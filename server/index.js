@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const app = express();
 const passport = require('passport');
-const passportConfig = require('./lib/passport');
+const passportConfig = require('./passport');
 passportConfig();
 const MySQLStore = require('express-mysql-session')(session);
 dotenv.config();

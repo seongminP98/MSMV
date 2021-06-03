@@ -17,7 +17,7 @@ router.post('/id', async(req,res,next)=> {//id중복확인
 });
 
 router.post('/nick', async function (req, res, next) {//nickname 중복확인
-  await db.query(`SELECT user_id FROM user where nickname=?`, [req.body.nickname],(error, result) => {
+  await db.query(`SELECT user_id FROM users where nickname=?`, [req.body.nickname],(error, result) => {
     if (error) {
       next(error);
     }
@@ -35,7 +35,7 @@ router.post('/', async function (req, res, next) {//회원가입
     await db.query(
       `INSERT INTO users(user_id,password,nickname) 
               VALUES(?,?,?);`,
-      [req.body.id, hash, req.body.nickname],
+      [req.body.user_id, hash, req.body.nickname],
       async (error, result) => {
         if (error) {
           next(error);
