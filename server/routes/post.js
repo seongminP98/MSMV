@@ -40,22 +40,25 @@ router.post('/', function(req, res){
   }
 })
 
-
+/*
 router.post('/review/update', async(req, res, next) => {
   console.log("Update review");
   const id = req.body.id;
   await db.query('UPDATE review SET comments = ? WHERE id = ?', [contents, id])
   //유저 입장에서 자기가 글 쓴 게 몇번인지 알 수 있나?...뭘 받아와야할지....
 })
+*/
 
-
+/*
 router.get('/review/delete', (req, res, next) => {
   console.log("Delete review");
   const id = req.body.id; //마찬가지
   db.query('DELETE FROM review WHERE id = ?', [id]);
 })
+*/
 
 //moviecount테이블
+/*
 router.get('/:movieCd', function(req, res, next){
   const movieCd = req.params.movieCd;
   db.query('SELECT movieCd FROM moviecount', function(error, results){
@@ -80,7 +83,7 @@ router.get('/:movieCd', function(req, res, next){
     }
   })
 })
-
+*/
 
 router.get('/boxOffice', function(req, response){
   let movies = new Object();
