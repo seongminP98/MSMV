@@ -343,6 +343,10 @@ router.get('/top10', async function(req, response){
 
 router.get('/recommend/:movieCode', async function(req, response){
   let res = await axios.get(`${process.env.FLASK_SERVER_URL}/${encodeURI(req.params.movieCode)}`);
+  if(res.data === "error") {
+    response.status(204).send({code : 204, result : "이 콘텐츠에 대한 추천은 제공하지 않습니다."});
+    return;
+  } 
   const movieList = new Array();
   let check = Object.values(res.data).length;
   let mv = new Object();

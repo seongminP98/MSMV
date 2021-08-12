@@ -34,9 +34,18 @@ def get_recommendations(movieCode, cosine_sim=cosine_sim):
 @app.route('/<movieCode>')
 def home(movieCode):
     movieCd = int(movieCode)
-    movies = get_recommendations(movieCd)
-    data = movies.to_json(orient='columns', force_ascii=False)
-    return data
+
+    try:
+        movies = get_recommendations(movieCd)
+    except:
+        app.logger.info("error")
+        data = "error"
+    else:
+        app.logger.info("complete")
+        data = movies.to_json(orient='columns', force_ascii=False)
+    finally:
+        app.logger.info(data)
+        return data
 
 
 if __name__ == '__main__':
