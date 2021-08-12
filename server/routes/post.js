@@ -344,27 +344,66 @@ router.get('/top10', async function(req, response){
 router.get('/recommend/:movieCode', async function(req, response){
   let res = await axios.get(`${process.env.FLASK_SERVER_URL}/${encodeURI(req.params.movieCode)}`);
   const movieList = new Array();
+  let check = Object.values(res.data).length;
+  let mv = new Object();
 
-  for(let i=0; i<Object.values(res.data).length; i++) {
-    let movie = new Object();
-    movie.movieCode = Object.values(res.data)[i]
-    movie.rank = i;
-    
-    crawling.parsing(Object.values(res.data)[i],movie,function(result){
-      //console.log(result);
-      movieList.push(result);
-      if(movieList.length === Object.values(res.data).length) {
-        movieList.sort(function(a,b){
-          return parseFloat(a.rank)-parseFloat(b.rank)
-      })
-        if(movieList){
-          response.status(200).send({code : 200, result : movieList});
-        }else{
-          response.status(400).send({code : 400, result : '에러'});
-        }
+  crawling.parsingRecommend(req.params.movieCode,mv,function(flag){
+    if(flag===false){
+      console.log('청불영화');
+      for(let i=0; i<check; i++) {
+        let movie = new Object();
+        movie.movieCode = Object.values(res.data)[i]
+        movie.rank = i;
+        
+        crawling.parsing(Object.values(res.data)[i],movie,function(result){
+          //console.log(result);
+          if(result!==false){
+            movieList.push(result);
+          } else{
+            check--;
+          }
+          if(movieList.length === check) {
+            movieList.sort(function(a,b){
+              return parseFloat(a.rank)-parseFloat(b.rank)
+          })
+            if(movieList){
+              response.status(200).send({code : 200, result : movieList});
+            }else{
+              response.status(400).send({code : 400, result : '에러'});
+            }
+          }
+        })
       }
-    })
-  }
+    } else{
+      console.log('청불영화 아님');
+      for(let i=0; i<check; i++) {
+        let movie = new Object();
+        movie.movieCode = Object.values(res.data)[i]
+        movie.rank = i;
+        
+        crawling.parsingRecommend(Object.values(res.data)[i],movie,function(result){
+          //console.log(result);
+          if(result!==false){
+            movieList.push(result);
+          } else{
+            check--;
+          }
+          if(movieList.length === check) {
+            movieList.sort(function(a,b){
+              return parseFloat(a.rank)-parseFloat(b.rank)
+          })
+            if(movieList){
+              response.status(200).send({code : 200, result : movieList});
+            }else{
+              response.status(400).send({code : 400, result : '에러'});
+            }
+          }
+        })
+      }
+    }
+  })
+  
+  
 
 })
 
