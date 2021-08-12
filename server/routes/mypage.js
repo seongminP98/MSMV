@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 const bcrypt = require('bcrypt');
-const { next } = require('cheerio/lib/api/traversing');
+
 
 //닉네임변경
 router.patch('/nickname/:id', async(req, res, next) => {
@@ -28,31 +28,25 @@ router.patch('/nickname/:id', async(req, res, next) => {
 
 
 router.patch('/password', async (req, res, next) => {
-  const old_pw = req.body.oldPassword;
-  const new_pw = req.body.newPassword;
-
   await db.query('SELECT password FROM users where id = ?', [req.body.id], async function(error, hash){
     if(error){
-      console.log("쿼리문 에러");
+      console.error("쿼리문 에러");
       next(error);
     }
-    console.log("해시는 ", hash);
     const origin_pw = hash[0].password;
-    await bcrypt.compare(old_pw, origin_pw, function(err, result){
+    await bcrypt.compare(req.body.oldPassword, origin_pw, function(err, result){
       if(err){
-        console.log("bcrypt.compare 오류");
+        console.error("bcrypt.compare 오류");
         next(err);
       }
-      console.log(result);
-      if(result == false){
-        console.log("비밀번호 불일치 ", result);
+      if(!result){
         res.status(400).send({code : 400, message : '비밀번호가 일치하지 않습니다.'});
       }
       else{
-        if(old_pw == new_pw){
+        if(req.body.oldPassword == req.body.newPassword){
           res.status(400).send({code : 400, message : '기존 비밀번호와 일치합니다.'});
         }else{
-          bcrypt.hash(new_pw, 12, async (err, hash)=>{
+          bcrypt.hash(req.body.newPassword, 12, async (err, hash)=>{
             if(err) next(err);
             await db.query('UPDATE users SET password = ? where id = ?', [hash, req.body.id], (err, result) =>{
               if(err) next(err);

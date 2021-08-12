@@ -3,25 +3,18 @@ const router = express.Router();
 const db = require('../lib/db');
 
 router.post('/', async(req,res,next)=> {
-    console.log("REVIEW");
-    const contents = req.body.contents;
-    const commenter = req.body.commenter;
-    const rate = req.body.rate;
-    const movieCd = req.body.movieCd;
-    const movieTitle = req.body.movieTitle;
-  
     await db.query('INSERT INTO review(contents, commenter, rate, movieCd, movieTitle) values (?, ?, ?, ?, ?)', [
-      contents, commenter, rate, movieCd, movieTitle], async (error, result) =>{
+      req.body.contents, req.body.commenter, req.body.rate, req.body.movieCd, req.body.movieTitle], async (error, result) =>{
       if(error) {
         next(error);
       }
       
-      await db.query('SELECT * FROM review WHERE movieCd = ?', [movieCd],
+      await db.query('SELECT * FROM review WHERE movieCd = ?', [req.body.movieCd],
          (err, result2) => {
            if(err){
              next(err);
            }
-           console.log(result2);
+
            if(result2[0]){
             res.status(200).send({code: 200, result: result2}) 
            }else{
@@ -35,7 +28,6 @@ router.post('/', async(req,res,next)=> {
   
   
   router.patch('/', async(req, res, next) => {
-    console.log("Update review");
     //req.body.id 는 리뷰의 id
     await db.query('SELECT commenter FROM review WHERE id=?',[req.body.id], async(error,result)=>{
       if(error){
@@ -50,14 +42,8 @@ router.post('/', async(req,res,next)=> {
     })
   
   })
-  
-  
-  
-  
+
   router.delete('/:id/:user_id', async (req, res, next) => {
-    console.log("Delete review");
-    console.log(`req.params.id ${req.params.id}`);
-    console.log(`req.params.user_id ${req.params.user_id}`);
     await db.query('SELECT commenter FROM review WHERE id=?',[req.params.id], async(error,result)=>{
       if(error){
         next(error);
@@ -68,7 +54,6 @@ router.post('/', async(req,res,next)=> {
         res.status(200).send({code:200, message : "리뷰가 삭제되었습니다."});
       } else{
         res.status(400).send({code:400, message : "내가 쓴 리뷰가 아닙니다."});
-        console.log(400);
       }
     })
   })
