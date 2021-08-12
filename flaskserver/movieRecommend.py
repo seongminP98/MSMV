@@ -34,7 +34,6 @@ def get_recommendations(movieCode, cosine_sim=cosine_sim):
 @app.route('/<movieCode>')
 def home(movieCode):
     movieCd = int(movieCode)
-
     try:
         movies = get_recommendations(movieCd)
     except:
