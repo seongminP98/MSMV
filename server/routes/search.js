@@ -29,12 +29,15 @@ router.post('/',(req,response)=>{
             naverAPI.getMovieListNm(option)
             .then(function(result){
                 //let resultLen = result.length;
-
-                for(let i=0; i<result.length; i++){
+                let len = result.length;
+                for(let i=0; i<len; i++){
                     crawling.parsing(result[i].movieCd,result[i],function(res){
-                         movieListNm.push(res);
-
-                        if(movieListNm.length === result.length){
+                        if(res.image === 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'){ //포스터 이미지 없는 영화 제외
+                            len--;
+                        }else{
+                            movieListNm.push(res);
+                        }
+                        if(movieListNm.length === len){
                             movieListNm.sort(function(a,b){
                                 return parseFloat(b.rate)-parseFloat(a.rate)
                             })
@@ -53,12 +56,17 @@ router.post('/',(req,response)=>{
         } else{
             function searchMovieDir(directorNm, callback){
                 dirNm = utf8.encode(directorNm);
-                return axios.get( `http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json?key=${process.env.serviceKey}&directorNm=${dirNm}`).then(response =>{
+                return axios.get( `http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json?key=${process.env.serviceKey}&directorNm=${dirNm}`).then(response2 =>{
                     resultMovies = new Array();
-                    let result = response.data.movieListResult.movieList
+                    let result = response2.data.movieListResult.movieList
                     for(let i=0; i<result.length; i++){
                         resultMovies.push({'movieName' : result[i].movieNm,
                                             'prdtYear' : result[i].prdtYear})
+                    }
+                    console.log(resultMovies);
+                    if(resultMovies.length === 0){
+                        console.log("없음")
+                        return response.status(200).send({code : 200, result : "검색결과가 없습니다."});
                     }
                     callback(resultMovies)
                 })
@@ -91,7 +99,7 @@ router.post('/',(req,response)=>{
                                     movieList.sort(function(a,b){
                                         return parseFloat(b.rate)-parseFloat(a.rate)
                                     })
-                                    console.log(movieList);
+                                    //console.log(movieList);
                                     response.status(200).send({code : 200, result : movieList});
                                     
                                 }
