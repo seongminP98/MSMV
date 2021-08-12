@@ -18,6 +18,7 @@ const Header = styled.header`
   border-width : 0 0 3px 0;
   border-style : solid ;
   border-color: #595959;
+  min-width:1190px;
 `;
 
 const Banner = styled(Link)`
@@ -63,6 +64,8 @@ const MenuLeft = styled(Menu)`
   display: block;
   text-align: left;
   padding-left: 80px;
+  padding-right:0px;
+  overflow:hidden;
 `;
 
 const IntroMent = styled(StyledLink)`

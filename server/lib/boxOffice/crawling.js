@@ -23,7 +23,8 @@ const parsing = async(keyword, result, callback) => {
 
     result.image = $(".mv_info_area").find("img").attr("src")
     result.summary = $(".story_area").find(".con_tx").text()
-    result.genre = genre
+
+
     if(!result.title){
         let title = $(".mv_info_area").find(".h_movie").text()
         title = title.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
@@ -42,6 +43,48 @@ const parsing = async(keyword, result, callback) => {
         
     }
     callback(result);
+    
+}
+
+const parsingRecommend = async(keyword, result,callback) => {
+    const html = await getHTML(keyword);
+    
+    const $ = cheerio.load(html.data); 
+    let grade = $(".info_spec").find("span:eq(4)").text().trim()
+    grade = grade.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+    result.grade = grade;
+    if(grade.includes('[국내]청소년 관람불가')){
+        callback(false);
+    } else{
+        let date = $(".info_spec").find("span:eq(3)").text().trim()
+        date = date.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+    
+        let genre = $(".info_spec").find("span:first").text().trim()
+        genre = genre.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+    
+        result.image = $(".mv_info_area").find("img").attr("src")
+        result.summary = $(".story_area").find(".con_tx").text()
+        
+        if(!result.title){
+            let title = $(".mv_info_area").find(".h_movie").text()
+            title = title.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+            result.title = title
+        }
+        if(genre===date){
+            result.date = "정보 없음";
+            //callback(false)
+        }
+        else if(date.charAt(0)==='['){
+            result.date = "정보 없음";
+        } 
+        else{
+            
+            result.date = date
+            
+        }
+        callback(result);
+    }
+    
     
 }
 
@@ -80,4 +123,4 @@ const parsingGenre = async(keyword, callback) => {
 
 
 
-module.exports = {parsing, parsingGenre};
+module.exports = {parsing, parsingGenre, parsingRecommend};

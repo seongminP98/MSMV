@@ -25,7 +25,7 @@ def get_recommendations(movieCode, cosine_sim=cosine_sim):
     idx = indices[movieCode]
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:11]
+    sim_scores = sim_scores[1:16]
     movie_indices = [i[0] for i in sim_scores]
     score = [i[1] for i in sim_scores]
     return df['movieCode'].iloc[movie_indices]
@@ -34,9 +34,17 @@ def get_recommendations(movieCode, cosine_sim=cosine_sim):
 @app.route('/<movieCode>')
 def home(movieCode):
     movieCd = int(movieCode)
-    movies = get_recommendations(movieCd)
-    data = movies.to_json(orient='columns', force_ascii=False)
-    return data
+    try:
+        movies = get_recommendations(movieCd)
+    except:
+        app.logger.info("error")
+        data = "error"
+    else:
+        app.logger.info("complete")
+        data = movies.to_json(orient='columns', force_ascii=False)
+    finally:
+        app.logger.info(data)
+        return data
 
 
 if __name__ == '__main__':
