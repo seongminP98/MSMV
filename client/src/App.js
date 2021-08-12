@@ -29,6 +29,7 @@ const FooterDesign = styled(Footer)`
   border-style : solid ;
   border-color: #595959;
   padding-top: 17px;
+  min-width:1190px;
 `;
 
 function App() {
