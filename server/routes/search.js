@@ -30,6 +30,11 @@ router.post('/',(req,response)=>{
             .then(function(result){
                 //let resultLen = result.length;
                 let len = result.length;
+                console.log('asdfasdf',result);
+                if(result.length === 0) {
+                    console.log("없음")
+                    return response.status(204).send();
+                }
                 for(let i=0; i<len; i++){
                     crawling.parsing(result[i].movieCd,result[i],function(res){
                         if(res.image === 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'){ //포스터 이미지 없는 영화 제외
@@ -66,7 +71,7 @@ router.post('/',(req,response)=>{
                     console.log(resultMovies);
                     if(resultMovies.length === 0){
                         console.log("없음")
-                        return response.status(200).send({code : 200, result : "검색결과가 없습니다."});
+                        return response.status(204).send();
                     }
                     callback(resultMovies)
                 })
