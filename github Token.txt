@@ -1,4 +1,0 @@
-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
-
-user.email=kenny022049@naver.com
-user.name=odh

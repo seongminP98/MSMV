@@ -13,42 +13,45 @@ const Search = () => {
   // const location = useLocation();
 
   const submitSearch = async (e) => {
-    if (searchContent === '') { // 아무것도 입력하지 않을 시
+    if (e.key === "Enter") {
+      if (searchContent === '') { // 아무것도 입력하지 않을 시
+        setCurrentSearch(searchContent);
+        return; // 아무것도 반환하지 않음
+      }
+
+      if (searchCrit === "title") {
+        console.log("search from title");
+        const check = 1;
+        const movieNm = searchContent;
+        console.log("start axios");
+        await axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, { check, movieNm })
+        .then((response) => {
+          setResult(response.data.result);
+        })
+        .catch((error) => {
+          window.alert(error.response.data.message);
+        });
+        console.log("end axios");
+      }
+      else if (searchCrit === "director") {
+        console.log("search from director");
+        const check = 2;
+        const dirNm = searchContent;
+        console.log("start axios");
+        await axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, { check, dirNm })
+        .then((response) => {
+          console.log(response);
+          setResult(response.data.result);
+        })
+        .catch((error) => {
+          window.alert(error.response.data.message);
+        });
+        console.log("end axios");
+      }
+      //result.sort((a, b) => a.rate < b.rate);
+      console.log(result);
       setCurrentSearch(searchContent);
-      return; // 아무것도 반환하지 않음
     }
-    if (searchCrit === "title") {
-      console.log("search from title");
-      const check = 1;
-      const movieNm = searchContent;
-      console.log("start axios");
-      await axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, { check, movieNm })
-      .then((response) => {
-        setResult(response.data.result);
-      })
-      .catch((error) => {
-        window.alert(error.response.data.message);
-      });
-      console.log("end axios");
-    }
-    else if (searchCrit === "director") {
-      console.log("search from director");
-      const check = 2;
-      const dirNm = searchContent;
-      console.log("start axios");
-      await axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, { check, dirNm })
-      .then((response) => {
-        console.log(response);
-        setResult(response.data.result);
-      })
-      .catch((error) => {
-        window.alert(error.response.data.message);
-      });
-      console.log("end axios");
-    }
-    //result.sort((a, b) => a.rate < b.rate);
-    console.log(result);
-    setCurrentSearch(searchContent);
   }
   
   const takeInput = (e) => {
