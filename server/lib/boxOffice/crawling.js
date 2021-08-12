@@ -53,7 +53,7 @@ const parsingRecommend = async(keyword, result,callback) => {
     let grade = $(".info_spec").find("span:eq(4)").text().trim()
     grade = grade.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
     result.grade = grade;
-    if(grade==='[국내]청소년 관람불가'){
+    if(grade.includes('[국내]청소년 관람불가')){
         callback(false);
     } else{
         let date = $(".info_spec").find("span:eq(3)").text().trim()

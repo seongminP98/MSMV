@@ -103,14 +103,36 @@ router.get('/detail/:movieCd', async function(req, response, next){
           grade = grade.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
           date = date.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
           genre = genre.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
-      
+          time = time.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+          
+          //드라마 디테일 페이지 
+          if(time.substring(0,4) === '[국내]') {
+            grade = time;
+            time = '정보없음';
+          }
+
+          if(genre.includes('한국')){
+            if(country.split(' ')[1] === '개봉') {
+              date = country;
+            }
+            country = '한국';
+            genre = '정보없음';
+          }
+
+          if(time.includes("개봉")){
+            date = time;
+            time = "정보없음";
+          }
+
+          if(!time.includes("분")){
+            time = "정보없음";
+          }
+          //
+
           item = {
-              //"image": $(".mv_info_area").find("img").attr("src"),
-              //"title": $(".mv_info").find(`h3>a`).text(),
               "title": title,
               "show" : show,
               "summary": summary,
-              //"movieCd": keyword,
               "people" : peopleArray,
               "genres" : genre,
               "country" : country,
@@ -135,6 +157,7 @@ router.get('/detail/:movieCd', async function(req, response, next){
         const $ = cheerio.load(html.data); 
 
         result.image = $("#page_content").find("img").attr("src")
+        console.log(result.image);
 
         callback(result);
     }
@@ -246,13 +269,6 @@ router.get('/boxOffice', async function(req, response,next){
                             }
                              response.status(200).send({code:200, boxOffice: result});
                           })
-                            // movieList.sort(function(a,b){
-                            //     return parseFloat(a.rank)-parseFloat(b.rank)
-                            // })
-                            // movies = {
-                            //     "boxOffice" : movieList
-                            // }
-                            // response.status(200).send({code:200, boxOffice:movies});
                         }
                     })
               })
@@ -265,18 +281,6 @@ router.get('/boxOffice', async function(req, response,next){
 
 })
 
-
-//자정에 todaymovie로 테이블 복사 후 moviecount테이블초기화 -> mysql 내 이벤트 스케쥴러 COPYmoviecount
-//main에 todaymovie 출력
-// get('/', function(req, res){
-//   db.query('SELECT * FROM todaymovie ORDER BY count DESC LIMIT 10', function(error, movierank){
-//     if(error){
-//       throw(error);
-//     }
-    
-//     console.log(movierank);
-//   })
-// })
 
 router.get('/top10', async function(req, response){
   //console.log('탑텐 시작')
