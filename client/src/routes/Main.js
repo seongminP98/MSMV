@@ -36,7 +36,7 @@ const Main = () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/post/boxOffice`)
     .then((response) => {
       setBoxOfficeData(response.data.boxOffice);
-      console.log(response.data.boxOffice);
+      console.log(response.data);
     })
     .catch((error) => {
       console.log(error);

@@ -9,6 +9,7 @@ import Header from './routes/Header.js';
 import Search from './routes/Search.js';
 import Detail from './routes/Detail.js';
 import MyPage from './routes/MyPage.js';
+import Genre from './routes/Genre.js';
 
 import store from "./store";
 import axios from 'axios';
@@ -71,6 +72,7 @@ function App() {
           <Route exact path="/mypage">
             <MyPage />
           </Route>
+          <Route exact path="/genre/:tag" component={Genre}/>
         </Router>
       )}
       <FooterDesign>Made by SangMyung University<br/>CS GladOS Team</FooterDesign>
