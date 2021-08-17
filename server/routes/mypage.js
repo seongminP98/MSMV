@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 
 //닉네임변경
-router.patch('/nickname/:id', async(req, res, next) => {
+router.patch('/nickname', async(req, res, next) => {
   console.log(req.body.nickname);
   await db.query('SELECT id FROM users where nickname = ?', [req.body.nickname], function(error, result){
     if (error){
@@ -15,7 +15,7 @@ router.patch('/nickname/:id', async(req, res, next) => {
       res.status(200).send({code : 400, message : '이미 사용 중인 닉네임입니다.'});
     }
     else{
-      db.query('UPDATE users SET nickname = ? where id = ?;',[req.body.nickname, req.params.id], function(error2, result2){
+      db.query('UPDATE users SET nickname = ? where id = ?;',[req.body.nickname, req.user.id], function(error2, result2){
         if (error2){
           next(error2);
         }
@@ -28,7 +28,7 @@ router.patch('/nickname/:id', async(req, res, next) => {
 
 
 router.patch('/password', async (req, res, next) => {
-  await db.query('SELECT password FROM users where id = ?', [req.body.id], async function(error, hash){
+  await db.query('SELECT password FROM users where id = ?', [req.user.id], async function(error, hash){
     if(error){
       console.error("쿼리문 에러");
       next(error);
@@ -48,7 +48,7 @@ router.patch('/password', async (req, res, next) => {
         }else{
           bcrypt.hash(req.body.newPassword, 12, async (err, hash)=>{
             if(err) next(err);
-            await db.query('UPDATE users SET password = ? where id = ?', [hash, req.body.id], (err, result) =>{
+            await db.query('UPDATE users SET password = ? where id = ?', [hash, req.user.id], (err, result) =>{
               if(err) next(err);
               res.status(200).send({code : 200, message : '비밀번호가 성공적으로 변경되었습니다.'});
             })
@@ -62,9 +62,9 @@ router.patch('/password', async (req, res, next) => {
 
 //회원탈퇴
 router.post('/withdraw', async(req, res, next) => {
-  const id = req.body.id;
+  const id = req.user.id;
   const pw = req.body.pw;
-  await db.query('SELECT password FROM users where id = ?', [req.body.id], async function(error, hash){
+  await db.query('SELECT password FROM users where id = ?', [req.user.id], async function(error, hash){
     if(error){
       console.log("쿼리문 에러");
       next(error);
@@ -97,8 +97,9 @@ router.post('/withdraw', async(req, res, next) => {
   })
 })
 
-router.get('/myReview/:user_id', async function(req, res, err){
-  await db.query('select review.id as review_id, contents, created, updated, commenter, rate, movieCd, movieTitle from review left join users on user_id = review.commenter where review.commenter = ?;', [req.params.user_id], function(err, review){
+router.get('/myReview', async function(req, res, err){
+  await db.query('select review.id as review_id, contents, created, updated, commenter, rate, movieCd, movieTitle from review left join users on user_id = review.commenter where review.commenter = ?;', 
+  [req.user.id], function(err, review){
     if(err){
       next(err);
     }
