@@ -77,11 +77,9 @@ const Detail = () => {
   }
 
   const [id, setId] = useState(''); // id value for Delete Review
-  const [user_id, setUser_Id] = useState('');
   
   const submitDeleteReview = async (e) => {
-    setId(e.target.id);
-    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/review/${id}`, {withCredentials: true})
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/review/${e.target.id}`, {withCredentials: true})
     .then((response) => {
      console.log(response);
      window.alert("리뷰 삭제 완료")

@@ -2,43 +2,6 @@ import React, {optionsState} from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
 
-const Search = styled.div`
-  padding-top: 40px;
-  padding-bottom: 40px;
-  min-height: 900px;
-`;
-
-const SearchUpper = styled.div`
-  margin: auto;
-  width: 900px;
-  padding: auto;
-  align: center;
-  display: block;
-  margin-bottom: 23px;
-`;
-
-const CritSelect = styled.select`
-  text-align: center;
-  width : 80px;
-  height : 50px;
-  font-size: 20px;
-  margin-top : 5px;
-  padding-left: 3px;
-`;
-
-const CritOption = styled.option`
-  text-align: center;
-  font-size: 20px;
-`;
-
-const SearchInput = styled.input`
-  height: 50px;
-  margin-left : 10px;
-  width : 810px;
-  margin-top : 5px;
-  font-size: 20px;
-  padding-left: 5px;
-`;
 
 const MovieCard = styled.div`
   padding : 15px;
@@ -124,7 +87,7 @@ const GenrePresenter = ({currentGenre, result}) => {
             </MovieImageLink>
             <MovieContent>
               <MovieTitleLink to={`/Detail?code=${movie.movieCd}`}>{movie.title}</MovieTitleLink> 
-              <p>평점 {movie.rate}<br/>
+              <p>평점 {movie.rate}
               {movie.date}</p>
               <MovieSummary>
                 {movie.summary} 

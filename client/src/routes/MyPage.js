@@ -72,7 +72,7 @@ const MyPage = () => {
     .then((response) => {
         console.log("탈퇴 완료");
         window.alert("탈퇴 완료");
-        history.push({ pathname: '/' });
+        window.location.href = "/";
     })
     .catch((error) => {
       console.log(error.response.data);
