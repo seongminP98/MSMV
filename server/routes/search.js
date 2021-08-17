@@ -1,13 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
-const utf8 = require('utf8');
-const request = require('request')
-
-const cheerio = require('cheerio');
-const naverAPI = require('../lib/boxOffice/naverAPI');
-const crawling = require('../lib/boxOffice/crawling');
-const movieData = require('../lib/boxOffice/movieData');
+const naverAPI = require('../lib/movie/naverAPI');
+const crawling = require('../lib/movie/crawling');
+const kobis = require('../lib/movie/kobis');
 
 router.post('/',(req,response)=>{
     console.log('search start')
@@ -28,7 +23,6 @@ router.post('/',(req,response)=>{
             let movieListNm = new Array();
             naverAPI.getMovieListNm(option)
             .then(function(result){
-                //let resultLen = result.length;
                 let len = result.length;
                 console.log('asdfasdf',result);
                 if(result.length === 0) {
@@ -59,25 +53,7 @@ router.post('/',(req,response)=>{
         if(req.body.dirNm === undefined){
             response.status(400).send({code : 400, message : "감독명을 입력해 주세요"});
         } else{
-            function searchMovieDir(directorNm, callback){
-                dirNm = utf8.encode(directorNm);
-                return axios.get( `http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json?key=${process.env.serviceKey}&directorNm=${dirNm}`).then(response2 =>{
-                    resultMovies = new Array();
-                    let result = response2.data.movieListResult.movieList
-                    for(let i=0; i<result.length; i++){
-                        resultMovies.push({'movieName' : result[i].movieNm,
-                                            'prdtYear' : result[i].prdtYear})
-                    }
-                    console.log(resultMovies);
-                    if(resultMovies.length === 0){
-                        console.log("없음")
-                        return response.status(204).send();
-                    }
-                    callback(resultMovies)
-                })
-            }
-            
-            searchMovieDir(req.body.dirNm,function(res){
+            kobis.searchMovieDir(req.body.dirNm,function(res){
                 let checkLength =res.length
                 
                 let movieList = new Array();
@@ -93,8 +69,7 @@ router.post('/',(req,response)=>{
                         filter : 'small',
                     }
                     naverAPI.getMovieListDir(option,req.body.dirNm)
-                    .then(function(result2){
-                        
+                    .then(function(result2){  
                         if(!result2){
                             checkLength--;
                         }else{
@@ -104,9 +79,7 @@ router.post('/',(req,response)=>{
                                     movieList.sort(function(a,b){
                                         return parseFloat(b.rate)-parseFloat(a.rate)
                                     })
-                                    //console.log(movieList);
                                     response.status(200).send({code : 200, result : movieList});
-                                    
                                 }
                             })
                         }
@@ -114,7 +87,6 @@ router.post('/',(req,response)=>{
                 }
             })
         }
-        
     }
     else{
         response.status(400).send({code : 400, message : "감독명이나 영화로 검색해주세요(check에러)"});

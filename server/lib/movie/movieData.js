@@ -1,4 +1,4 @@
-const boxOffice = require('./boxOffice');
+const boxOffice = require('./kobis');
 
 async function getName(targetDt){
 
