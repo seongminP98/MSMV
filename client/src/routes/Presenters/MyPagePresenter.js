@@ -322,8 +322,8 @@ const MyPagePresenter = ({takeNewNickname, submitNewNickname, takeOldPassword, t
                       <LeftLayout>
                         {/* <p>비밀번호 변경</p> */}
                       <SideBySide2>
-                        <AllInput input onChange={takeOldPassword} placeholder="현재 비밀번호 입력"></AllInput><br/>
-                        <AllInput input onChange={takeNewPassword} placeholder="새 비밀번호 입력"></AllInput>
+                        <AllInput input type='password' onChange={takeOldPassword} placeholder="현재 비밀번호 입력"></AllInput><br/>
+                        <AllInput input type='password' onChange={takeNewPassword} placeholder="새 비밀번호 입력"></AllInput>
                         <AllButton button onClick={submitNewPassword}>변경</AllButton>
                       </SideBySide2>
                       </LeftLayout>
