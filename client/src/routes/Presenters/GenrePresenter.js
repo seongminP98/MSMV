@@ -116,9 +116,25 @@ const GenrePresenter = ({currentGenre, result}) => {
 
   return (
     <div>
-      {result}
-      {currentGenre}
-      </div>
+      {result.map((movie) => ( 
+          
+          <MovieCard key={movie.movieCd}>
+            <MovieImageLink>
+              <Link to={`/Detail?code=${movie.movieCd}`}><MovieImage alt="movie" src={movie.image}></MovieImage></Link>
+            </MovieImageLink>
+            <MovieContent>
+              <MovieTitleLink to={`/Detail?code=${movie.movieCd}`}>{movie.title}</MovieTitleLink> 
+              <p>평점 {movie.rate}<br/>
+              {movie.date}</p>
+              <MovieSummary>
+                {movie.summary} 
+              </MovieSummary>
+              <SummaryLink to={`/Detail?code=${movie.movieCd}`}>더 보기</SummaryLink>
+              
+            </MovieContent>
+          </MovieCard>
+          ))}
+    </div>
   )
 }
 

@@ -4,15 +4,16 @@ import GenrePresenter from './Presenters/GenrePresenter';
 import {useLocation} from 'react-router-dom';
 
 const Genre = () => {
-  const [currentGenre, setCurrentGenre] = useState("Init");
-  const [result, setResult] = useState([]);
+  const [currentGenre, setCurrentGenre] = useState("");
+  const [result, setResult] = useState([[]]);
   const location = useLocation();
-  console.log(location);
-  //etCurrentGenre(window.location.pathname);
+  
+  console.log(location.pathname);
 
   const genreSearch = async (e) => {
-    console.log("genreSearch");
-    await axios.get(`${process.env.REACT_APP_SERVER_URL}/search/genre${currentGenre}`)
+    console.log(location);
+    console.log(currentGenre);
+    await axios.get(`${process.env.REACT_APP_SERVER_URL}/search/genre/1`)
     .then((response) => {
       setResult(response.data.result);
     })
@@ -22,6 +23,8 @@ const Genre = () => {
     console.log("end axios");
   }
 
+  genreSearch();
+  //useEffect(() => genreSearch(), []);
 
   return ( 
     <GenrePresenter currentGenre={currentGenre} result={result}/>

@@ -56,7 +56,7 @@ const Detail = () => {
       window.alert("별점을 매겨주세요.");
       return;
     }
-    await axios.post(`${process.env.REACT_APP_SERVER_URL}/review`, { contents, commenter, rate, movieCd, movieTitle })
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/review`, { contents, commenter, rate, movieCd, movieTitle }, {withCredentials : true})
     .then((response) => {
      console.log(response);
      window.alert("리뷰 작성 완료");
@@ -83,7 +83,7 @@ const Detail = () => {
   const submitDeleteReview = async (e) => {
     setId(e.target.id);
     setUser_Id(store.getState().user.id);
-    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/review/${id}/${user_id}`)
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/review/${id}/${user_id}`, {withCredentials: true})
     .then((response) => {
      console.log(response);
      window.alert("리뷰 삭제 완료")

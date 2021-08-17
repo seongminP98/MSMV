@@ -18,7 +18,7 @@ const MyPage = () => {
   const submitNewNickname = async () => {
     const nickname = newNickname;
     const id = store.getState().user.id;
-    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/mypage/nickname/${id}`, { nickname, id })
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/mypage/nickname/${id}`, { nickname }, { withCredentials: true })
     .then((response) => {
       console.log(response);
       if (response.data.code === 400) {
@@ -51,7 +51,7 @@ const MyPage = () => {
 
   const submitNewPassword = async () => {
     const id = store.getState().user.id;
-    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/mypage/password`, { oldPassword, newPassword, id })
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/mypage/password`, { id, oldPassword, newPassword }, { withCredentials: true })
     .then((response) => {
         console.log("비밀번호 변경 완료");
         window.alert("비밀번호가 정상적으로 변경되었습니다.");
@@ -71,7 +71,7 @@ const MyPage = () => {
   const submitWithdraw = async () => {
     const id = store.getState().user.id;
     const pw = withdrawPassword;
-    await axios.post(`${process.env.REACT_APP_SERVER_URL}/mypage/withdraw`, { id, pw })
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/mypage/withdraw`, { id, pw }, { withCredentials: true })
     .then((response) => {
         console.log("탈퇴 완료");
         window.alert("탈퇴 완료");

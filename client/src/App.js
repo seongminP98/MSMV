@@ -69,11 +69,13 @@ function App() {
           <Route exact path="/search">
             <Search />
           </Route>
+          <Route exact path="/genre/:tag" component={Genre}/>
+
           <Route exact path="/detail" component={Detail}/>
           <Route exact path="/mypage">
             <MyPage />
           </Route>
-          <Route exact path="/genre/:tag" component={Genre}/>
+            
         </Router>
       )}
       <FooterDesign>Made by SangMyung University<br/>CS GladOS Team</FooterDesign>

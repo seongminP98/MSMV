@@ -41,7 +41,13 @@ const Search = () => {
         await axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, { check, dirNm })
         .then((response) => {
           console.log(response);
+          if (response.status === 204) {
+            console.log("204");
+            setResult([]);
+          }
+          else {
           setResult(response.data.result);
+          }
         })
         .catch((error) => {
           window.alert(error.response.data.message);

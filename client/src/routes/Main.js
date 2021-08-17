@@ -25,7 +25,7 @@ const Main = () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/post/top10`)
     .then((response) => {
       setTopTenData(response.data.result);
-      console.log(response.data.result);
+      console.log(response);
     })
     .catch((error) => {
       console.log(error);
