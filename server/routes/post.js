@@ -1,13 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
-const request = require('request')
-const boxOffice = require('../lib/boxOffice/boxOffice');
 const axios = require('axios');
-const cheerio = require('cheerio');
-const naverAPI = require('../lib/boxOffice/naverAPI');
-const crawling = require('../lib/boxOffice/crawling');
-const movieData = require('../lib/boxOffice/movieData');
+const naverAPI = require('../lib/movie/naverAPI');
+const crawling = require('../lib/movie/crawling');
+const movieData = require('../lib/movie/movieData');
 
 
 router.get('/detail/:movieCd', async function(req, response, next){
@@ -16,170 +13,39 @@ router.get('/detail/:movieCd', async function(req, response, next){
     if(error){
       next(error);
     }
-    if(results.length===0){ //null값
-
+    if(results.length===0){ //null값 moviecount에 추가.
       await db.query('INSERT INTO moviecount(movieCd, count) values (?, ?)', [
         movieCd, 1
       ])
-      //console.log('moviecount 테이블 갱신');
     }
-    else{ //moviecount에 해당 영화가 있으면
+    else{ //moviecount에 해당 영화가 있으면 count+1
       await db.query('SELECT count FROM moviecount where movieCd = ?',[movieCd] ,async function(error2, count){
         if(error2){
           next(error2);
         }
-
         await db.query('UPDATE moviecount SET count = ? WHERE movieCd = ?', [count[0].count+1, movieCd]
         );
-        
       })
     }
-
     await db.query('select review.id,contents, created, updated, rate, nickname, commenter from review left join users on review.commenter = users.id WHERE movieCd = ?', 
     [req.params.movieCd], async (error3, resultR)=>{
       if(error3){
         throw(error3)
       }
       else{
-
-        const getHTML = async(keyword) => {
-          try{
-              return await axios.get("https://movie.naver.com/movie/bi/mi/basic.nhn?code="+keyword)
-          }catch(err){
-              console.log(err)
-          }
-          
-      }
-
-      const parsing = async(keyword,review, callback) => {
-          const html = await getHTML(keyword);
-          
-          const $ = cheerio.load(html.data); //갖고온 html코드는 data안에 들어온다.
-      //    const $itemList = $(".poster")
-      
-          let item = new Object();
-          let show = false;
-          let title = $(".mv_info").find(`h3>a`).text()
-          if(title.includes('상영중')){
-              title = title.split('상영중')[0];
-              show = true;
-          }else{
-              title = title.substring(0,title.length/2);
-          }
-          let summary = $(".story_area").find(".con_tx").text()
-          let $peopleList = $(".people >ul > li")
-          let people = new Object();
-          let peopleArray = new Array();
-      
-          $peopleList.each((idx,node)=>{
-              let peopleImage = $(node).find("img").attr("src")
-              let peopleName =  $(node).find(".tx_people").text()
-              let peopleJob =$(node).find(".staff").text().trim()
-
-              people = {
-                  "peopleImage" : peopleImage,
-                  "peopleName" : peopleName,
-                  "peopleJob" : peopleJob,
-              }
-              peopleArray.push(people);
+        crawling.parsingDetail(movieCd,resultR,function(res){
+          crawling.parsingPost(movieCd,res,function(res2){
+            if(res2){
+              response.status(200).send({code : 200, result : res2});
+            }else{
+              response.status(400).send({code : 400, result : '에러'});
+            }
           })
-          let genre = $(".info_spec").find("span:first").text().trim()
-          let country = $(".info_spec").find("span:eq(1)").text().trim()
-          let time = $(".info_spec").find("span:eq(2)").text().trim()
-          let date = $(".info_spec").find("span:eq(3)").text().trim()
-          let grade = $(".info_spec").find("span:eq(4)").text().trim()
-          if(!show){
-            if(date.charAt(0)==='['){
-              grade = date;
-            }
-            date = '정보 없음'
-          }
-           
-          
-          if(grade.charAt(0)!=='['){
-            grade = '정보 없음'
-          }
-          country = country.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
-          grade = grade.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
-          date = date.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
-          genre = genre.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
-          time = time.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
-          
-          //드라마 디테일 페이지 
-          if(time.substring(0,4) === '[국내]') {
-            grade = time;
-            time = '정보없음';
-          }
-
-          if(genre.includes('한국')){
-            if(country.split(' ')[1] === '개봉') {
-              date = country;
-            }
-            country = '한국';
-            genre = '정보없음';
-          }
-
-          if(time.includes("개봉")){
-            date = time;
-            time = "정보없음";
-          }
-
-          if(!time.includes("분")){
-            time = "정보없음";
-          }
-          //
-
-          item = {
-              "title": title,
-              "show" : show,
-              "summary": summary,
-              "people" : peopleArray,
-              "genres" : genre,
-              "country" : country,
-              "runningTime" : time,
-              "openDt" : date,
-              "grade" : grade,
-              "review" : review
-          }
-          callback(item);
-      }
-      const getHTMLPost = async(keyword) => {
-        try{
-            return await axios.get("https://movie.naver.com/movie/bi/mi/photoViewPopup.naver?movieCode="+keyword)
-        }catch(err){
-            console.log(err)
-        }
-        
-    }
-      const parsingPost = async(keyword,result,callback) => {
-        const html = await getHTMLPost(keyword);
-        
-        const $ = cheerio.load(html.data); 
-
-        result.image = $("#page_content").find("img").attr("src")
-        console.log(result.image);
-
-        callback(result);
-    }
-      parsing(movieCd,resultR,function(res){
-        //console.log(res);
-        parsingPost(movieCd,res,function(res2){
-          //console.log(res2);
-          if(res2){
-            response.status(200).send({code : 200, result : res2});
-          }else{
-            response.status(400).send({code : 400, result : '에러'});
-          }
         })
-          
-          
-      })
-
       }
-  })
+    })
   })
 })
-
 
 router.get('/boxOffice', async function(req, response,next){
 
@@ -188,12 +54,9 @@ router.get('/boxOffice', async function(req, response,next){
       next(err)
     }
     if(result.length>0){
-      //console.log('있으면',result)
       response.status(200).send({code:200, boxOffice: result});
     }
     else{
-      //console.log('없음')
-      let movies = new Object();
       let now = new Date();	// 현재 날짜 및 시간
     
       let yesterday = new Date(now.setDate(now.getDate() - 1));	// 어제
@@ -233,11 +96,8 @@ router.get('/boxOffice', async function(req, response,next){
       let a = movieData.getName(targetDt);
       
       a.then(function(result){
-          // let movieData;
-          
           let movieList = new Array();
-          //let movieTT = new Array();
-          // let checkLength = result.dailyBoxOfficeList.length;
+
           for(let i=0; i<result.dailyBoxOfficeList.length; i++){
             let prdtYear = result.dailyBoxOfficeList[i].prdtYear;
                   const option = {
@@ -274,16 +134,12 @@ router.get('/boxOffice', async function(req, response,next){
               })
           }
       })
-      
     }
   })
-
-
 })
 
 
 router.get('/top10', async function(req, response){
-  //console.log('탑텐 시작')
   await db.query('SELECT * FROM weeklymovie ORDER BY count DESC LIMIT 10', function(error, result){
     if(error){
       throw(error);
@@ -293,46 +149,18 @@ router.get('/top10', async function(req, response){
     for(let i=0; i<result.length; i++){
       movieCd.push(result[i].movieCd)
     }
-
-    const getHTML = async(keyword) => {
-      try{
-          return await axios.get("https://movie.naver.com/movie/bi/mi/basic.nhn?code="+keyword)
-      }catch(err){
-          console.log(err)
-      }
-  }
-  //console.log('영화코드',movieCd);
-  const parsing = async(keyword, rank, callback) => {
-      const html = await getHTML(keyword);
-      
-      const $ = cheerio.load(html.data); //갖고온 html코드는 data안에 들어온다.
-  
-      let item = new Object();
-  
-      let title = $(".mv_info").find(`h3>a`).text()
-      if(title.includes('상영중')){
-          title = title.split('상영중')[0];
-      }else{
-          title = title.substring(0,title.length/2);
-      }
-      item = {
-          "image": $(".mv_info_area").find("img").attr("src"),
-          "title": title,
-          "movieCd": keyword,
-          "rank": rank
-      }
-      callback(item);
-  }
   let topMovies = [];
   for(let i=0; i<movieCd.length; i++){
-      parsing(movieCd[i],i,function(res){
+      let result2 = new Object();
+      result2.rank = i;
+      result2.movieCd = movieCd[i];
+      crawling.parsing(movieCd[i],result2,function(res){
           topMovies.push(res);
           
           if(topMovies.length === movieCd.length){
               topMovies.sort(function(a,b){
                   return parseFloat(a.rank)-parseFloat(b.rank)
               })
-              console.log(topMovies)
               if(topMovies){
                 response.status(200).send({code : 200, result : topMovies});
               }else{
@@ -340,10 +168,9 @@ router.get('/top10', async function(req, response){
               }
           }
       })
-  }
+    }
   })
 })
-
 
 router.get('/recommend/:movieCode', async function(req, response){
   let res = await axios.get(`${process.env.FLASK_SERVER_URL}/${encodeURI(req.params.movieCode)}`);
@@ -357,14 +184,11 @@ router.get('/recommend/:movieCode', async function(req, response){
 
   crawling.parsingRecommend(req.params.movieCode,mv,function(flag){
     if(flag===false){
-      console.log('청불영화');
       for(let i=0; i<check; i++) {
         let movie = new Object();
         movie.movieCode = Object.values(res.data)[i]
         movie.rank = i;
-        
         crawling.parsing(Object.values(res.data)[i],movie,function(result){
-          //console.log(result);
           if(result!==false){
             movieList.push(result);
           } else{
@@ -383,14 +207,12 @@ router.get('/recommend/:movieCode', async function(req, response){
         })
       }
     } else{
-      console.log('청불영화 아님');
       for(let i=0; i<check; i++) {
         let movie = new Object();
         movie.movieCode = Object.values(res.data)[i]
         movie.rank = i;
         
         crawling.parsingRecommend(Object.values(res.data)[i],movie,function(result){
-          //console.log(result);
           if(result!==false){
             movieList.push(result);
           } else{
@@ -410,9 +232,6 @@ router.get('/recommend/:movieCode', async function(req, response){
       }
     }
   })
-  
-  
-
 })
 
 module.exports = router;
