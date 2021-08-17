@@ -59,7 +59,7 @@ const Detail = () => {
     .then((response) => {
      console.log(response);
      window.alert("리뷰 작성 완료");
-     window.location.reload();
+     getMovieData();
     })
     .catch((error)=> {
       console.log(error);
@@ -83,7 +83,7 @@ const Detail = () => {
     .then((response) => {
      console.log(response);
      window.alert("리뷰 삭제 완료")
-     window.location.reload();
+     getMovieData();
     })
     .catch((error)=> {
       console.log(error);
