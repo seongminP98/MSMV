@@ -5,10 +5,8 @@ const crawling = require('../lib/movie/crawling');
 const kobis = require('../lib/movie/kobis');
 
 router.post('/',(req,response)=>{
-    console.log('search start')
-    console.log(req.body.check)
     if(req.body.check===1){ //제목으로 검색
-        console.log('제목으로 검색')
+        // console.log('제목으로 검색')
         if(req.body.movieNm === undefined){
             response.status(400).send({code : 400, message : "제목을 입력해 주세요"});
         }else{
@@ -24,9 +22,7 @@ router.post('/',(req,response)=>{
             naverAPI.getMovieListNm(option)
             .then(function(result){
                 let len = result.length;
-                console.log('asdfasdf',result);
                 if(result.length === 0) {
-                    console.log("없음")
                     return response.status(204).send();
                 }
                 for(let i=0; i<len; i++){
@@ -49,7 +45,7 @@ router.post('/',(req,response)=>{
         
     }
     else if(req.body.check===2){ //감독명으로 검색
-        console.log("감독명으로 검색");
+        // console.log("감독명으로 검색");
         if(req.body.dirNm === undefined){
             response.status(400).send({code : 400, message : "감독명을 입력해 주세요"});
         } else{
