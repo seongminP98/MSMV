@@ -114,12 +114,10 @@ const PeopleWord = styled.div`
 `;
 
 const TitleWord = styled.div`
-  font-size : 13px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size : 15px;
   font-weight: 600;
-`;
-
-const NameWord = styled.div`
-  font-size : 11px;
 `;
 
 const NonReviewDiv = styled.div`
@@ -127,8 +125,7 @@ const NonReviewDiv = styled.div`
   font-family: '나눔고딕'
 `
 
-
-const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, reviewOnChange, writeOnClick, updateClick, submitDeleteReview, starRating, onStarClick}) => {
+const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, reviewOnChange, writeOnClick, submitDeleteReview, starRating, onStarClick}) => {
   const director = [];
   const actor = [];
 
@@ -148,7 +145,6 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
       <Detail>
         <GridContainer>
           <MyImage src={movieData.image} alt={movieData.title}/>
-          
           <MovieElement>
             <br/>
             <ThemovieTitle>{movieData.title}</ThemovieTitle>
@@ -202,18 +198,15 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
                       {recommendedMovies && recommendedMovies.map((movie) => ( 
                         <React.Fragment key={movie.movieCode}>
                           <Col lg={6} md={6} xs={12}>
-                            <Link to={`/Detail?code=${movie.movieCode}`}> <img src={movie.image} alt={movie.title} width="100%" height="auto"/> </Link>
-                            
-                            <p><TitleWord>{movie.title}</TitleWord>
-                            <NameWord>{movie.genre}</NameWord></p>
-                            
-                            </Col>
+                            <Link to={`/Detail?code=${movie.movieCode}`}> <img src={movie.image} alt="" width="100%" height="auto"/> </Link>
+                            <TitleWord>{movie.title}</TitleWord>
+                          </Col>
                         </React.Fragment>
                       ))}
                       
                       </Row>
                     </DetPad></DetailContainer>
-                  </div> : <div>No Recommend</div>}
+                  </div> : <div>관련된 영화 데이터가 없습니다.</div>}
                 
               </Tab>
             </Tabs>

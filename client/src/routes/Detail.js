@@ -30,8 +30,15 @@ const Detail = () => {
     .then((response) => {
       if (response.status === 204)
         setRecommendedMovies([]);
-      else
+      else {
+        response.data.result.forEach(function(item, index, object) {
+          if (item.image === 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png') {
+            object.splice(index, 1);
+          }
+        });
         setRecommendedMovies(response.data.result);
+      }
+      console.log(response.data.result);
     })
     .catch((error) => {
       console.log(error);
