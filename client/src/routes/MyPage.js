@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {useHistory} from 'react-router';
 import store from "../store";
 import MyPagePresenter from './Presenters/MyPagePresenter.js';
 
@@ -63,8 +62,6 @@ const MyPage = () => {
   const takeWithdrawPassword = async (e) => {
     setWithdrawPassword(e.target.value);
   }
-
-  const history = useHistory();
 
   const submitWithdraw = async () => {
     const pw = withdrawPassword;

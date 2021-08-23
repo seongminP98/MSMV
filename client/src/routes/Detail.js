@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import DetailPresenter from "./Presenters/DetailPresenter.js";
-import {useHistory, useLocation} from "react-router";
+import {useLocation} from "react-router";
 import axios from "axios";
-import store from "../store";
 
 const Detail = () => {
   // below for detail code
@@ -29,8 +28,10 @@ const Detail = () => {
 
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/post/recommend/${movieCd}`)
     .then((response) => {
-      console.log(response);
-      setRecommendedMovies(response.data.result);
+      if (response.status === 204)
+        setRecommendedMovies([]);
+      else
+        setRecommendedMovies(response.data.result);
     })
     .catch((error) => {
       console.log(error);
@@ -40,8 +41,6 @@ const Detail = () => {
 
   
   // below for review code
-
-  const history = useHistory();
 
   const [reviewContent, setReviewContent] = useState('');
   //const [rating, setRate] = useState(0);
@@ -75,8 +74,6 @@ const Detail = () => {
   const writeOnClick = () => {
     submitWriteReview();
   }
-
-  const [id, setId] = useState(''); // id value for Delete Review
   
   const submitDeleteReview = async (e) => {
     await axios.delete(`${process.env.REACT_APP_SERVER_URL}/review/${e.target.id}`, {withCredentials: true})

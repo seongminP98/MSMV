@@ -26,7 +26,10 @@ const Search = () => {
         console.log("start axios");
         await axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, { check, movieNm })
         .then((response) => {
-          setResult(response.data.result);
+          if (response.status === 204)
+            setResult([]);
+          else
+            setResult(response.data.result);
         })
         .catch((error) => {
           window.alert(error.response.data.message);
@@ -40,14 +43,10 @@ const Search = () => {
         console.log("start axios");
         await axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, { check, dirNm })
         .then((response) => {
-          console.log(response);
-          if (response.status === 204) {
-            console.log("204");
+          if (response.status === 204)
             setResult([]);
-          }
-          else {
-          setResult(response.data.result);
-          }
+          else
+            setResult(response.data.result);
         })
         .catch((error) => {
           window.alert(error.response.data.message);

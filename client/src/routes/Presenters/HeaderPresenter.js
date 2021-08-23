@@ -83,8 +83,8 @@ const HeaderPresenter = ({user, LogoutClick}) => {
       <MenuLeft>
         {user ? (
           <>
-            <Tooltip title="마이페이지 가기!">
-              <StyledLink to="MyPage"><img src="./avatar.png" width="25px"/></StyledLink>
+            <Tooltip title="마이페이지">
+              <StyledLink to="MyPage"><img src="./avatar.png" width="25px" alt=""/></StyledLink>
             </Tooltip>
             <IntroMent to="MyPage">안녕하세요, {user.nickname}님!</IntroMent>
           </>
@@ -96,12 +96,12 @@ const HeaderPresenter = ({user, LogoutClick}) => {
             <StyledLink to="/" onClick={LogoutClick}>로그아웃</StyledLink>
         ) : (
           <>
-            <StyledLink to="Login">로그인</StyledLink>
-            <StyledLink to="Join">회원가입</StyledLink>
+            <StyledLink to="/Login">로그인</StyledLink>
+            <StyledLink to="/Join">회원가입</StyledLink>
           </>
         )}  
-            <Tooltip title="영화검색하러 가기!">
-            <StyledLink to="Search"><img src="./search.png" width="25px"/></StyledLink>
+            <Tooltip title="영화 검색">
+            <StyledLink to="/Search"><img src="./search.png" width="25px" alt=""/></StyledLink>
             </Tooltip>
       </Menu>
     </Header>

@@ -1,8 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import { Row, Col } from 'antd';
-import 'antd/dist/antd.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Navigation, Pagination, Autoplay, Scrollbar } from "swiper";
 import "swiper/swiper.scss";
@@ -84,6 +82,10 @@ const BannerPad = styled.div`
     padding-bottom: 50px;
 `;
 
+const NoMovieDiv = styled.div`
+  margin-top : 10px;
+  font-size: 20px;
+`
 
 const SearchButton = styled(Link)`
   font-weight: 600;
@@ -101,9 +103,6 @@ const SearchButton = styled(Link)`
   }
 `;
 
-const Textbox = styled.div`
-  text-align:center;
-`;
 
 SwiperCore.use([Navigation, Pagination, Autoplay, Scrollbar])
 
@@ -114,7 +113,7 @@ const MainPresenter = ({topTenData, boxOfficeData}) => {
       <SwipeDiv>
           <BoxOfficeTitle>주간 인기 영화</BoxOfficeTitle>
             <hr />
-            <SwipePad>
+            {topTenData.length ? <SwipePad>
               <Swiper
                 className="banner"
                 spaceBetween={10}
@@ -123,22 +122,22 @@ const MainPresenter = ({topTenData, boxOfficeData}) => {
                 navigation
                 pagination={{ clickable: true }} 
                 >
-                
                 {topTenData && topTenData.map((movie) => ( 
                 <SwiperSlide key={movie.movieCd}> 
-                
                   <Link to={`/Detail?code=${movie.movieCd}`}>
                     <img style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.title}></img>
                   </Link>
-                  
                 </SwiperSlide>
                 ))}
-                
-            
                 <br/>
                 <br/>
               </Swiper>   
-            </SwipePad>
+            </SwipePad> : <SwipePad>
+                <SwiperSlide>
+                  <NoMovieDiv>집계된 데이터가 없습니다.</NoMovieDiv>
+                </SwiperSlide>
+              </SwipePad>}
+            
         </SwipeDiv>
       <SwipeDiv>
         <BoxOfficeTitle>최근 박스오피스 개봉영화</BoxOfficeTitle>
@@ -196,7 +195,7 @@ const MainPresenter = ({topTenData, boxOfficeData}) => {
                           <h2 style={{fontStyle: 'italic', fontSize:'30px', fontWeight: 'bold',color: 'white'}}> 무더운 여름 공기를 시원하게 해줄 공포영화를 원한다면? </h2>
                           <br/>
                           <p style={{ color: 'white', fontSize: '1rem' }}> 지금 바로 검색하러가기</p>
-                          <SearchButton to="/Genre/1"><img src="https://beslow.co.kr/assets/img/arrow-foward.png" width="25px"/></SearchButton>
+                          <SearchButton to="/Genre/4"><img src="https://beslow.co.kr/assets/img/arrow-foward.png" width="25px" alt=""/></SearchButton>
                         </div>
                       </div>
                   </div>
@@ -220,7 +219,7 @@ const MainPresenter = ({topTenData, boxOfficeData}) => {
                             <h2 style={{  fontStyle: 'italic', fontSize:'30px', fontWeight: 'bold',color: 'white' }}> 장마를 잠시나마 잊게해줄<br/>  힐링영화를 원한다면? </h2>
                             <br/>
                             <p style={{ color: 'white', fontSize: '1rem' }}> 지금 바로 검색하러가기</p>
-                            <SearchButton to="Search"><img src="https://beslow.co.kr/assets/img/arrow-foward.png" width="25px"/></SearchButton>
+                            <SearchButton to="/Genre/6"><img src="https://beslow.co.kr/assets/img/arrow-foward.png" width="25px" alt=""/></SearchButton>
                           </div>
                       </div>
                   </div>
@@ -244,7 +243,7 @@ const MainPresenter = ({topTenData, boxOfficeData}) => {
                         <h2 style={{ fontStyle: 'italic', fontSize:'30px', fontWeight: 'bold', color: 'white' }}> 계속되는 폭염을 시원하게 날려줄<br/>  격투영화가 보고싶다면? </h2>
                         <br/>
                         <p style={{ color: 'white', fontSize: '1rem' }}> 지금 바로 검색하러가기</p>
-                        <SearchButton to="Search"><img src="https://beslow.co.kr/assets/img/arrow-foward.png" width="25px"/></SearchButton>
+                        <SearchButton to="/Genre/19"><img src="https://beslow.co.kr/assets/img/arrow-foward.png" width="25px" alt=""/></SearchButton>
                       </div>
                     </div>
                   </div>

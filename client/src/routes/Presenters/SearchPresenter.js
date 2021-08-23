@@ -25,6 +25,11 @@ const CritSelect = styled.select`
   font-size: 20px;
   margin-top : 5px;
   padding-left: 3px;
+  outline: none;
+  &:hover,
+  &:focus {
+    border: 1px solid #6799ff;
+  }
 `;
 
 const CritOption = styled.option`
@@ -39,6 +44,12 @@ const SearchInput = styled.input`
   margin-top : 5px;
   font-size: 20px;
   padding-left: 5px;
+  transition: border 0.1s ease-in-out;
+  outline: none;
+  &:hover,
+  &:focus {
+    border: 2px solid #6799ff;
+  }
 `;
 
 const MovieCard = styled.div`
@@ -141,13 +152,14 @@ const SearchPresenter = ({searchCritCheck, submitSearch, takeInput, result, curr
       </SearchUpper>
 
       {currentSearch ? (<>
+    
         {/* 무언가가 검색되었을 때의 표시 공간 */}
         <h2>'{currentSearch}' 전체 검색결과가 {result.length}건 발견되었습니다.</h2>
         {result.map((movie) => ( 
           
           <MovieCard key={movie.movieCd}>
             <MovieImageLink>
-              <Link to={`/Detail?code=${movie.movieCd}`}><MovieImage alt="movie" src={movie.image}></MovieImage></Link>
+              <Link to={`/Detail?code=${movie.movieCd}`}><MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage></Link>
             </MovieImageLink>
             <MovieContent>
               <MovieTitleLink to={`/Detail?code=${movie.movieCd}`}>{movie.title}</MovieTitleLink> 

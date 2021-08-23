@@ -2,14 +2,11 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import store from '../store';
 import HeaderPresenter from './Presenters/HeaderPresenter'
-import {useHistory} from 'react-router';
 
 const Header = () => {
   const [user, setUser] = useState(store.getState().user);
   const sUser = () => setUser(store.getState().user);
   store.subscribe(sUser);
-
-  const history = useHistory();
   const LogoutClick = async () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/logout`, {withCredentials: true})
     .then(() => {

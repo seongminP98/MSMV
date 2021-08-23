@@ -27,7 +27,7 @@ const Auth = () => {
       store.dispatch({ type : 'LOGIN', user: response.data.result});
       history.push({pathname : '/'})
     })
-    .catch((error) => window.alert(" : 아이디와 비밀번호를 확인해주세요."));
+    .catch((error) => window.alert("아이디와 비밀번호를 확인해주세요."));
   } 
 
   return (

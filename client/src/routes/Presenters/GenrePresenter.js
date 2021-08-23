@@ -1,4 +1,4 @@
-import React, {optionsState} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
 
@@ -74,26 +74,22 @@ const SummaryLink = styled(Link)`
 `;
 
 
-
-const GenrePresenter = ({currentGenre, result}) => {
-
+const GenrePresenter = ({result}) => {
   return (
     <div>
       {result.map((movie) => ( 
-          
           <MovieCard key={movie.movieCd}>
             <MovieImageLink>
-              <Link to={`/Detail?code=${movie.movieCd}`}><MovieImage alt="movie" src={movie.image}></MovieImage></Link>
+              <Link to={`/Detail?code=${movie.code}`}><MovieImage alt={movie.title} src={movie.image} onerror="this.src='image.png'"></MovieImage></Link>
             </MovieImageLink>
             <MovieContent>
-              <MovieTitleLink to={`/Detail?code=${movie.movieCd}`}>{movie.title}</MovieTitleLink> 
+              <MovieTitleLink to={`/Detail?code=${movie.code}`}>{movie.title}</MovieTitleLink> 
               <p>평점 {movie.rate}
               {movie.date}</p>
               <MovieSummary>
                 {movie.summary} 
               </MovieSummary>
-              <SummaryLink to={`/Detail?code=${movie.movieCd}`}>더 보기</SummaryLink>
-              
+              <SummaryLink to={`/Detail?code=${movie.code}`}>더 보기</SummaryLink>
             </MovieContent>
           </MovieCard>
           ))}

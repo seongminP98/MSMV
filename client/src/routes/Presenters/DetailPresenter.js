@@ -2,16 +2,13 @@ import React from 'react';
 import store from '../../store';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import {Descriptions, Badge, Row, Col} from 'antd';
+import {Row, Col, Comment} from 'antd';
 import 'antd/dist/antd.css';
 import 'antd/dist/antd.less';
 import '../../App.css';
 import StarRatingComponent  from 'react-star-rating-component';
-import { Comment, Tooltip, Avatar } from 'antd';
 import moment from 'moment';
 import { Tab, Tabs } from 'react-bootstrap';
-import {UserOutlined} from '@ant-design/icons';
-
 
 const DetailContainer=styled.div`
   overflow-y: scroll;
@@ -49,25 +46,15 @@ const ReviewTitle = styled.div`
   font-family: 'Nanum Gothic', sans-serif;
 `;
 
-const GrayBackground = styled.div`
-
-    // background: #eaeaea;
-    // background: linear-gradient(135deg , ivory, #c5cae9 )
+const Detail = styled.div`
     margin-left:40px;
     margin-right:40px;
     min-width:1190px;
 `;
 
-const Background = styled.div`
-    font-family: 맑은고딕;
-`;
-
 const Pad = styled.div`
-    padding-top: 30px; 
-    padding-left: 30px; 
-    padding-right: 30px; 
-    padding-bottom: 30px; 
- 
+    margin: auto;
+    width : 1000px;
 `;
 const ComLeft = styled.div`
     font-size: 15px;
@@ -106,31 +93,39 @@ const MyImage = styled.img`
     width:550px;
 `;
 
-const MyPageLink = styled(Link)`
-    font-size:18px;
-`;
+
+const ReviewContent = styled(ComLeft)`
+  font-family: '나눔고딕'
+`
+
 const Font = styled.div`
   font-family: 'Gowun Dodum', sans-serif;
   font-size:15px;
 `;
 
-// const Spacer = styled.div`
-//     flex-grow: 0.01;
-// `;
+const ReviewDeleteButton = styled.button`
+  color: white;
+  background-color: #6B66FF;
+  border-color: #6B66FF;
+`
 
 const PeopleWord = styled.div`
   font-size : 13px;
-
 `;
+
 const TitleWord = styled.div`
   font-size : 13px;
   font-weight: 600;
-  
 `;
 
 const NameWord = styled.div`
   font-size : 11px;
 `;
+
+const NonReviewDiv = styled.div`
+  margin: 15px;
+  font-family: '나눔고딕'
+`
 
 
 const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, reviewOnChange, writeOnClick, updateClick, submitDeleteReview, starRating, onStarClick}) => {
@@ -150,11 +145,9 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
   }
 
   return (
-
-
-      <GrayBackground>
+      <Detail>
         <GridContainer>
-          <MyImage src={movieData.image} alt="movieData.title" />
+          <MyImage src={movieData.image} alt={movieData.title}/>
           
           <MovieElement>
             <br/>
@@ -203,74 +196,30 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
                 </PeopleWord>
               </Tab>
               <Tab eventKey="recommend" title="추천영화">
-                <div label="추천" span={3} contentStyle={{ background: "white" }}>
-                <DetailContainer><DetPad>
-                <Row gutter={[16,16]}>
-                  {recommendedMovies && recommendedMovies.map((movie) => ( 
-                    <React.Fragment key={movie.movieCode}>
-                      <Col lg={6} md={6} xs={12}>
-                        <Link to={`/Detail?code=${movie.movieCode}`}> <img src={movie.image} alt={movie.title} width="100%" height="auto"/> </Link>
-                        
-                        <p><TitleWord>{movie.title}</TitleWord>
-                        <NameWord>{movie.genre}</NameWord></p>
-                        
-                        </Col>
-                    </React.Fragment>
-                  ))}
-                </Row>
-                </DetPad></DetailContainer>
-                </div>
+                {recommendedMovies.length ? <div label="추천" span={3} contentStyle={{ background: "white" }}>
+                  <DetailContainer><DetPad>
+                    <Row gutter={[16,16]}>
+                      {recommendedMovies && recommendedMovies.map((movie) => ( 
+                        <React.Fragment key={movie.movieCode}>
+                          <Col lg={6} md={6} xs={12}>
+                            <Link to={`/Detail?code=${movie.movieCode}`}> <img src={movie.image} alt={movie.title} width="100%" height="auto"/> </Link>
+                            
+                            <p><TitleWord>{movie.title}</TitleWord>
+                            <NameWord>{movie.genre}</NameWord></p>
+                            
+                            </Col>
+                        </React.Fragment>
+                      ))}
+                      
+                      </Row>
+                    </DetPad></DetailContainer>
+                  </div> : <div>No Recommend</div>}
+                
               </Tab>
             </Tabs>
             </MovieElement>
         </GridContainer>
-        
-
-
       
-
-      {/* <br />
-      
-        <img src={movieData.image} alt="movieData.title"/>
-      
-      <br />
-      <Background>
-      <Descriptions title="영화 정보" bordered>
-        <Descriptions.Item label="영화 제목" contentStyle={{ background: "white" }}>{movieData.title}</Descriptions.Item>
-        <Descriptions.Item label="개봉 날짜" contentStyle={{ background: "white" }}>{movieData.openDt}</Descriptions.Item>
-        <Descriptions.Item label="관람등급" contentStyle={{ background: "white" }}>{movieData.grade}</Descriptions.Item>
-        <Descriptions.Item label="장르" contentStyle={{ background: "white" }}>{movieData.genres}</Descriptions.Item>
-        <Descriptions.Item label="국가" contentStyle={{ background: "white" }}>{movieData.country}</Descriptions.Item>
-        <Descriptions.Item label="상영시간" contentStyle={{ background: "white" }}>{movieData.runningTime}</Descriptions.Item>
-        <Descriptions.Item label="줄거리" span={3} contentStyle={{ background: "white" }}>{movieData.summary}</Descriptions.Item>
-        <Descriptions.Item label="감독" span={3} contentStyle={{ background: "white" }}>{director && director.map((people, index) => ( 
-          <React.Fragment key={people.index}>
-            
-              <img src={people.peopleImage} alt={people.peopleName}/><br/>{people.peopleName}
-              <p>{people.peopleJob}</p>
-            
-          </React.Fragment>
-        ))}</Descriptions.Item>
-        <Descriptions.Item label="배우" span={3} contentStyle={{ background: "white" }}>
-        <Row gutter={[16,16]}>
-          {actor && actor.map((people, index) => ( 
-          <React.Fragment key={people.index}>
-            <Col lg={3} md={6} xs={12}>
-              <img style={{ width:'100%', height:'150px'}} src={people.peopleImage} alt={people.peopleName}/> {people.peopleName}
-              <p>{people.peopleJob}</p>
-            </Col>
-          </React.Fragment>
-        ))}
-        
-        </Row>
-        </Descriptions.Item>
-      </Descriptions>
-      </Background> */}
-      
-      
-      
-    
-    
     <div>
       <ReviewTitle>영화 리뷰</ReviewTitle>
       {store.getState().user ? (<Pad>
@@ -304,39 +253,39 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
               <div>
                 {store.getState().user ? (
                   (store.getState().user.id === review.commenter) ? (
-                    <button type="button" id={review.id} onClick={submitDeleteReview}>리뷰 삭제하기</button>
+                    <ReviewDeleteButton type="button" id={review.id} onClick={submitDeleteReview}>리뷰 삭제</ReviewDeleteButton>
                     ) : (<p>{review.commenter}, {store.getState().user.id}</p>)
                     ) : (<p></p>)
                 }
               </div>
               </React.Fragment>
             ]}
-            avatar={<UserOutlined style={{ fontSize: '250%'}}/>}
-            author={<MyPageLink to="/Mypage">{review.nickname}</MyPageLink>}
             content={
-              <ComLeft>        
-                <br/>    
-                평점: <StarRatingComponent 
-                  name="rate2" 
-                  editing={false}
-                  starCount={5}
-                  value={review.rate}
-                />
-                <br/>
-                <br/>
-                내용: {review.contents}
-              </ComLeft>
+              <ReviewContent>
+                <div>        
+                  <b>{review.nickname}</b> &nbsp;{moment(review.created).format("YYYY-MM-DD")} 작성<br/>
+                  <StarRatingComponent 
+                    name="rate2" 
+                    editing={false}
+                    starCount={5}
+                    value={review.rate}
+                  /><br/>
+                </div>
+                <div> 
+                  {review.contents}
+                </div>
+              </ReviewContent>
             }>
             <hr/>
           </Comment>
         ))}
         </>
       ):(
-        <div>리뷰가 없습니다.</div>
+        <NonReviewDiv>리뷰가 없습니다.</NonReviewDiv>
       )}
       </Font>
     </Pad>
-    </GrayBackground>
+    </Detail>
   )
 }
 

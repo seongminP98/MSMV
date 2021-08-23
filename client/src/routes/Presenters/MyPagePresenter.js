@@ -3,8 +3,10 @@ import styled from 'styled-components';
 import store from '../../store';
 import Nav from 'react-bootstrap/Nav'
 import '../../App.css';
-import { Tab, Tabs, Col, Row } from 'react-bootstrap';
+import { Tab, Col, Row } from 'react-bootstrap';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
+import StarRatingComponent from 'react-star-rating-component';
 
 const Wrapper = styled.div`
   margin-left:100px;
@@ -151,22 +153,22 @@ const Review = styled.div`
   padding-left:40px;
 `;
 const Rate = styled.div`
-  font-size: 15px;
+  font-size: 14px;
 `;
 
+const Title = styled.div`
+  font-size: 18px;
+`
+
 const Info = styled.div`
-  font-size: 15px;
+  font-size: 12px;
+  text-align: right;
 `;
 
 const Contents = styled.div`
-  font-size: 15px;
+  font-size: 14px;
 `;
 
-const Paging = styled.div`
-  fonst-size: 12px;
-  width: 150px;
-  margin: 30px auto;
-`;
 const DeleteLayout = styled.div`
   padding: 100px 20px 20px 20px;
   height: 400px;
@@ -278,7 +280,8 @@ const Pointword = styled.div`
 
 const MyPagePresenter = ({takeNewNickname, submitNewNickname, takeOldPassword, takeNewPassword, submitNewPassword, takeWithdrawPassword, submitWithdraw, myReviews}) => {
   const user = store.getState().user;
-  
+
+
   return (
     <AllThing>
     <Wrapper>        
@@ -343,35 +346,29 @@ const MyPagePresenter = ({takeNewNickname, submitNewNickname, takeOldPassword, t
                 <Tab.Pane eventKey="second">
                   <MyReviewLayout>
                     <SubTitle><p>내가 쓴 리뷰</p></SubTitle>
-                    
-                    
-                    {myReviews.map((review) => ( 
-
+                    {myReviews.slice(0).reverse().map((review) => ( 
                       <Review>
                         <Table key={review.review_id}>
-                        
-                          <Info>
-                          날짜 : {moment(review.created).format('MMMM Do YYYY, h:mm:ss a')}
-                          </Info>
-                          <Contents>
-                            제목 : {review.movieTitle}<br/>
-                            내용 : {review.contents}
-                          </Contents>
-                          
+                          <Title>
+                            <Link to={`/Detail?code=${review.movieCd}`}>{review.movieTitle}</Link><br/> 
+                          </Title>
                           <Rate>
-                            평점 : {review.rate}
+                            <StarRatingComponent 
+                              name="rate2" 
+                              editing={false}
+                              starCount={5}
+                              value={review.rate}
+                            />
                           </Rate>
-                          
+                          <Contents>
+                            {review.contents}<br/>
+                          </Contents>
+                          <Info>
+                            <i>{moment(review.created).format('YYYY-MM-DD')} 작성</i>
+                          </Info>
                         </Table>
-
                       </Review>
-                      
-                      ))}
-                      
-                   
-                    <Paging></Paging>
-
-                  
+                    ))}
                   </MyReviewLayout>
                 </Tab.Pane>
               </Tab.Content>

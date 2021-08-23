@@ -2,10 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Wrapper = styled.div`
-    padding-top: 120px; 
-`;
-
 const Login = styled.div`
   width: 100%;
   display: flex;
@@ -60,15 +56,11 @@ const PasswordTitleDiv = styled.div`
   justify-content: space-between;
 `;
 
-const PasswordResetLink = styled(Link)`
-  color: red;
-  text-decoration: none;
-  font-size: 13px;
-`;
-
-const InputLabel = styled.label`
-  font-size: 13px;
-`;
+// const PasswordResetLink = styled(Link)`
+//   color: red;
+//   text-decoration: none;
+//   font-size: 13px;
+// `;
 
 const LoginButton = styled.button`
   margin-top: 25px;
@@ -133,9 +125,9 @@ const AuthPresenter = ({ id, password, onChange, onSubmit }) => {
       </LoginForm>
 
       <AskJoinDiv>
-        <AskJoinTitle>비밀번호를 잊으셨나요?</AskJoinTitle>
+        <AskJoinTitle>처음 오셨나요?</AskJoinTitle>
         <JoinLink to="/join">
-          <LinkInnerSpan>비밀번호 재설정</LinkInnerSpan>
+          <LinkInnerSpan>회원가입</LinkInnerSpan>
         </JoinLink>
       </AskJoinDiv>
     </Login>

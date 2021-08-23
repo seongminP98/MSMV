@@ -2,10 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Wrapper = styled.div`
-    padding-top: 120px; 
-`;
-
 const Join = styled.div`
   width: 100%;
   display: flex;
@@ -50,10 +46,6 @@ const Input = styled.input`
   &:focus {
     border: 2px solid #6799ff;
   }
-`;
-
-const InputLabel = styled.label`
-  font-size: 13px;
 `;
 
 const JoinButton = styled.button`
@@ -101,7 +93,7 @@ const LinkInnerSpan = styled.span`
   margin-right: 5px;
 `;
 
-const JoinPresenter = ({ onSubmit, onChange, id, password, nickname, passwordCheck, email }) => {
+const JoinPresenter = ({ onSubmit, onChange, id, password, nickname, passwordCheck }) => {
   return (
     <Join>
       <JoinForm>
@@ -109,7 +101,7 @@ const JoinPresenter = ({ onSubmit, onChange, id, password, nickname, passwordChe
         <InputContainer>
           <Input required={true} maxLength={10} value={id} placeholder="아이디" id="id" onChange={onChange} />
           <Input required={true} maxLength={8} value={nickname} placeholder="닉네임" id="nickname" onChange={onChange} />
-          <Input
+          {/* <Input
             required={true}
             minLength={10}
             maxLength={30}
@@ -118,7 +110,7 @@ const JoinPresenter = ({ onSubmit, onChange, id, password, nickname, passwordChe
             placeholder="이메일"
             id="email"
             onChange={onChange}
-          />
+          /> */}
           <Input
             required={true}
             minLength={6}
