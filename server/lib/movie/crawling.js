@@ -58,8 +58,24 @@ const parsingRecommend = async(keyword, result,callback) => {
     const $ = cheerio.load(html.data); 
     let grade = $(".info_spec").find("span:eq(4)").text().trim()
     grade = grade.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+
+    //등급의 위치가 span:eq(4)가아닌 더 앞에 있는 경우가 있음.
+    let gradeCheck = [$(".info_spec").find("span:eq(2)").text().trim(),
+                    $(".info_spec").find("span:eq(3)").text().trim(),
+                    $(".info_spec").find("span:eq(4)").text().trim()];
+
+
     result.grade = grade;
-    if(grade.includes('[국내]청소년 관람불가')){
+    let gradeFlag = true;
+    for(let i=0; i<gradeCheck.length; i++) {
+        let gc = gradeCheck[i].replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+
+        if(gc.includes('[국내]청소년 관람불가')){
+            gradeFlag = false;
+        }
+    }
+
+    if(!gradeFlag){
         callback(false);
     } else{
         let date = $(".info_spec").find("span:eq(3)").text().trim()
