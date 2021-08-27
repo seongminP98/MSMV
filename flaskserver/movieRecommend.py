@@ -21,11 +21,11 @@ cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 indices = pd.Series(df.index, index=df['movieCode']).drop_duplicates()
 
 
-def get_recommendations(movieCode, cosine_sim=cosine_sim):
+def get_recommendations(movieCode, size, cosine_sim=cosine_sim):
     idx = indices[movieCode]
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:16]
+    sim_scores = sim_scores[1:size+1]
     movie_indices = [i[0] for i in sim_scores]
     score = [i[1] for i in sim_scores]
     return df['movieCode'].iloc[movie_indices]
@@ -35,7 +35,23 @@ def get_recommendations(movieCode, cosine_sim=cosine_sim):
 def home(movieCode):
     movieCd = int(movieCode)
     try:
-        movies = get_recommendations(movieCd)
+        movies = get_recommendations(movieCd, 15)
+    except:
+        app.logger.info("error")
+        data = "error"
+    else:
+        app.logger.info("complete")
+        data = movies.to_json(orient='columns', force_ascii=False)
+    finally:
+        app.logger.info(data)
+        return data
+
+
+@app.route('/personal/<movieCode>')
+def personal(movieCode):
+    movieCd = int(movieCode)
+    try:
+        movies = get_recommendations(movieCd, 5)
     except:
         app.logger.info("error")
         data = "error"
