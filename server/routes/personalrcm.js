@@ -38,7 +38,7 @@ router.get('/', async (req, response, next) => {
     let movieCdList = new Array();
 
     await db.query('SELECT * FROM usermovie where user_id = ?',
-    [111], async (error, result) => {
+    [req.user.id], async (error, result) => {
         for(let i=0; i<result.length; i++) {
             movieCdList.push(result[i].movieCd);
         }
