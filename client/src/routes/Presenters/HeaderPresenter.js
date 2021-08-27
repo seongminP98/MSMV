@@ -87,6 +87,7 @@ const HeaderPresenter = ({user, LogoutClick}) => {
               <StyledLink to="MyPage"><img src="./avatar.png" width="25px" alt=""/></StyledLink>
             </Tooltip>
             <IntroMent to="MyPage">안녕하세요, {user.nickname}님!</IntroMent>
+            <StyledLink to="/Recomm">추천</StyledLink>
           </>
         ) : (<></>)}  
       </MenuLeft>
