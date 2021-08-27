@@ -10,11 +10,20 @@ router.post('/', async(req, res, next) => {
         return res.status(400).send({code:400, result : "5개 이하로 선택해주세요."});
     }
 
+    await db.query(`DELETE from usermovie where user_id = ?`,
+    [req.user.id], (error, result) => {
+        if(error) {
+            console.error('db error');
+            next(error);
+        }
+    })
+
     for(let i=0; i<movieList.length; i++) {
         await db.query(`INSERT INTO usermovie(user_id, movieCd) VALUES(?,?)`,
-        [222, movieList[i]],
+        [req.user.id, movieList[i]],
         (error, result) => {
             if(error) {
+                console.error('db error');
                 next(error);
             }
         })
