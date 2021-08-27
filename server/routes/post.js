@@ -5,6 +5,7 @@ const axios = require('axios');
 const naverAPI = require('../lib/movie/naverAPI');
 const crawling = require('../lib/movie/crawling');
 const movieData = require('../lib/movie/movieData');
+const movieRcm = require('../lib/movie/recommend');
 
 
 router.get('/detail/:movieCd', async function(req, response, next){
@@ -174,6 +175,20 @@ router.get('/top10', async function(req, response){
 
 router.get('/recommend/:movieCode', async function(req, response){
   let res = await axios.get(`${process.env.FLASK_SERVER_URL}/${encodeURI(req.params.movieCode)}`);
+  movieRcm.movieRecommend(req.params.movieCode, res, function(movieList){
+
+    if(movieList === 400){
+      return response.status(400).send({code : 400, result : '에러'});
+    }
+    else if(movieList === 204){
+      return response.status(204).send({code : 204, result : "이 콘텐츠에 대한 추천은 제공하지 않습니다."});
+    } else{
+      response.status(200).send({code : 200, result : movieList});
+    }
+  })
+
+/*
+  let res = await axios.get(`${process.env.FLASK_SERVER_URL}/${encodeURI(req.params.movieCode)}`);
   if(res.data === "error") {
     response.status(204).send({code : 204, result : "이 콘텐츠에 대한 추천은 제공하지 않습니다."});
     return;
@@ -232,6 +247,7 @@ router.get('/recommend/:movieCode', async function(req, response){
       }
     }
   })
+  */
 })
 
 module.exports = router;
