@@ -5,16 +5,16 @@ const movieRcm = require('../lib/movie/recommend');
 const axios = require('axios');
 const crawling = require('../lib/movie/crawling');
 
-router.post('/', async(req, res, next) => {
+router.post('/', async(request, res, next) => {
     let movieList = new Array();
-    movieList = req.body.movieList;
+    movieList = request.body.movieList;
 
     if(movieList.length > 5) {
         return res.status(400).send({code:400, result : "5개 이하로 선택해주세요."});
     }
 
     await db.query(`DELETE from usermovie where user_id = ?`,
-    [req.user.id], (error, result) => {
+    [request.user.id], (error, result) => {
         if(error) {
             console.error('db error');
             next(error);
@@ -23,7 +23,7 @@ router.post('/', async(req, res, next) => {
 
     for(let i=0; i<movieList.length; i++) {
         await db.query(`INSERT INTO usermovie(user_id, movieCd) VALUES(?,?)`,
-        [req.user.id, movieList[i]],
+        [request.user.id, movieList[i]],
         (error, result) => {
             if(error) {
                 console.error('db error');
@@ -35,11 +35,11 @@ router.post('/', async(req, res, next) => {
 
 })
 
-router.get('/', async (req, response, next) => {
+router.get('/', async (request, response, next) => {
     let movieCdList = new Array();
 
     await db.query('SELECT * FROM usermovie where user_id = ?',
-    [req.user.id], async (error, result) => {
+    [request.user.id], async (error, result) => {
         for(let i=0; i<result.length; i++) {
             movieCdList.push(result[i].movieCd);
         }
@@ -48,7 +48,7 @@ router.get('/', async (req, response, next) => {
             next(error);
         }
         if(result.length===0) {
-            return response.status(200).send({code:200, result : "먼저 영화를 선택해주세요."})
+            return response.status(204).send({code:204, result : "먼저 영화를 선택해주세요."})
         } else{
             let sumList = new Array();
             let check = 0;
@@ -88,9 +88,9 @@ router.get('/', async (req, response, next) => {
     })
 })
 
-router.post('/usermovie', async function(req, response){
+router.post('/usermovie', async (request, response) => {
 
-    let movieCd = req.body.movieList; //사용자가 선택한 영화
+    let movieCd = request.body.movieList; //사용자가 선택한 영화
 
     let movieList = [];
     for(let i=0; i<movieCd.length; i++){
@@ -112,6 +112,40 @@ router.post('/usermovie', async function(req, response){
             }
         })
     }
+})
+
+router.get('/usermovies', async (request, response) => {
+    await db.query('select * from usermovie where user_id = ?',
+    [6], async (error, dbResult) =>{
+        if(error) {
+            console.error('db error')
+            next(error);
+        }
+        if(dbResult.length===0) {
+            return response.status(204).send({code:204, result : "먼저 영화를 선택해주세요."})
+        } else{
+            let movieList = [];
+            for(let i=0; i<dbResult.length; i++){
+                let result = new Object();
+                result.rank = i;
+                result.movieCd = dbResult[i].movieCd;
+                crawling.parsing(dbResult[i].movieCd,result,function(res){
+                    movieList.push(res);
+                    
+                    if(movieList.length === dbResult.length){
+                        movieList.sort(function(a,b){
+                            return parseFloat(a.rank)-parseFloat(b.rank)
+                        })
+                        if(movieList){
+                            response.status(200).send({code : 200, result : movieList});
+                        }else{
+                            response.status(400).send({code : 400, result : '에러'});
+                        }
+                    }
+                })
+            }
+        }
+    })
 })
 
 module.exports = router;
