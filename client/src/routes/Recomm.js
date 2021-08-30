@@ -48,6 +48,11 @@ const Recomm = () => {
     console.log(movieList);
   }
 
+  const deleteMovie = async (e) => {
+    console.log(e.target.getAttribute("value"));
+    setMovieList(movieList.filter((movie) => movie !== e.target.getAttribute("value")));
+  }
+
   const confirmMovie = async () => {
     if (movieList.length === 0)
       window.alert("Enter somethign");
@@ -70,10 +75,8 @@ const Recomm = () => {
   const [recommendMovieList, setRecommendMovieList] = useState([]);
 
   const showRecommendMovies = async () => {
-    
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/personalrcm`, {withCredentials : true})
     .then((response) => {
-      console.log(showRecommendMovies);
       console.log(response);
       if (response.data.result.length===0)
         setRecommendMovieList(undefined);
@@ -89,7 +92,7 @@ const Recomm = () => {
   
   const showSelectedMovies = async () => {
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/personalrcm/usermovie`, {movieList}, {withCredentials : true})
-    .then((response) => {
+    .then((response) => {    
       console.log(response);
       if (response.data.result==="먼저 영화를 선택해주세요.")
         setSelectedMovies([]);
@@ -119,7 +122,7 @@ const Recomm = () => {
   useEffect(() => getSelectedMovies(), []);
 
   return (
-    <RecommPresenter submitSearch={submitSearch} takeInput={takeInput} selectMovie={selectMovie} confirmMovie={confirmMovie} recommendMovieList={recommendMovieList} selectedMovies={selectedMovies} selectedMovieList={selectedMovieList} {...props}/>
+    <RecommPresenter submitSearch={submitSearch} takeInput={takeInput} selectMovie={selectMovie} deleteMovie={deleteMovie} confirmMovie={confirmMovie} recommendMovieList={recommendMovieList} selectedMovies={selectedMovies} selectedMovieList={selectedMovieList} {...props}/>
   )
 }
 

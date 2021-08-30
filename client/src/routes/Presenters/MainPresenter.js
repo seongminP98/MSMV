@@ -35,7 +35,6 @@ const SwipeDiv = styled.div`
   padding-top: 25px;
 `;
 
-
 // const Boxoffice = styled.div`
 
 //   display: flex;
@@ -70,7 +69,6 @@ const BoxOfficeTitle = styled.div`
   font-weight: 600;
   font-family: 'Nanum Gothic', sans-serif;
 `;
-
 
 const SwipePad = styled.div`
     padding-left: 100px;

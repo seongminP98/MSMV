@@ -193,7 +193,7 @@ const NoMovieDiv = styled.div`
   margin-bottom: 10px;
 `
 
-const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, selectMovie, confirmMovie, recommendMovieList, selectedMovies, selectedMovieList}) => {
+const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, selectMovie, deleteMovie, confirmMovie, recommendMovieList, selectedMovies, selectedMovieList}) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -231,7 +231,7 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
             {!(selectedMovies.length === 0) ? (<>
               {selectedMovies.map((movie) => ( 
                 <SelectMovieCard key={movie.movieCd}>
-                  <MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage> 
+                  <MovieImage onClick={deleteMovie} value={movie.movieCd} alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage> 
                   <SelectTitle to={`/Detail?code=${movie.movieCd}`}><b>{movie.title}</b></SelectTitle>
                 </SelectMovieCard>
               ))}</>) : (

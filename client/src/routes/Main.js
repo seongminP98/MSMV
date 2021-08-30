@@ -45,30 +45,26 @@ const Main = () => {
   
 
 
-  const [genre, setGenre] = useState(4);
+  const [genre, setGenre] = useState(1);
   const [genreList, setGenreList] = useState([]);
 
-  const selectGenre = async (e) => {
-    setGenre(e.target.getAttribute("value"));
-    getGenre();
-  }
-
   const getGenre = async () => {
-    console.log("start axios");
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/search/genre/${genre}`)
     .then((response) => {
-      console.log(response.data.result);
       setGenreList(response.data.result);
     })
     .catch((error) => {
       window.alert(error);
     });
-    console.log("end axios");
+  }
+
+  const selectGenre = (e) => {
+    setGenre(e.target.getAttribute("value"));
   }
 
   useEffect(() => getTopTen(), []);
   useEffect(() => getBoxOffice(), []);
-  useEffect(() => getGenre(), []);
+  useEffect(() => getGenre(), [genreList]);
   
   return (
     <MainPresenter topTenData={topTenData} boxOfficeData={boxOfficeData} genreList={genreList} selectGenre={selectGenre}/>
