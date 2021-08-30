@@ -6,6 +6,7 @@ import SwiperCore, { Navigation, Pagination, Autoplay, Scrollbar } from "swiper"
 import "swiper/swiper.scss";
 import "swiper/components/navigation/navigation.scss";
 import "swiper/components/pagination/pagination.scss";
+import {Nav} from 'react-bootstrap';
 import '../../App.css';
 
 // const Wrapper = styled.div`
@@ -106,7 +107,7 @@ const SearchButton = styled(Link)`
 
 SwiperCore.use([Navigation, Pagination, Autoplay, Scrollbar])
 
-const MainPresenter = ({topTenData, boxOfficeData}) => {
+const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
 
   return (
     <MainPage>
@@ -163,8 +164,73 @@ const MainPresenter = ({topTenData, boxOfficeData}) => {
               <br/>
             </Swiper>   
           </SwipePad>
-
       </SwipeDiv>
+
+     {/*  
+     *  1. 드라마
+        2. 판타지
+        4. 공포
+        5. 로맨스
+        6. 모험
+        7. 스릴러
+        8. 느와르
+        10. 다큐멘터리
+        11. 코미디
+        12. 가족
+        13. 미스터리
+        14. 전쟁
+        15. 애니메이션
+        16. 범죄
+        17. 뮤지컬
+        18. SF
+        19. 액션
+     */ }
+      <br/>
+      <BoxOfficeTitle>장르별 영화</BoxOfficeTitle>
+      
+      <Nav className="justify-content-center" activeKey="/home">
+        <Nav.Item>
+          <Nav.Link value="1" onClick={selectGenre}>드라마</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link value="2" onClick={selectGenre}>판타지</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link value="4" onClick={selectGenre}>공포</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link value="5" onClick={selectGenre}>로맨스</Nav.Link>
+        </Nav.Item>
+      </Nav>
+      
+      <SwipeDiv>
+        <SwipePad>
+          <Swiper
+            className="banner"
+            spaceBetween={10}
+            slidesPerView={5}
+            slidesPerGroup={5}
+            navigation
+            pagination={{ clickable: true }} 
+            >
+          
+            {genreList && genreList.map((movie) => ( 
+                <SwiperSlide key={movie.code}>
+                  <Link to={`/Detail?code=${movie.code}`}>
+                    <img style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.name}></img>
+                  </Link>
+                </SwiperSlide>
+            ))}
+            <br/>
+            <br/>
+          </Swiper>   
+        </SwipePad>
+      </SwipeDiv>
+      
+
+
+
+
       <BannerPad>
         <Swiper
             className="banner"

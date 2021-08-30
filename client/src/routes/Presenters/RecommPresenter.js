@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import {Modal, Button} from "react-bootstrap";
 import styled from "styled-components";
+import { Swiper, SwiperSlide } from 'swiper/react';
 import "../../App.css";
 
 const Recomm = styled.div`
@@ -13,8 +14,62 @@ const Recomm = styled.div`
 const SearchMovieModal = styled(Modal)`
 `
 
+const SearchInput = styled.input`
+  height: 50px;
+  width : 510px;
+  margin-left: 125px;
+  margin-top : 5px;
+  font-size: 20px;
+  transition: border 0.1s ease-in-out;
+  outline: none;
+  &:hover,
+  &:focus {
+    border: 2px solid #6799ff;
+  }
+`;
 
-const SearchInput = styled.input``;
+const SelectMovieLine = styled.div`
+  display: float;
+  margin: auto;
+  margin-top : 30px;
+  padding-bottom : 110px;
+  width: 92%;
+  border-bottom: 1px solid;
+`
+const SelectMovieCard = styled.div`
+  max-width: 80px;
+  max-height: 100px;
+  display:grid;
+  grid-template-rows: 3fr 1fr;
+  margin: auto;
+`
+
+const SelectTitle = styled.div`
+  text-align: center;
+  color: black;
+  hover {
+    text-decoration: underline;
+  }
+  active {
+    text-decoration: underline;
+  }
+  padding-top: 4px;
+  font-size: 15px;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; 
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; 
+  word-wrap:break-word;
+  line-height: 1.5em;
+  height: 4.5em;
+`
+
+const SelectAsk = styled.h2`
+  margin: auto;
+  height: 100px;
+  position: relative;
+  top: 60px;
+`
 
 const SearchMovieList = styled(Modal.Body)`
   display: grid;
@@ -24,13 +79,12 @@ const SearchMovieList = styled(Modal.Body)`
 
 const MovieCard = styled.div`
   class: "card bg-primary mb-3";
-  margin: 20px auto 20px auto;
+  margin: 5px auto 20px auto;
   display: grid;
   width: 360px;
   height: 129px;
   grid-template-columns: 1fr 2fr;
-  box-shadow: 1px 2px 2px gray;
-  font-family: 나눔고딕;
+  font-family: 고딕;
 `;
 
 const MovieImageLink = styled.div`
@@ -59,25 +113,100 @@ const MovieContent = styled.div`
   }
 `;
 
+const RecommContent = styled.div`
+  margin-top:10px;
+  text-decoration: none;
+  font-size: 21px;
+  color: black;
+  hover {
+    text-decoration: underline;
+    
+  }
+
+  active {
+    text-decoration: underline;
+  }
+`;
+
+const RecommLink = styled(Link)`
+  text-decoration: none;
+  font-size: 24px;
+  color: black;
+  hover {
+    text-decoration: underline;
+  }
+
+  active {
+    text-decoration: underline;
+  }
+`
+
 const ModalButtonDiv = styled.div`
   padding-right: 20px;
   display: block;
 `
 
 const SelectButton = styled.button`
-  font-size: 15px;
-  float: right;
+  background-color: #7D79FF;
+  color : white;
+  margin-left: 170px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: .2s all;
+  font-family: 'Jua', sans-serif;
+  border-radius: 5px;
+  border-color: white;
+  &:hover {
+      background: white;
+      color: #6b66ff;
+  }
 `;
 
-const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, initMovieList, selectMovie, confirmMovie, recommendMovieList}) => {
+const MovieTitle = styled(Link)`
+  color: black;
+  hover {
+    text-decoration: underline;
+  }
+  active {
+    text-decoration: underline;
+  }
+`
+
+const SwipeDiv = styled.div`
+  padding-top: 25px;
+`;
+
+const RecommTitle = styled.div`
+  font-size: 30px;
+  font-weight: 600;
+  font-family: 'Nanum Gothic', sans-serif;
+`;
+
+const SwipePad = styled.div`
+    padding-left: 100px;
+    padding-right: 100px;
+`;
+
+const NoMovieDiv = styled.div`
+  margin-top : 10px;
+  font-size: 20px;
+  margin-bottom: 10px;
+`
+
+const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, selectMovie, confirmMovie, recommendMovieList, selectedMovies, selectedMovieList}) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
-    confirmMovie();
   }
+
+  const handleConfirm = () => {
+    confirmMovie();
+    setShow(false);
+  }
+
   const handleShow = () => {
+
     setShow(true);
-    initMovieList();
   }
 
   for (let i = 0 ; i < result.length; i++) {
@@ -92,12 +221,27 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, initMo
   return (
     <Recomm>
       <SearchMovieModal show={show} onHide={handleClose} size="lg">
-        <SearchMovieModal.Header closeButton>
+        <SearchMovieModal.Header>
           <Modal.Title>영화 목록 선택</Modal.Title>
         </SearchMovieModal.Header>
         <SearchMovieModal.Body>
           <SearchInput type="text" onChange={takeInput} onKeyPress={submitSearch} placeholder="제목으로 영화 찾기"></SearchInput>
+          
+          <SelectMovieLine>
+            {!(selectedMovies.length === 0) ? (<>
+              {selectedMovies.map((movie) => ( 
+                <SelectMovieCard key={movie.movieCd}>
+                  <MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage> 
+                  <SelectTitle to={`/Detail?code=${movie.movieCd}`}><b>{movie.title}</b></SelectTitle>
+                </SelectMovieCard>
+              ))}</>) : (
+            <>
+            {/* 아무것도 검색되지 않았을 때의 표시 공간 */}
+              <SelectAsk>추천 영화를 선택하세요. (최대 5개)</SelectAsk>
+            </>)}
+          </SelectMovieLine>
         </SearchMovieModal.Body>
+
         <SearchMovieList>
         {currentSearch ? (<>
           {result.map((movie) => ( 
@@ -105,19 +249,17 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, initMo
               <MovieImageLink>
                 <Link to={`/Detail?code=${movie.movieCd}`}><MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage></Link>
               </MovieImageLink>
-              <MovieContent> <Link to={`/Detail?code=${movie.movieCd}`}>{movie.title}</Link>
+              <MovieContent> <MovieTitle to={`/Detail?code=${movie.movieCd}`}>{movie.title}</MovieTitle>
                 <ModalButtonDiv>
                   <SelectButton value={movie.movieCd} onClick={selectMovie}>
                     선택
                   </SelectButton>
                 </ModalButtonDiv>
-              </MovieContent> 
-              
+              </MovieContent>              
             </MovieCard>
           ))}</>) : (
         <>
         {/* 아무것도 검색되지 않았을 때의 표시 공간 */}
-            <h2>제목으로 영화를 검색하세요.</h2>
         </>)}
         </SearchMovieList>
 
@@ -125,30 +267,58 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, initMo
           <Button variant="secondary" onClick={handleClose}>
             닫기
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={handleConfirm}>
             결정
           </Button>
         </SearchMovieModal.Footer>
       </SearchMovieModal>
 
-          
-      {(recommendMovieList.length > 0) ? (<>
-        {recommendMovieList.map((movie) => ( 
-          <MovieCard key={movie.movieCode}>
-            <MovieImageLink>
-              <Link to={`/Detail?code=${movie.movieCode}`}><MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage></Link>
-            </MovieImageLink>
-            <MovieContent> <Link to={`/Detail?code=${movie.movieCode}`}>{movie.title}</Link>
-            </MovieContent> 
-            
-          </MovieCard>
+      <SelectMovieLine>
+        {selectedMovieList ? (<>
+          {selectedMovieList.map((movie) => ( 
+            <SelectMovieCard key={movie.movieCd}>
+              <MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage> 
+              <SelectTitle to={`/Detail?code=${movie.movieCd}`}><b>{movie.title}</b></SelectTitle>
+            </SelectMovieCard>
           ))}</>) : (
         <>
         {/* 아무것도 검색되지 않았을 때의 표시 공간 */}
-            <h2>유사한 영화를 제공해드립니다.</h2>
+          <SelectAsk>현재 데이터 없음</SelectAsk>
         </>)}
+      </SelectMovieLine>
 
-        <Button variant="primary" onClick={handleShow}>
+      <SwipeDiv>
+        <RecommTitle>추천 영화</RecommTitle><hr />
+        {recommendMovieList.length ? <SwipePad>
+          <Swiper
+            className="banner"
+            spaceBetween={10}
+            slidesPerView={(recommendMovieList.length < 5) ? recommendMovieList.length : 5}
+            slidesPerGroup={5}
+            navigation
+            pagination={{ clickable: true }} 
+          >
+            {recommendMovieList && recommendMovieList.map((movie) => ( 
+            <SwiperSlide key={movie.movieCode}> 
+              <Link to={`/Detail?code=${movie.movieCode}`}>
+                <img style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.title}></img>
+              </Link>
+              <RecommContent> 
+                <RecommLink to={`/Detail?code=${movie.movieCode}`}><b>{movie.title}</b></RecommLink>
+              </RecommContent> 
+            </SwiperSlide>
+            ))}
+            <br/>
+            <br/>
+          </Swiper>   
+        </SwipePad> : <SwipePad>
+          <SwiperSlide>
+            <NoMovieDiv>집계된 데이터가 없습니다.</NoMovieDiv>
+          </SwiperSlide>
+        </SwipePad>}
+      </SwipeDiv>
+        
+      <Button variant="primary" onClick={handleShow}>
         추천 영화 목록 만들기
       </Button>
     </Recomm>

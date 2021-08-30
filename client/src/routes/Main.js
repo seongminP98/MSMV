@@ -43,12 +43,35 @@ const Main = () => {
     });
   }
   
+
+
+  const [genre, setGenre] = useState(4);
+  const [genreList, setGenreList] = useState([]);
+
+  const selectGenre = async (e) => {
+    setGenre(e.target.getAttribute("value"));
+    await getGenre();
+  }
+
+  const getGenre = async () => {
+    console.log("start axios");
+    await axios.get(`${process.env.REACT_APP_SERVER_URL}/search/genre/${genre}`)
+    .then((response) => {
+      console.log(response.data.result);
+      setGenreList(response.data.result);
+    })
+    .catch((error) => {
+      window.alert(error);
+    });
+    console.log("end axios");
+  }
+
   useEffect(() => getTopTen(), []);
   useEffect(() => getBoxOffice(), []);
-
-
+  useEffect(() => getGenre(), []);
+  
   return (
-    <MainPresenter topTenData={topTenData} boxOfficeData={boxOfficeData}/>
+    <MainPresenter topTenData={topTenData} boxOfficeData={boxOfficeData} genreList={genreList} selectGenre={selectGenre}/>
   )
 }
 

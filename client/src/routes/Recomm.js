@@ -42,18 +42,18 @@ const Recomm = () => {
   const [movieList, setMovieList] = useState([]);
   
   const initMovieList = () => {
-    setMovieList([]);
+    
   }
 
-  const selectMovie = (e) => {
+  const selectMovie = async (e) => {
     if (movieList.length < 5)
       if (!movieList.includes(e.target.value))
         setMovieList(movieList => [...movieList, e.target.value]);
     console.log(movieList);
   }
 
-  const confirmMovie = async (e) => {
-    if (!movieList)
+  const confirmMovie = async () => {
+    if (movieList.length === 0)
       window.alert("Enter somethign");
     else {
       await axios.post(`${process.env.REACT_APP_SERVER_URL}/personalrcm`, { movieList }, {withCredentials : true})
@@ -63,8 +63,11 @@ const Recomm = () => {
       .catch((error) => {
         console.log(error);
       });
-
+    
       await showRecommendMovies();
+      await getSelectedMovies();
+      setMovieList([]);
+      setSelectedMovies([]);
     }
   }
 
@@ -84,10 +87,41 @@ const Recomm = () => {
     });
   }
 
+  const [selectedMovies, setSelectedMovies] = useState([]);
+  
+  const showSelectedMovies = async () => {
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/personalrcm/usermovie`, {movieList}, {withCredentials : true})
+    .then((response) => {
+      console.log(response);
+      if (response.data.result==="먼저 영화를 선택해주세요.")
+        setSelectedMovies([]);
+      else
+        setSelectedMovies(response.data.result);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  const [selectedMovieList, setSelectedMovieList] = useState([]);
+
+  const getSelectedMovies = async () => {
+    await axios.get(`${process.env.REACT_APP_SERVER_URL}/personalrcm/usermovies`, {withCredentials : true})
+    .then((response) => {
+      console.log(response);
+      setSelectedMovieList(response.data.result);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+  
   useEffect(() => showRecommendMovies(), []);
+  useEffect(() => showSelectedMovies(), [movieList]);
+  useEffect(() => getSelectedMovies(), []);
 
   return (
-    <RecommPresenter submitSearch={submitSearch} takeInput={takeInput} initMovieList={initMovieList} selectMovie={selectMovie} confirmMovie={confirmMovie} recommendMovieList={recommendMovieList} {...props}/>
+    <RecommPresenter submitSearch={submitSearch} takeInput={takeInput} selectMovie={selectMovie} confirmMovie={confirmMovie} recommendMovieList={recommendMovieList} selectedMovies={selectedMovies} selectedMovieList={selectedMovieList} {...props}/>
   )
 }
 
