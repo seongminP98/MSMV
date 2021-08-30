@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../lib/db');
 const movieRcm = require('../lib/movie/recommend');
 const axios = require('axios');
+const crawling = require('../lib/movie/crawling');
 
 router.post('/', async(req, res, next) => {
     let movieList = new Array();
@@ -87,5 +88,30 @@ router.get('/', async (req, response, next) => {
     })
 })
 
+router.post('/usermovie', async function(req, response){
+
+    let movieCd = req.body.movieList; //사용자가 선택한 영화
+
+    let movieList = [];
+    for(let i=0; i<movieCd.length; i++){
+        let result = new Object();
+        result.rank = i;
+        result.movieCd = movieCd[i];
+        crawling.parsing(movieCd[i],result,function(res){
+            movieList.push(res);
+            
+            if(movieList.length === movieCd.length){
+                movieList.sort(function(a,b){
+                    return parseFloat(a.rank)-parseFloat(b.rank)
+                })
+                if(movieList){
+                    response.status(200).send({code : 200, result : movieList});
+                }else{
+                    response.status(400).send({code : 400, result : '에러'});
+                }
+            }
+        })
+    }
+})
 
 module.exports = router;
