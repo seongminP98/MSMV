@@ -116,7 +116,7 @@ router.post('/usermovie', async (request, response) => {
 
 router.get('/usermovies', async (request, response) => {
     await db.query('select * from usermovie where user_id = ?',
-    [6], async (error, dbResult) =>{
+    [request.user.id], async (error, dbResult) =>{
         if(error) {
             console.error('db error')
             next(error);
