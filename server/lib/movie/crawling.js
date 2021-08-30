@@ -126,7 +126,7 @@ const parsingGenre = async(keyword, callback) => {
     let movie = new Object();
     let len = $(".list_ranking").find("tr").length;
     let rank = 1;
-    for(let i=2; i<len-1; i++ ){
+    for(let i=2; i<12; i++ ){
         let mvLink = $(".list_ranking").find(`tr:eq(${i})`).find("td.title > .tit3 > a").attr("href") //영화링크
         let mvName = $(".list_ranking").find(`tr:eq(${i})`).find("td.title > .tit3 > a").text()
         if(mvLink !== undefined){
