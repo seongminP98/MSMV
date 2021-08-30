@@ -124,9 +124,9 @@ const parsingGenre = async(keyword, callback) => {
 
     let list = new Array();
     let movie = new Object();
-    let len = $(".list_ranking").find("tr").length;
+    // let len = $(".list_ranking").find("tr").length; //해당 장르에 속한 영화결과가 다 필요할 때 사용. 현재는 10개만 사용함.
     let rank = 1;
-    for(let i=2; i<len-1; i++ ){
+    for(let i=2; i<12; i++ ){
         let mvLink = $(".list_ranking").find(`tr:eq(${i})`).find("td.title > .tit3 > a").attr("href") //영화링크
         let mvName = $(".list_ranking").find(`tr:eq(${i})`).find("td.title > .tit3 > a").text()
         if(mvLink !== undefined){
