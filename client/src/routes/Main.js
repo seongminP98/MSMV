@@ -50,7 +50,7 @@ const Main = () => {
 
   const selectGenre = async (e) => {
     setGenre(e.target.getAttribute("value"));
-    await getGenre();
+    getGenre();
   }
 
   const getGenre = async () => {

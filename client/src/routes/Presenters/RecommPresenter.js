@@ -247,7 +247,7 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
           {result.map((movie) => ( 
             <MovieCard key={movie.movieCd}>
               <MovieImageLink>
-                <Link to={`/Detail?code=${movie.movieCd}`}><MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage></Link>
+                <MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage>
               </MovieImageLink>
               <MovieContent> <MovieTitle to={`/Detail?code=${movie.movieCd}`}>{movie.title}</MovieTitle>
                 <ModalButtonDiv>
@@ -289,7 +289,8 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
 
       <SwipeDiv>
         <RecommTitle>추천 영화</RecommTitle><hr />
-        {recommendMovieList.length ? <SwipePad>
+        {(recommendMovieList) ? (
+        <SwipePad>
           <Swiper
             className="banner"
             spaceBetween={10}
@@ -311,11 +312,11 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
             <br/>
             <br/>
           </Swiper>   
-        </SwipePad> : <SwipePad>
+        </SwipePad>) : (<SwipePad>
           <SwiperSlide>
             <NoMovieDiv>집계된 데이터가 없습니다.</NoMovieDiv>
           </SwiperSlide>
-        </SwipePad>}
+        </SwipePad>)}
       </SwipeDiv>
         
       <Button variant="primary" onClick={handleShow}>

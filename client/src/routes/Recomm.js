@@ -40,10 +40,6 @@ const Recomm = () => {
   }
   
   const [movieList, setMovieList] = useState([]);
-  
-  const initMovieList = () => {
-    
-  }
 
   const selectMovie = async (e) => {
     if (movieList.length < 5)
@@ -74,11 +70,13 @@ const Recomm = () => {
   const [recommendMovieList, setRecommendMovieList] = useState([]);
 
   const showRecommendMovies = async () => {
+    
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/personalrcm`, {withCredentials : true})
     .then((response) => {
+      console.log(showRecommendMovies);
       console.log(response);
-      if (response.data.result==="먼저 영화를 선택해주세요.")
-        setRecommendMovieList([]);
+      if (response.data.result.length===0)
+        setRecommendMovieList(undefined);
       else
         setRecommendMovieList(response.data.result);
     })
