@@ -63,45 +63,53 @@ const SwipeDiv = styled.div`
 //   margin-bottom: 50px;
   
 // `;
+
+// const BannerPad = styled.div`
+//     padding-left: 50px;
+//     padding-right: 50px;
+//     padding-bottom: 50px;
+// `;
+
+// const SearchButton = styled(Link)`
+//   font-weight: 600;
+//   background: white;
+//   border: 1px black;
+//   padding: 10px;
+//   padding-bottom: 10px;
+//   cursor: pointer;
+//   border-radius: 2px;
+//   text-decoration: none;
+//   transition: .2s all;
+
+//   &:hover {
+//       background: lightblue;
+//   }
+// `;
+
 const BoxOfficeTitle = styled.div`
   // margin-top: 50px;
   font-size: 30px;
   font-weight: 600;
   font-family: 'Nanum Gothic', sans-serif;
+  padding-bottom: 20px;
 `;
 
 const SwipePad = styled.div`
     padding-left: 100px;
     padding-right: 100px;
+    padding-bottom: 20px;
 `;
 
-const BannerPad = styled.div`
-    padding-left: 50px;
-    padding-right: 50px;
-    padding-bottom: 50px;
-`;
 
 const NoMovieDiv = styled.div`
   margin-top : 10px;
   font-size: 20px;
 `
 
-const SearchButton = styled(Link)`
-  font-weight: 600;
-  background: white;
-  border: 1px black;
-  padding: 10px;
-  padding-bottom: 10px;
-  cursor: pointer;
-  border-radius: 2px;
-  text-decoration: none;
-  transition: .2s all;
-
-  &:hover {
-      background: lightblue;
-  }
-`;
-
+const GenreNav = styled(Nav)`
+  position: relative;
+  bottom : 10px;
+`
 
 SwiperCore.use([Navigation, Pagination, Autoplay, Scrollbar])
 
@@ -111,7 +119,6 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
     <MainPage>
       <SwipeDiv>
           <BoxOfficeTitle>주간 인기 영화</BoxOfficeTitle>
-            <hr />
             {topTenData.length ? <SwipePad>
               <Swiper
                 className="banner"
@@ -140,7 +147,6 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
         </SwipeDiv>
       <SwipeDiv>
         <BoxOfficeTitle>최근 박스오피스 개봉영화</BoxOfficeTitle>
-          <hr />
           <SwipePad>
             <Swiper
               className="banner"
@@ -185,21 +191,41 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
      */ }
       <br/>
       <BoxOfficeTitle>장르별 영화</BoxOfficeTitle>
-      
-      <Nav className="justify-content-center" activeKey="/home">
-        <Nav.Item>
-          <Nav.Link value="1" onClick={selectGenre}>드라마</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link value="2" onClick={selectGenre}>판타지</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link value="4" onClick={selectGenre}>공포</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link value="5" onClick={selectGenre}>로맨스</Nav.Link>
-        </Nav.Item>
-      </Nav>
+      <GenreNav className="justify-content-center">
+        <GenreNav.Item>
+          <GenreNav.Link value="1" onClick={selectGenre}>드라마</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="2" onClick={selectGenre}>판타지</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="4" onClick={selectGenre}>공포</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="5" onClick={selectGenre}>로맨스</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="6" onClick={selectGenre}>모험</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="7" onClick={selectGenre}>스릴러</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="11" onClick={selectGenre}>코미디</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="12" onClick={selectGenre}>가족</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="15" onClick={selectGenre}>애니메이션</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="18" onClick={selectGenre}>SF</GenreNav.Link>
+        </GenreNav.Item>
+        <GenreNav.Item>
+          <GenreNav.Link value="19" onClick={selectGenre}>액션</GenreNav.Link>
+        </GenreNav.Item>
+      </GenreNav>
       
       <SwipeDiv>
         <SwipePad>
@@ -211,7 +237,6 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
             navigation
             pagination={{ clickable: true }} 
             >
-          
             {genreList && genreList.map((movie) => ( 
                 <SwiperSlide key={movie.code}>
                   <Link to={`/Detail?code=${movie.code}`}>
@@ -224,12 +249,8 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
           </Swiper>   
         </SwipePad>
       </SwipeDiv>
-      
-
-
-
-
-      <BannerPad>
+    
+      {/* <BannerPad>
         <Swiper
             className="banner"
             spaceBetween={50}
@@ -313,7 +334,7 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
                   </div>
                 </SwiperSlide>
           </Swiper> 
-        </BannerPad>
+        </BannerPad> */}
     </MainPage>
   );
 };

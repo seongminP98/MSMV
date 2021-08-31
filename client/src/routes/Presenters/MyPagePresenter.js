@@ -346,29 +346,33 @@ const MyPagePresenter = ({takeNewNickname, submitNewNickname, takeOldPassword, t
                 <Tab.Pane eventKey="second">
                   <MyReviewLayout>
                     <SubTitle><p>내가 쓴 리뷰</p></SubTitle>
-                    {myReviews.slice(0).reverse().map((review) => ( 
-                      <Review>
-                        <Table key={review.review_id}>
-                          <Title>
-                            <Link to={`/Detail?code=${review.movieCd}`}>{review.movieTitle}</Link><br/> 
-                          </Title>
-                          <Rate>
-                            <StarRatingComponent 
-                              name="rate2" 
-                              editing={false}
-                              starCount={5}
-                              value={review.rate}
-                            />
-                          </Rate>
-                          <Contents>
-                            {review.contents}<br/>
-                          </Contents>
-                          <Info>
-                            <i>{moment(review.created).format('YYYY-MM-DD')} 작성</i>
-                          </Info>
-                        </Table>
-                      </Review>
-                    ))}
+                    {!(myReviews.length === 0) ? (<>
+                      {myReviews.slice(0).reverse().map((review) => ( 
+                        <Review>
+                          <Table key={review.review_id}>
+                            <Title>
+                              <Link to={`/Detail?code=${review.movieCd}`}>{review.movieTitle}</Link><br/> 
+                            </Title>
+                            <Rate>
+                              <StarRatingComponent 
+                                name="rate2" 
+                                editing={false}
+                                starCount={5}
+                                value={review.rate}
+                              />
+                            </Rate>
+                            <Contents>
+                              {review.contents}<br/>
+                            </Contents>
+                            <Info>
+                              <i>{moment(review.created).format('YYYY-MM-DD')} 작성</i>
+                            </Info>
+                          </Table>
+                        </Review>
+                    ))}</>) : (<>
+                      <p>작성한 리뷰가 없습니다.</p>
+                    </>)}
+                    
                   </MyReviewLayout>
                 </Tab.Pane>
               </Tab.Content>

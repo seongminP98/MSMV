@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
-import {Modal, Button} from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 import styled from "styled-components";
+import {Tooltip} from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "../../App.css";
 
@@ -26,7 +27,16 @@ const SearchInput = styled.input`
   &:focus {
     border: 2px solid #6799ff;
   }
+  padding-left: 10px;
 `;
+
+const HelpImage = styled.img`
+  helght: 50px;
+  width: 50px;
+  position: relative;
+  bottom: 5px;
+  left: 30px;
+`
 
 const SelectMovieLine = styled.div`
   display: float;
@@ -34,7 +44,9 @@ const SelectMovieLine = styled.div`
   margin-top : 30px;
   padding-bottom : 110px;
   width: 92%;
-  border-bottom: 1px solid;
+  max-width: 800px;
+  border-radius: 10px;
+  background : #E2E1FF;
 `
 const SelectMovieCard = styled.div`
   max-width: 80px;
@@ -42,10 +54,14 @@ const SelectMovieCard = styled.div`
   display:grid;
   grid-template-rows: 3fr 1fr;
   margin: auto;
+  position: relative;
+  top: 20px;
 `
 
 const SelectTitle = styled.div`
   text-align: center;
+  font-family: "Jua";
+  font-weight: 100;
   color: black;
   hover {
     text-decoration: underline;
@@ -57,11 +73,12 @@ const SelectTitle = styled.div`
   font-size: 15px;
   overflow: hidden; text-overflow: ellipsis;
   display: -webkit-box; 
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical; 
   word-wrap:break-word;
   line-height: 1.5em;
-  height: 4.5em;
+  height: 3em;
+  
 `
 
 const SelectAsk = styled.h2`
@@ -69,6 +86,11 @@ const SelectAsk = styled.h2`
   height: 100px;
   position: relative;
   top: 60px;
+  padding-top: 30px;
+  padding-right: 10px;
+  padding-left: 10px;
+  border-radius: 10px;
+  background : #E2E1FF;
 `
 
 const SearchMovieList = styled(Modal.Body)`
@@ -96,7 +118,16 @@ const MovieImage = styled.img`
   overflow: hidden;
   width: 90px;
   height: 129px;
+  border-radius: 4px;
 `;
+
+const SelectMovieImage = styled(MovieImage)`
+  cursor: pointer;
+  &:hover {
+    transition: 0.2s all;
+    filter: brightness(70%);
+  }
+`
 
 const MovieContent = styled.div`
   display: grid;
@@ -104,13 +135,6 @@ const MovieContent = styled.div`
   text-decoration: none;
   font-size: 21px;
   color: black;
-  hover {
-    text-decoration: underline;
-  }
-
-  active {
-    text-decoration: underline;
-  }
 `;
 
 const RecommContent = styled.div`
@@ -118,27 +142,12 @@ const RecommContent = styled.div`
   text-decoration: none;
   font-size: 21px;
   color: black;
-  hover {
-    text-decoration: underline;
-    
-  }
-
-  active {
-    text-decoration: underline;
-  }
 `;
 
 const RecommLink = styled(Link)`
   text-decoration: none;
   font-size: 24px;
   color: black;
-  hover {
-    text-decoration: underline;
-  }
-
-  active {
-    text-decoration: underline;
-  }
 `
 
 const ModalButtonDiv = styled.div`
@@ -149,10 +158,10 @@ const ModalButtonDiv = styled.div`
 const SelectButton = styled.button`
   background-color: #7D79FF;
   color : white;
-  margin-left: 170px;
   cursor: pointer;
   font-size: 18px;
   transition: .2s all;
+  font-weight: 100;
   font-family: 'Jua', sans-serif;
   border-radius: 5px;
   border-color: white;
@@ -162,14 +171,18 @@ const SelectButton = styled.button`
   }
 `;
 
+const CreateButton = styled(SelectButton)`
+  margin: auto;
+  margin-top : 20px;
+  font-size: 20px;
+  font-weight: 100;
+  height: 50px;
+  position: relative;
+  left: 30px;
+`
+
 const MovieTitle = styled(Link)`
   color: black;
-  hover {
-    text-decoration: underline;
-  }
-  active {
-    text-decoration: underline;
-  }
 `
 
 const SwipeDiv = styled.div`
@@ -180,6 +193,7 @@ const RecommTitle = styled.div`
   font-size: 30px;
   font-weight: 600;
   font-family: 'Nanum Gothic', sans-serif;
+  margin-bottom: 15px;
 `;
 
 const SwipePad = styled.div`
@@ -188,8 +202,10 @@ const SwipePad = styled.div`
 `;
 
 const NoMovieDiv = styled.div`
-  margin-top : 10px;
+  padding : 180px;
+  height : 100px;
   font-size: 20px;
+  margin-top : 10px;
   margin-bottom: 10px;
 `
 
@@ -200,8 +216,12 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
   }
 
   const handleConfirm = () => {
-    confirmMovie();
-    setShow(false);
+    if (selectedMovies.length === 0)
+      window.alert("Enter Something!")
+    else {
+      confirmMovie();
+      setShow(false);
+    }
   }
 
   const handleShow = () => {
@@ -226,13 +246,15 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
         </SearchMovieModal.Header>
         <SearchMovieModal.Body>
           <SearchInput type="text" onChange={takeInput} onKeyPress={submitSearch} placeholder="제목으로 영화 찾기"></SearchInput>
-          
+          <Tooltip title="선택한 영화의 포스터를 눌러 선택을 취소할 수 있습니다.">
+            <HelpImage src="question.png"></HelpImage>
+          </Tooltip>
           <SelectMovieLine>
             {!(selectedMovies.length === 0) ? (<>
               {selectedMovies.map((movie) => ( 
                 <SelectMovieCard key={movie.movieCd}>
-                  <MovieImage onClick={deleteMovie} value={movie.movieCd} alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage> 
-                  <SelectTitle to={`/Detail?code=${movie.movieCd}`}><b>{movie.title}</b></SelectTitle>
+                  <SelectMovieImage onClick={deleteMovie} value={movie.movieCd} alt="movie" src={movie.image} onerror="this.src='image.png'"></SelectMovieImage> 
+                  <SelectTitle to={`/Detail?code=${movie.movieCd}`}>{movie.title}</SelectTitle>
                 </SelectMovieCard>
               ))}</>) : (
             <>
@@ -264,17 +286,17 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
         </SearchMovieList>
 
         <SearchMovieModal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <SelectButton variant="secondary" onClick={handleClose}>
             닫기
-          </Button>
-          <Button variant="primary" onClick={handleConfirm}>
+          </SelectButton>
+          <SelectButton variant="primary" onClick={handleConfirm}>
             결정
-          </Button>
+          </SelectButton>
         </SearchMovieModal.Footer>
       </SearchMovieModal>
 
       <SelectMovieLine>
-        {selectedMovieList ? (<>
+        {!(selectedMovieList.length === 0) ? (<>
           {selectedMovieList.map((movie) => ( 
             <SelectMovieCard key={movie.movieCd}>
               <MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage> 
@@ -283,13 +305,20 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
           ))}</>) : (
         <>
         {/* 아무것도 검색되지 않았을 때의 표시 공간 */}
-          <SelectAsk>현재 데이터 없음</SelectAsk>
+          <SelectAsk>영화를 선택해, 비슷한 영화를 찾아보세요!</SelectAsk>
         </>)}
+        
       </SelectMovieLine>
+      <CreateButton variant="primary" onClick={handleShow}>
+        추천 영화 목록 만들기
+      </CreateButton>
+      <Tooltip title="선택한 영화의 줄거리를 참고해, 유사한 영화를 제공합니다.">
+        <HelpImage src="question.png"></HelpImage>
+      </Tooltip>
 
       <SwipeDiv>
-        <RecommTitle>추천 영화</RecommTitle><hr />
-        {(recommendMovieList) ? (
+        <RecommTitle>추천 영화</RecommTitle>
+        {!(recommendMovieList.length === 0) ? (
         <SwipePad>
           <Swiper
             className="banner"
@@ -319,9 +348,7 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
         </SwipePad>)}
       </SwipeDiv>
         
-      <Button variant="primary" onClick={handleShow}>
-        추천 영화 목록 만들기
-      </Button>
+      
     </Recomm>
   )
 }

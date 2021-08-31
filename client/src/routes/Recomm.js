@@ -50,7 +50,12 @@ const Recomm = () => {
 
   const deleteMovie = async (e) => {
     console.log(e.target.getAttribute("value"));
-    setMovieList(movieList.filter((movie) => movie !== e.target.getAttribute("value")));
+    if (movieList.length === 1)
+      setMovieList([]);
+    else {
+      setMovieList(movieList.filter((movie) => movie !== e.target.getAttribute("value")));
+    }
+    
   }
 
   const confirmMovie = async () => {
@@ -78,8 +83,10 @@ const Recomm = () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/personalrcm`, {withCredentials : true})
     .then((response) => {
       console.log(response);
-      if (response.data.result.length===0)
+      if (response.status === 204) {
+        console.log(200); 
         setRecommendMovieList(undefined);
+      }
       else
         setRecommendMovieList(response.data.result);
     })
@@ -91,6 +98,8 @@ const Recomm = () => {
   const [selectedMovies, setSelectedMovies] = useState([]);
   
   const showSelectedMovies = async () => {
+    if (movieList.length === 0)
+      setSelectedMovies([]);
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/personalrcm/usermovie`, {movieList}, {withCredentials : true})
     .then((response) => {    
       console.log(response);
@@ -119,7 +128,7 @@ const Recomm = () => {
   
   useEffect(() => showRecommendMovies(), []);
   useEffect(() => showSelectedMovies(), [movieList]);
-  useEffect(() => getSelectedMovies(), []);
+  useEffect(() => getSelectedMovies(), [movieList]);
 
   return (
     <RecommPresenter submitSearch={submitSearch} takeInput={takeInput} selectMovie={selectMovie} deleteMovie={deleteMovie} confirmMovie={confirmMovie} recommendMovieList={recommendMovieList} selectedMovies={selectedMovies} selectedMovieList={selectedMovieList} {...props}/>
