@@ -98,6 +98,7 @@ const SwipePad = styled.div`
     padding-left: 100px;
     padding-right: 100px;
     padding-bottom: 20px;
+    transition-duration: 0.5s;
 `;
 
 
@@ -109,6 +110,10 @@ const NoMovieDiv = styled.div`
 const GenreNav = styled(Nav)`
   position: relative;
   bottom : 10px;
+`
+
+const MovieImage = styled.img`
+  border-radius: 4px;
 `
 
 SwiperCore.use([Navigation, Pagination, Autoplay, Scrollbar])
@@ -131,7 +136,7 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
                 {topTenData && topTenData.map((movie) => ( 
                 <SwiperSlide key={movie.movieCd}> 
                   <Link to={`/Detail?code=${movie.movieCd}`}>
-                    <img style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.title}></img>
+                    <MovieImage style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.title}/>
                   </Link>
                 </SwiperSlide>
                 ))}
@@ -160,7 +165,7 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
               {boxOfficeData && boxOfficeData.map((movie) => ( 
                   <SwiperSlide key={movie.movieCd}>
                     <Link to={`/Detail?code=${movie.movieCd}`}>
-                      <img style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.name}></img>
+                      <MovieImage style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.name}/>
                     </Link>
                   </SwiperSlide>
               ))}
@@ -171,23 +176,11 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
       </SwipeDiv>
 
      {/*  
-     *  1. 드라마
-        2. 판타지
-        4. 공포
-        5. 로맨스
-        6. 모험
-        7. 스릴러
-        8. 느와르
-        10. 다큐멘터리
-        11. 코미디
-        12. 가족
-        13. 미스터리
-        14. 전쟁
-        15. 애니메이션
-        16. 범죄
-        17. 뮤지컬
-        18. SF
-        19. 액션
+        1. 드라마   2. 판타지   4. 공포     5. 로맨스
+        6. 모험     7. 스릴러   8. 느와르   10. 다큐멘터리
+        11. 코미디  12. 가족    13. 미스터리
+        14. 전쟁    15. 애니메이션 
+        16. 범죄    17. 뮤지컬  18. SF      19. 액션
      */ }
       <br/>
       <BoxOfficeTitle>장르별 영화</BoxOfficeTitle>
@@ -240,7 +233,7 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
             {genreList && genreList.map((movie) => ( 
                 <SwiperSlide key={movie.code}>
                   <Link to={`/Detail?code=${movie.code}`}>
-                    <img style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.name}></img>
+                    <MovieImage style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.name}/>
                   </Link>
                 </SwiperSlide>
             ))}

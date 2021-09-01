@@ -179,6 +179,8 @@ const CreateButton = styled(SelectButton)`
   height: 50px;
   position: relative;
   left: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
 `
 
 const MovieTitle = styled(Link)`
@@ -331,7 +333,7 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
             {recommendMovieList && recommendMovieList.map((movie) => ( 
             <SwiperSlide key={movie.movieCode}> 
               <Link to={`/Detail?code=${movie.movieCode}`}>
-                <img style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.title}></img>
+                <img style={{ width:'199px', height:'auto'}} src={movie.image} alt={movie.title}></img>
               </Link>
               <RecommContent> 
                 <RecommLink to={`/Detail?code=${movie.movieCode}`}><b>{movie.title}</b></RecommLink>
