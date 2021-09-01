@@ -24,8 +24,8 @@ const Auth = () => {
   const onSubmit = async (e) => {
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/auth/login`, {id, password}, { withCredentials: true })
     .then((response) => {
+      history.push({pathname : '/'});
       store.dispatch({ type : 'LOGIN', user: response.data.result});
-      history.push({pathname : '/'})
     })
     .catch((error) => window.alert("아이디와 비밀번호를 확인해주세요."));
   } 
