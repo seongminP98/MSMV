@@ -45,10 +45,12 @@ const Main = () => {
   
 
 
-  const [genre, setGenre] = useState(1);
+  const [genre, setGenre] = useState();
   const [genreList, setGenreList] = useState([]);
 
   const getGenre = async () => {
+    if (genre === undefined)
+      setGenre(1);
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/search/genre/${genre}`)
     .then((response) => {
       setGenreList(response.data.result);
@@ -64,7 +66,7 @@ const Main = () => {
 
   useEffect(() => getTopTen(), []);
   useEffect(() => getBoxOffice(), []);
-  useEffect(() => getGenre(), [genreList]);
+  useEffect(() => getGenre(), [genre]);
   
   return (
     <MainPresenter topTenData={topTenData} boxOfficeData={boxOfficeData} genreList={genreList} selectGenre={selectGenre}/>

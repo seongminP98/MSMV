@@ -184,7 +184,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
               </Tab>
               <Tab eventKey="profile" title="감독">
                 <PeopleWord>
-                <div label="감독" span={3} contentStyle={{ background: "white" }}>
+                <div label="감독" span={3}>
                   {director && director.map((people) => ( 
                     <React.Fragment key={people.peopleName}>
                         <img style={{width:'90px', height:'auto'}} src={people.peopleImage} alt={people.peopleName}/><br/>
@@ -196,7 +196,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
               </Tab>
               <Tab eventKey="contact" title="배우">
                 <PeopleWord>
-                <div label="배우" span={3} contentStyle={{ background: "white" }}>
+                <div label="배우" span={3}>
                   
                   <Row gutter={[16,16]}>
                     {actor && actor.map((people) => ( 
@@ -213,7 +213,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
                 </PeopleWord>
               </Tab>
               <Tab eventKey="recommend" title="추천영화">
-                {recommendedMovies.length ? <div label="추천" span={3} contentStyle={{ background: "white" }}>
+                {recommendedMovies.length ? <div label="추천" span={3}>
                   <DetailContainer><DetPad>
                     <Row gutter={[16,16]}>
                       {recommendedMovies && recommendedMovies.map((movie) => ( 
