@@ -110,10 +110,27 @@ const NoMovieDiv = styled.div`
 const GenreNav = styled(Nav)`
   position: relative;
   bottom : 10px;
+  & div { 
+    font-size: 15px;
+    margin: 10px;
+    background-color: #C9C7FF;
+    cursor: pointer;
+    font-size: 18px;
+    transition: .2s all;
+    font-weight: 100;
+    font-family: 'Jua', sans-serif;
+    border-radius: 5px;
+    &:hover {
+      background: #E8E7FF;
+    }
+    &:focus-within {
+      background: #E8E7FF;
+    }
+  }
 `
 
 const MovieImage = styled.img`
-  border-radius: 4px;
+  border-radius: 5px;
 `
 
 SwiperCore.use([Navigation, Pagination, Autoplay, Scrollbar])
@@ -163,11 +180,11 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
               >
             
               {boxOfficeData && boxOfficeData.map((movie) => ( 
-                  <SwiperSlide key={movie.movieCd}>
-                    <Link to={`/Detail?code=${movie.movieCd}`}>
-                      <MovieImage style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.name}/>
-                    </Link>
-                  </SwiperSlide>
+                <SwiperSlide key={movie.movieCd}>
+                  <Link to={`/Detail?code=${movie.movieCd}`}>
+                    <MovieImage style={{ width:'auto', height:'100%'}} src={movie.image} alt={movie.name}/>
+                  </Link>
+                </SwiperSlide>
               ))}
               <br/>
               <br/>
