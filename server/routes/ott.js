@@ -57,8 +57,8 @@ router.post('/make', async(req, res, next) => { //그룹 만들기
                 next(error2);
             }
 
-            await db.query('insert into userGroup(group_id,user_id,authority) values(?,?,?)',
-            [result2[0].id, req.user.id, 'ADMIN'],
+            await db.query('insert into userGroup(group_id,user_id,authority,remittance) values(?,?,?,?)',
+            [result2[0].id, req.user.id, 'ADMIN',1],
             async(error3, result3) => {
                 if(error3) {
                     console.error('sql3 error');
@@ -232,7 +232,7 @@ router.post('/remittance', async(req, res, next) => { //그룹 멤버가 그룹�
                             next(error3);
                         }
                         await db.query('insert into remittanceCheck(group_id, req_user_id, master_id) values(?,?,?)',
-                        [req.body.groupId, 7, result2[0].master],
+                        [req.body.groupId, req.user.id, result2[0].master],
                         (error4, result4) => {
                             if(erro43) {
                                 console.error(error4);
