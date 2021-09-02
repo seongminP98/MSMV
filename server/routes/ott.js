@@ -1,0 +1,184 @@
+const express = require('express');
+const router = express.Router();
+const db = require('../lib/db');
+
+router.get('/', async(req, res, next) => { //그룹 목록
+    await db.query('select group_id, title, classification, max_member_num, count(user_id) current_count from usergroup left join ottGroup on usergroup.group_id = ottGroup.id group by group_id',
+    (error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        
+        res.status(200).send({code:200, result : result})
+    })
+})
+
+router.get('/search/:class', async(req, res, next) => { //그룹 클래스로 검색 (어떤 ott서비스인지) 
+    await db.query('select group_id, user_id, title, classification, notice, max_member_num, count(user_id) current_count from usergroup left join ottGroup on usergroup.group_id = ottGroup.id group by group_id having classification = ?',
+    [req.params.class],
+    (error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        
+        res.status(200).send({code:200, result : result})
+    })
+})
+
+router.get('/mine', async(req, res, next) => { //내가 참여 중인 그룹 목록.
+    await db.query('select group_id, user_id, title, classification, notice, max_member_num, count(user_id) count from usergroup left join ottGroup on usergroup.group_id = ottGroup.id group by group_id having group_id in (select group_id from usergroup where user_id = ?);',
+    [req.user.id],
+    (error, result) => {
+        if(error) {
+            console.error('db error');
+            next(error);
+        }
+        res.status(200).send({code:200, result : result})
+    })
+
+})
+
+router.post('/make', async(req, res, next) => { //그룹 만들기
+    await db.query('insert into ottGroup(title,classification,max_member_num) values(?,?,?)',
+    [req.body.title, req.body.classification, req.body.max_member_num],
+    async(error, result) => {
+        if(error) {
+            console.error('sql1 error');
+            next(error);
+        }
+        
+        await db.query('select id from ottGroup where id=?',
+        [result.insertId],
+        async(error2, result2) => {
+            if(error2) {
+                console.error('sql2 error');
+                next(error2);
+            }
+
+            await db.query('insert into userGroup(group_id,user_id,authority) values(?,?,?)',
+            [result2[0].id, req.user.id, 'ADMIN'],
+            async(error3, result3) => {
+                if(error3) {
+                    console.error('sql3 error');
+                    next(error3);
+                }
+
+                await db.query('select * from ottGroup where id = ?',
+                [result.insertId],
+                (error4, result4) => {
+                    if(error4) {
+                        console.error('sql4 error');
+                        next(error4);
+                    }
+                    res.status(200).send({code:200, result : result4});
+                })
+
+            })
+        })
+        
+    })
+
+})
+
+router.get('/participation/:groupId', async(req, res, next) => { //그룹 참여하기
+    await db.query('select * from userGroup where group_id = ? and user_id = ?', 
+    [req.params.groupId, req.user.id],
+    async(error,result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        if(result.length>0){
+            res.status(400).send({code:400, result : '이미 참여 중 입니다.'});
+        }
+        else{
+            await db.query('select max_member_num from ottGroup where id = ?',
+            [req.params.groupId],
+            async(error2, result2) => {
+                if(error2) {
+                    console.error(error2)
+                    next(error2);
+                }
+                await db.query('select count(*) as count from usergroup where group_id = ?',
+                [req.params.groupId],
+                async(error3, result3) => {
+                    if(error3) {
+                        console.error(error3);
+                        next(error3);
+                    }
+                    if(result2[0].max_member_num <= result3[0].count) {
+                        res.status(400).send({code:400, result : '자리가 없어 입장할 수 없습니다.'})
+                    } else{
+                        await db.query('insert into userGroup(group_id,user_id,authority) values(?,?,?)',
+                        [req.params.groupId, req.user.id, 'USER'],
+                        async (error4, result4) => {
+                            if(error4) {
+                                console.error(error4);
+                                next(error4);
+                            }
+
+                            await db.query('select * from ottGroup where id = ?',
+                            [req.params.groupId],
+                            (error5, result5) => {
+                                if(error5) {
+                                    console.error(error5);
+                                    next(error5)
+                                }
+                                res.status(200).send({code:200, result : result5[0]});
+                            })
+                        })
+                    }
+                })
+            })
+        }
+    })
+})
+
+router.get('/:groupId', async(req, res, next) => { //그룹 디테일
+    await db.query('select * from usergroup where group_id = ? and user_id = ?',
+    [req.params.groupId, 7],
+    async(error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        if(result.length > 0) {
+            await db.query('select * from ottGroup where id = ?',
+            [req.params.groupId],
+            async(error2, result2) => {
+                if(error2) {
+                    console.error(error2);
+                    next(error2);
+                }
+                await db.query('select nickname from users where id in (select user_id from userGroup where group_id = ?)',
+                [req.params.groupId],
+                (error3, result3) => {
+                    if(error3) {
+                        console.error(error3);
+                        next(error3);
+                    }
+                    result2[0].nick = result3;
+                    res.status(200).send({code:200, result : result2[0]});
+                })
+                
+            })
+        } else {
+            res.status(400).send({code:400, result : '접근할 수 없습니다.'});
+        }
+    })
+
+})
+
+router.post('/:groupId', async(req, res, next) => { //그룹 내용수정(공지 등). 그룹장만 가능.
+
+})
+
+router.delete('/:groupId', async(req, res, next) => { //그룹 나가기. 그룹장은 삭제하기 가능.
+
+})
+
+
+
+module.exports = router;
