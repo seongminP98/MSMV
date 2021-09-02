@@ -81,7 +81,7 @@ router.get('/boxOffice', async function(req, response,next){
               return '07'
           } else if(d[1] === 'Aug'){
               return '08'
-          } else if(d[1] === 'Sept'){
+          } else if(d[1] === 'Sep'){
               return '09'
           } else if(d[1] === 'Oct'){
               return '10'
