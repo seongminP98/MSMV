@@ -220,6 +220,34 @@ router.post('/remittance', async(req, res, next) => { //그룹 멤버가 그룹�
     })
 })
 
+router.get('/remittance/:groupId', async(req, res, next) => { //그룹장이 송금완료 했다는 요청 확인.
+    await db.query('select authority from userGroup where group_id = ? and user_id = ?',
+    [req.params.groupId, req.user.id],
+    async(error, result) => {
+        if(error){
+            console.error(error);
+            next(error);
+        }
+        if(result.length>0) {
+            if(result[0].authority === 'ADMIN') {
+                await db.query('select users.id as user_id, nickname, group_id from remittanceCheck join users on req_user_id = users.id where group_id = ?',
+                [req.params.groupId],
+                (error2, result2) => {
+                    if(error2) {
+                        console.error(error2);
+                        next(error2);
+                    }
+                    res.status(200).send({code:200, result : result2});
+                })
+            } else{ //그룹장이 아닌사람이 확인 할 경우
+                res.status(400).send({code:400, result : '권한이 없습니다. 그룹장만 확인 가능합니다.'});
+            }
+        }else {
+            res.status(400).send({code:400, result : '잘못된 접근. 그룹이 없거나 그룹에 속해있지 않습니다.'});
+        }
+    })
+})
+
 
 router.post('/:groupId', async(req, res, next) => { //그룹 내용수정(공지 등). 그룹장만 가능.
 
