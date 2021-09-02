@@ -138,32 +138,60 @@ router.get('/participation/:groupId', async(req, res, next) => { //그룹 참여
 
 router.get('/:groupId', async(req, res, next) => { //그룹 디테일
     await db.query('select * from usergroup where group_id = ? and user_id = ?',
-    [req.params.groupId, 7],
+    [req.params.groupId, req.user.id],
     async(error, result) => {
         if(error) {
             console.error(error);
             next(error);
         }
         if(result.length > 0) {
-            await db.query('select * from ottGroup where id = ?',
-            [req.params.groupId],
-            async(error2, result2) => {
-                if(error2) {
-                    console.error(error2);
-                    next(error2);
-                }
-                await db.query('select nickname from users where id in (select user_id from userGroup where group_id = ?)',
-                [req.params.groupId],
-                (error3, result3) => {
-                    if(error3) {
-                        console.error(error3);
-                        next(error3);
+            await db.query('select remittance from userGroup where user_id = ? and group_id = ?',
+                [req.user.id,req.params.groupId],
+                async(error2, result2) => {
+                    if(error2) {
+                        console.error(error2);
+                        next(error2);
                     }
-                    result2[0].nick = result3;
-                    res.status(200).send({code:200, result : result2[0]});
+                    if(result2[0].remittance === 1) { //송금 확인 된 유저
+                        await db.query('select * from ottGroup where id = ?',
+                        [req.params.groupId],
+                        async(error3, result3) => {
+                            if(error3) {
+                                console.error(error3);
+                                next(error3);
+                            }
+                            await db.query('select userGroup.user_id, nickname,authority from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?)',
+                            [req.params.groupId],
+                            (error4, result4) => {
+                                if(error4) {
+                                    console.error(error4);
+                                    next(error4);
+                                }
+                                result3[0].members = result4;
+                                res.status(200).send({code:200, result : result3[0]});
+                            })
+                        })
+                    } else {
+                        await db.query('select id, title, classification, notice, account, term, start_date, end_date, max_member_num, created from ottGroup where id = ?',
+                        [req.params.groupId],
+                        async(error3, result3) => {
+                            if(error3) {
+                                console.error(error3);
+                                next(error3);
+                            }
+                            await db.query('select userGroup.user_id, nickname,authority from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?)',
+                            [req.params.groupId],
+                            (error4, result4) => {
+                                if(error4) {
+                                    console.error(error4);
+                                    next(error4);
+                                }
+                                result3[0].members = result4;
+                                res.status(200).send({code:200, result : result3[0]});
+                            })
+                        })
+                    }
                 })
-                
-            })
         } else {
             res.status(400).send({code:400, result : '접근할 수 없습니다.'});
         }
