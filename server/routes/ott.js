@@ -170,9 +170,9 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
     })
 })
 
-router.get('/remittance/:groupId', async(req, res, next) => { //그룹 멤버가 그룹장한테 송금했다는 확인 요청 보내기.
+router.post('/remittance', async(req, res, next) => { //그룹 멤버가 그룹장한테 송금했다는 확인 요청 보내기.
     await db.query('select remittance, authority from userGroup where user_id = ? and group_id =?',
-    [req.user.id, req.params.groupId],
+    [req.user.id, req.body.groupId],
     async(error, result) => {
         if(error) {
             console.error(error);
@@ -186,7 +186,7 @@ router.get('/remittance/:groupId', async(req, res, next) => { //그룹 멤버가
             res.status(400).send({code:400, result : '이미 송금 확인이 완료된 상태입니다.'}); //이미 송금요청 완료된 사람이 요청.
         } else {
             await db.query('select * from remittanceCheck where group_id = ? and req_user_id = ?',
-            [req.params.groupId, req.user.id],
+            [req.body.groupId, req.user.id],
             async(error2, result2) => {
                 if(error2) {
                     console.error(error2);
@@ -197,14 +197,14 @@ router.get('/remittance/:groupId', async(req, res, next) => { //그룹 멤버가
                 }
                 else{
                     await db.query('select user_id as master from userGroup where group_id = ? and authority = ?',
-                    [req.params.groupId, 'ADMIN'],
+                    [req.body.groupId, 'ADMIN'],
                     async(error3, result3) => {
                         if(error3) {
                             console.error(error3);
                             next(error3);
                         }
                         await db.query('insert into remittanceCheck(group_id, req_user_id, master_id) values(?,?,?)',
-                        [req.params.groupId, 7, result2[0].master],
+                        [req.body.groupId, 7, result2[0].master],
                         (error4, result4) => {
                             if(erro43) {
                                 console.error(error4);
@@ -218,8 +218,8 @@ router.get('/remittance/:groupId', async(req, res, next) => { //그룹 멤버가
             
         }
     })
-    
 })
+
 
 router.post('/:groupId', async(req, res, next) => { //그룹 내용수정(공지 등). 그룹장만 가능.
 
