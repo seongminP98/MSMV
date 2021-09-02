@@ -324,8 +324,8 @@ router.patch('/:groupId', async(req, res, next) => { //그룹 내용수정(공�
         if(result.length>0) {
             if(result[0].authority === 'ADMIN') {
 
-                await db.query('update ottGroup set title = ?, notice = ?, account = ?, ott_id = ?, ott_pwd = ?, term = ?, start_date = ?, end_date = ?',
-                [req.body.title, req.body.notice, req.body.account, req.body.ott_id, req.body.ott_pwd, req.body.term, req.body.start_date, req.body.end_date],
+                await db.query('update ottGroup set title = ?, notice = ?, account = ?, ott_id = ?, ott_pwd = ?, term = ?, start_date = ?, end_date = ? where id = ?',
+                [req.body.title, req.body.notice, req.body.account, req.body.ott_id, req.body.ott_pwd, req.body.term, req.body.start_date, req.body.end_date, req.params.groupId],
                 (error2, result2) => {
                     if(error2) {
                         console.error(error2);
@@ -343,7 +343,6 @@ router.patch('/:groupId', async(req, res, next) => { //그룹 내용수정(공�
 })
 
 router.delete('/:groupId', async(req, res, next) => { //그룹 나가기. 그룹장은 삭제하기 가능.
-
 })
 
 
