@@ -230,7 +230,7 @@ router.get('/remittance/:groupId', async(req, res, next) => { //그룹장이 송
         }
         if(result.length>0) {
             if(result[0].authority === 'ADMIN') {
-                await db.query('select users.id as user_id, nickname, group_id from remittanceCheck join users on req_user_id = users.id where group_id = ?',
+                await db.query('select remittanceCheck.id as remittanceCheck_id, users.id as user_id, nickname, group_id from remittanceCheck join users on req_user_id = users.id where group_id = ?',
                 [req.params.groupId],
                 (error2, result2) => {
                     if(error2) {
@@ -243,6 +243,42 @@ router.get('/remittance/:groupId', async(req, res, next) => { //그룹장이 송
                 res.status(400).send({code:400, result : '권한이 없습니다. 그룹장만 확인 가능합니다.'});
             }
         }else {
+            res.status(400).send({code:400, result : '잘못된 접근. 그룹이 없거나 그룹에 속해있지 않습니다.'});
+        }
+    })
+})
+
+router.post('/remittance/complete', async(req, res, next) => { //해당 유저의 송금완료 요청 확인.
+    await db.query('select authority from userGroup where group_id = ? and user_id = ?',
+    [req.body.groupId, req.user.id],
+    async(error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        if(result.length>0) {
+            if(result[0].authority === 'ADMIN') {
+                await db.query('update userGroup set remittance = 1 where group_id = ? and user_id = ?',
+                [req.body.groupId, req.user.id],
+                async(error2, result2) => {
+                    if(error2) {
+                        console.error(error2);
+                        next(error2);
+                    }
+                    await db.query('delete from remittanceCheck where id = ?',
+                    [req.body.remittance_id],
+                    (error3, result3) => {
+                        if(error3) {
+                            console.error(error3);
+                            next(error3);
+                        }
+                        res.status(200).send({code:200, result : '확인되었습니다.'});
+                    })
+                })
+            } else{// 그룹장이 아닐 경우
+                res.status(400).send({code:400, result : '권한이 없습니다. 그룹장만 확인 가능합니다.'});
+            }
+        } else {
             res.status(400).send({code:400, result : '잘못된 접근. 그룹이 없거나 그룹에 속해있지 않습니다.'});
         }
     })
