@@ -313,8 +313,33 @@ router.post('/remittance/complete', async(req, res, next) => { //해당 유저�
 })
 
 
-router.post('/:groupId', async(req, res, next) => { //그룹 내용수정(공지 등). 그룹장만 가능.
+router.patch('/:groupId', async(req, res, next) => { //그룹 내용수정(공지 등). 그룹장만 가능.
+    await db.query('select authority from userGroup where group_id = ? and user_id = ?',
+    [req.params.groupId, req.user.id],
+    async(error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        if(result.length>0) {
+            if(result[0].authority === 'ADMIN') {
 
+                await db.query('update ottGroup set title = ?, notice = ?, account = ?, ott_id = ?, ott_pwd = ?, term = ?, start_date = ?, end_date = ?',
+                [req.body.title, req.body.notice, req.body.account, req.body.ott_id, req.body.ott_pwd, req.body.term, req.body.start_date, req.body.end_date],
+                (error2, result2) => {
+                    if(error2) {
+                        console.error(error2);
+                        next(error2);
+                    }
+                    res.status(200).send({code:200, result : '수정되었습니다.'})
+                })
+            } else{// 그룹장이 아닐 경우
+                res.status(400).send({code:400, result : '권한이 없습니다. 그룹장만 접근 가능합니다.'});
+            }
+        } else {
+            res.status(400).send({code:400, result : '잘못된 접근. 그룹이 없거나 그룹에 속해있지 않습니다.'});
+        }
+    })
 })
 
 router.delete('/:groupId', async(req, res, next) => { //그룹 나가기. 그룹장은 삭제하기 가능.
