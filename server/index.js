@@ -17,6 +17,7 @@ const mypageRouter = require('./routes/mypage');
 const searchRouter = require('./routes/search');
 const reviewRouter = require('./routes/review');
 const personalrcmRouter = require('./routes/personalrcm');
+const ottRouter = require('./routes/ott');
 
 const options ={
   host: process.env.DB_HOST,
@@ -52,6 +53,7 @@ app.use('/mypage',mypageRouter);
 app.use('/search',searchRouter);
 app.use('/review',reviewRouter);
 app.use('/personalrcm',personalrcmRouter);
+app.use('/ott',ottRouter);
 app.get('/favicon.ico', (req, res) => res.status(204));
 app.use((req, res, next) => {
   const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
