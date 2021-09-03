@@ -172,7 +172,7 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                             })
                         })
                     } else {
-                        await db.query('select id, title, classification, notice, account, term, start_date, end_date, max_member_num, created from ottGroup where id = ?',
+                        await db.query('select id, title, classification, notice, account, term, start_date, end_date, max_member_num, created, total_money, sub_money from ottGroup where id = ?',
                         [req.params.groupId],
                         async(error3, result3) => {
                             if(error3) {
