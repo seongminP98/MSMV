@@ -91,7 +91,7 @@ router.get('/participation/:groupId', async(req, res, next) => { //그룹 참여
             next(error);
         }
         if(result.length>0){
-            res.status(2000).send({code:200-1, result : '이미 참여 중 입니다.'});
+            res.status(200).send({code:200-1, result : '이미 참여 중 입니다.'});
         }
         else{
             await db.query('select max_member_num from ottGroup where id = ?',
