@@ -323,16 +323,24 @@ router.patch('/:groupId', async(req, res, next) => { //그룹 내용수정(공�
         }
         if(result.length>0) {
             if(result[0].authority === 'ADMIN') {
-
-                await db.query('update ottGroup set title = ?, notice = ?, account = ?, ott_id = ?, ott_pwd = ?, term = ?, start_date = ?, end_date = ? where id = ?',
-                [req.body.title, req.body.notice, req.body.account, req.body.ott_id, req.body.ott_pwd, req.body.term, req.body.start_date, req.body.end_date, req.params.groupId],
-                (error2, result2) => {
+                await db.query('select max_member_num from ottGroup where id = ?',
+                [req.params.groupId],
+                async(error2, result2) => {
                     if(error2) {
                         console.error(error2);
                         next(error2);
                     }
-                    res.status(200).send({code:200, result : '수정되었습니다.'})
+                    await db.query('update ottGroup set title = ?, notice = ?, account = ?, ott_id = ?, ott_pwd = ?, term = ?, start_date = ?, end_date = ?, total_money = ?, div_money = ? where id = ?',
+                    [req.body.title, req.body.notice, req.body.account, req.body.ott_id, req.body.ott_pwd, req.body.term, req.body.start_date, req.body.end_date, req.body.money,Math.ceil(req.body.money/result2[0].max_member_num),req.params.groupId],
+                    (error3, result3) => {
+                        if(error3) {
+                            console.error(erro32);
+                            next(error3);
+                        }
+                        res.status(200).send({code:200, result : '수정되었습니다.'})
+                    })
                 })
+            
             } else{// 그룹장이 아닐 경우
                 res.status(403).send({code:403, result : '권한이 없습니다. 그룹장만 접근 가능합니다.'});
             }
