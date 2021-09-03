@@ -168,7 +168,57 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
             res.status(400).send({code:400, result : '접근할 수 없습니다.'});
         }
     })
+})
 
+router.get('/remittance/:groupId', async(req, res, next) => { //그룹 멤버가 그룹장한테 송금했다는 확인 요청 보내기.
+    await db.query('select remittance, authority from userGroup where user_id = ? and group_id =?',
+    [req.user.id, req.params.groupId],
+    async(error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        if(result.length === 0){
+            res.status(400).send({code:400, result : '이용할 수 없습니다.'}); //그룹에 속해있지 않음.
+        } else if(result[0].authority === 'ADMIN') {
+            res.status(400).send({code:400, result : '그룹장은 이용할 수 없습니다.'}); //그룹장이 요청
+        } else if(result[0].remittance === 1) {
+            res.status(400).send({code:400, result : '이미 송금 확인이 완료된 상태입니다.'}); //이미 송금요청 완료된 사람이 요청.
+        } else {
+            await db.query('select * from remittanceCheck where group_id = ? and req_user_id = ?',
+            [req.params.groupId, req.user.id],
+            async(error2, result2) => {
+                if(error2) {
+                    console.error(error2);
+                    next(error2);
+                }
+                if(result2.length > 0) {
+                    res.status(400).send({code:400, result : '이미 확인 요청을 보냈습니다.'});
+                }
+                else{
+                    await db.query('select user_id as master from userGroup where group_id = ? and authority = ?',
+                    [req.params.groupId, 'ADMIN'],
+                    async(error3, result3) => {
+                        if(error3) {
+                            console.error(error3);
+                            next(error3);
+                        }
+                        await db.query('insert into remittanceCheck(group_id, req_user_id, master_id) values(?,?,?)',
+                        [req.params.groupId, 7, result2[0].master],
+                        (error4, result4) => {
+                            if(erro43) {
+                                console.error(error4);
+                                next(error4);
+                            }
+                            res.status(200).send({code:200, result : '송금했다는 요청을 보냈습니다.'});
+                        })
+                    })
+                }
+            })
+            
+        }
+    })
+    
 })
 
 router.post('/:groupId', async(req, res, next) => { //그룹 내용수정(공지 등). 그룹장만 가능.
