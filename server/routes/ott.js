@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../lib/db');
 
 router.get('/', async(req, res, next) => { //그룹 목록
-    await db.query('select group_id, title, classification, max_member_num, count(user_id) current_count from usergroup left join ottGroup on usergroup.group_id = ottGroup.id group by group_id',
+    await db.query('select group_id, title, classification, max_member_num, o.created, total_money, div_money, count(user_id) current_count from usergroup left join ottGroup as o on usergroup.group_id = o.id group by group_id',
     (error, result) => {
         if(error) {
             console.error(error);
@@ -15,7 +15,7 @@ router.get('/', async(req, res, next) => { //그룹 목록
 })
 
 router.get('/search/:class', async(req, res, next) => { //그룹 클래스로 검색 (어떤 ott서비스인지) 
-    await db.query('select group_id, user_id, title, classification, notice, max_member_num, count(user_id) current_count from usergroup left join ottGroup on usergroup.group_id = ottGroup.id group by group_id having classification = ?',
+    await db.query('select group_id, title, classification, max_member_num, o.created, total_money, div_money, count(user_id) current_count from usergroup left join ottGroup as o on usergroup.group_id = o.id group by group_id having classification = ?',
     [req.params.class],
     (error, result) => {
         if(error) {
@@ -28,8 +28,8 @@ router.get('/search/:class', async(req, res, next) => { //그룹 클래스로 �
 })
 
 router.get('/mine', async(req, res, next) => { //내가 참여 중인 그룹 목록.
-    await db.query('select group_id, user_id, title, classification, notice, max_member_num, count(user_id) count from usergroup left join ottGroup on usergroup.group_id = ottGroup.id group by group_id having group_id in (select group_id from usergroup where user_id = ?);',
-    [req.user.id],
+    await db.query('select group_id, title, classification, max_member_num, o.created, total_money, div_money, count(user_id) current_count from usergroup left join ottGroup as o on usergroup.group_id = o.id group by group_id having group_id in (select group_id from usergroup where user_id = ?);',
+    [18],
     (error, result) => {
         if(error) {
             console.error('db error');
