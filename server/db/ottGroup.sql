@@ -10,4 +10,6 @@ term int(11),
 start_date datetime,
 end_date datetime,
 max_member_num int(4),
+total_money int(20),
+div_money int(20),
 created timestamp default now());
