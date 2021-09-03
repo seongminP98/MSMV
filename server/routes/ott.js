@@ -160,7 +160,7 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                                 console.error(error3);
                                 next(error3);
                             }
-                            await db.query('select userGroup.user_id, nickname,authority from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?)',
+                            await db.query('select distinct userGroup.user_id, nickname,authority from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?)',
                             [req.params.groupId],
                             (error4, result4) => {
                                 if(error4) {
@@ -179,7 +179,7 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                                 console.error(error3);
                                 next(error3);
                             }
-                            await db.query('select userGroup.user_id, nickname,authority from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?)',
+                            await db.query('select distinct userGroup.user_id, nickname,authority from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?)',
                             [req.params.groupId],
                             (error4, result4) => {
                                 if(error4) {
