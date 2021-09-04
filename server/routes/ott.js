@@ -29,7 +29,7 @@ router.get('/search/:class', async(req, res, next) => { //그룹 클래스로 �
 
 router.get('/mine', async(req, res, next) => { //내가 참여 중인 그룹 목록.
     await db.query('select group_id, title, classification, max_member_num, o.created, total_money, div_money, count(user_id) current_count from usergroup left join ottGroup as o on usergroup.group_id = o.id group by group_id having group_id in (select group_id from usergroup where user_id = ?);',
-    [18],
+    [req.user.id],
     (error, result) => {
         if(error) {
             console.error('db error');
@@ -160,7 +160,7 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                                 console.error(error3);
                                 next(error3);
                             }
-                            await db.query('select distinct userGroup.user_id, nickname,authority from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?) and group_id = ?',
+                            await db.query('select distinct userGroup.user_id, nickname, authority, remittance from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?) and group_id = ?',
                             [req.params.groupId, req.params.groupId],
                             (error4, result4) => {
                                 if(error4) {
@@ -172,14 +172,14 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                             })
                         })
                     } else {
-                        await db.query('select id, title, classification, notice, account, term, start_date, end_date, max_member_num, created, total_money, sub_money from ottGroup where id = ?',
+                        await db.query('select id, title, classification, notice, account, term, start_date, end_date, max_member_num, created, total_money, div_money from ottGroup where id = ?',
                         [req.params.groupId],
                         async(error3, result3) => {
                             if(error3) {
                                 console.error(error3);
                                 next(error3);
                             }
-                            await db.query('select distinct userGroup.user_id, nickname,authority from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?) and group_id = ?',
+                            await db.query('select distinct userGroup.user_id, nickname, authority, remittance from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?) and group_id = ?',
                             [req.params.groupId, req.params.groupId],
                             (error4, result4) => {
                                 if(error4) {
@@ -334,7 +334,7 @@ router.patch('/:groupId', async(req, res, next) => { //그룹 내용수정(공�
                     [req.body.title, req.body.notice, req.body.account, req.body.ott_id, req.body.ott_pwd, req.body.term, req.body.start_date, req.body.end_date, req.body.money,Math.ceil(req.body.money/result2[0].max_member_num),req.params.groupId],
                     (error3, result3) => {
                         if(error3) {
-                            console.error(erro32);
+                            console.error(error3);
                             next(error3);
                         }
                         res.status(200).send({code:200, result : '수정되었습니다.'})
