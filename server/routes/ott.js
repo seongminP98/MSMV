@@ -138,7 +138,7 @@ router.get('/participation/:groupId', async(req, res, next) => { //그룹 참여
 
 router.get('/:groupId', async(req, res, next) => { //그룹 디테일
     await db.query('select * from usergroup where group_id = ? and user_id = ?',
-    [req.params.groupId, req.user.id],
+    [req.params.groupId, 7],
     async(error, result) => {
         if(error) {
             console.error(error);
@@ -146,7 +146,7 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
         }
         if(result.length > 0) {
             await db.query('select remittance from userGroup where user_id = ? and group_id = ?',
-                [req.user.id,req.params.groupId],
+                [7,req.params.groupId],
                 async(error2, result2) => {
                     if(error2) {
                         console.error(error2);
@@ -162,13 +162,23 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                             }
                             await db.query('select distinct userGroup.user_id, nickname, authority, remittance from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?) and group_id = ?',
                             [req.params.groupId, req.params.groupId],
-                            (error4, result4) => {
+                            async(error4, result4) => {
                                 if(error4) {
                                     console.error(error4);
                                     next(error4);
                                 }
                                 result3[0].members = result4;
-                                res.status(200).send({code:200, result : result3[0]});
+                                await db.query('select users.id as user_id, nickname, authority from usergroup join users on usergroup.user_id = users.id where group_id = ? and authority = ?',
+                                [req.params.groupId, 'ADMIN'],
+                                (error5, result5) => {
+                                    if(error5) {
+                                        console.error(error5);
+                                        next(error5);
+                                    }
+                                    result3[0].ADMIN = result5;
+                                    res.status(200).send({code:200, result : result3[0]});
+                                })
+                                
                             })
                         })
                     } else {
@@ -181,13 +191,22 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                             }
                             await db.query('select distinct userGroup.user_id, nickname, authority, remittance from users join userGroup on users.id = userGroup.user_id where users.id in (select user_id from userGroup where group_id = ?) and group_id = ?',
                             [req.params.groupId, req.params.groupId],
-                            (error4, result4) => {
+                            async(error4, result4) => {
                                 if(error4) {
                                     console.error(error4);
                                     next(error4);
                                 }
                                 result3[0].members = result4;
-                                res.status(200).send({code:200, result : result3[0]});
+                                await db.query('select users.id as user_id, nickname, authority from usergroup join users on usergroup.user_id = users.id where group_id = ? and authority = ?',
+                                [req.params.groupId, 'ADMIN'],
+                                (error5, result5) => {
+                                    if(error5) {
+                                        console.error(error5);
+                                        next(error5);
+                                    }
+                                    result3[0].ADMIN = result5;
+                                    res.status(200).send({code:200, result : result3[0]});
+                                })
                             })
                         })
                     }
@@ -232,9 +251,9 @@ router.post('/remittance', async(req, res, next) => { //그룹 멤버가 그룹�
                             next(error3);
                         }
                         await db.query('insert into remittanceCheck(group_id, req_user_id, master_id) values(?,?,?)',
-                        [req.body.groupId, req.user.id, result2[0].master],
+                        [req.body.groupId, req.user.id, result3[0].master],
                         (error4, result4) => {
-                            if(erro43) {
+                            if(error4) {
                                 console.error(error4);
                                 next(error4);
                             }
@@ -287,7 +306,7 @@ router.post('/remittance/complete', async(req, res, next) => { //해당 유저�
         if(result.length>0) {
             if(result[0].authority === 'ADMIN') {
                 await db.query('update userGroup set remittance = 1 where group_id = ? and user_id = ?',
-                [req.body.groupId, req.user.id],
+                [req.body.groupId, req.body.user_id],
                 async(error2, result2) => {
                     if(error2) {
                         console.error(error2);
