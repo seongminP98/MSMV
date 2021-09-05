@@ -86,12 +86,11 @@ const SwipeDiv = styled.div`
 //   }
 // `;
 
-const BoxOfficeTitle = styled.div`
-  // margin-top: 50px;
-  font-size: 30px;
-  font-weight: 600;
-  font-family: 'Nanum Gothic', sans-serif;
+const TitleDiv = styled.div`
+  font-size: 35px;
+  font-family: 'Jua', 'Nanum Gothic', sans-serif;
   padding-bottom: 20px;
+  font-weight: 100;
 `;
 
 const SwipePad = styled.div`
@@ -140,7 +139,7 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
   return (
     <MainPage>
       <SwipeDiv>
-          <BoxOfficeTitle>주간 인기 영화</BoxOfficeTitle>
+          <TitleDiv>주간 인기 영화</TitleDiv>
             {topTenData.length ? <SwipePad>
               <Swiper
                 className="banner"
@@ -168,7 +167,7 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
             
         </SwipeDiv>
       <SwipeDiv>
-        <BoxOfficeTitle>최근 박스오피스 개봉영화</BoxOfficeTitle>
+        <TitleDiv>최근 박스오피스 개봉영화</TitleDiv>
           <SwipePad>
             <Swiper
               className="banner"
@@ -200,7 +199,7 @@ const MainPresenter = ({topTenData, boxOfficeData, genreList, selectGenre}) => {
         16. 범죄    17. 뮤지컬  18. SF      19. 액션
      */ }
       <br/>
-      <BoxOfficeTitle>장르별 영화</BoxOfficeTitle>
+      <TitleDiv>장르별 영화</TitleDiv>
       <GenreNav className="justify-content-center">
         <GenreNav.Item>
           <GenreNav.Link value="1" onClick={selectGenre}>드라마</GenreNav.Link>

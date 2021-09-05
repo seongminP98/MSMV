@@ -25,7 +25,6 @@ const Main = () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/post/top10`)
     .then((response) => {
       setTopTenData(response.data.result);
-      console.log(response);
     })
     .catch((error) => {
       console.log(error);
@@ -36,7 +35,6 @@ const Main = () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/post/boxOffice`)
     .then((response) => {
       setBoxOfficeData(response.data.boxOffice);
-      console.log(response.data);
     })
     .catch((error) => {
       console.log(error);

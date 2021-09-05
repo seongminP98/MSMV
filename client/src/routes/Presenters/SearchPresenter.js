@@ -1,7 +1,6 @@
 import React, {optionsState} from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
-//import "../../../node_modules/bootswatch/dist/minty/bootstrap.min.css";
 
 const Search = styled.div`
   padding-top: 40px;

@@ -41,7 +41,7 @@ const HelpImage = styled.img`
 const SelectMovieLine = styled.div`
   display: float;
   margin: auto;
-  margin-top : 30px;
+  margin-top : 20px;
   padding-bottom : 110px;
   width: 92%;
   max-width: 800px;
