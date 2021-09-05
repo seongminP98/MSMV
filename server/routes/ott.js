@@ -370,12 +370,47 @@ router.patch('/:groupId', async(req, res, next) => { //그룹 내용수정(공�
 })
 
 router.delete('/:groupId', async(req, res, next) => { //그룹 나가기. 그룹장은 삭제하기 가능.
-    // a
-    // await db.query('delete from userGroup where group_id = ? and user_id = ?',
-    // [req.params.groupId, req.user.id],
-    // (error, result) => {
-        
-    // })
+    await db.query('select * from userGroup where group_id = ? and user_id = ?',
+    [req.params.groupId, req.user.id],
+    async(error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        if(result.length > 0) {
+            if(result[0].authority === 'ADMIN') {
+                await db.query('delete from ottGroup where id = ?',
+                [req.params.groupId],
+                (error3, result3) => {
+                    if(error3) {
+                        console.error(error3);
+                        next(error3);
+                    }
+                    res.status(200).send({code:200, result : '그룹에서 나갔습니다.'})
+                })
+            } else {
+                await db.query('delete from userGroup where group_id = ? and user_id = ?',
+                [req.params.groupId, req.user.id],
+                async(error2, result2) => {
+                    if(error2) {
+                        console.error(error2);
+                        next(error2);
+                    }
+                    await db.query('delete from remittanceCheck where group_id = ? and req_user_id = ?',
+                    [req.params.groupId, req.user.id],
+                    (error3, result3) => {
+                        if(error3) {
+                            console.error(error3);
+                            next(error3);
+                        }
+                        res.status(200).send({code:200, result : '그룹에서 나갔습니다.'})
+                    })
+                })
+            }
+        } else {
+            res.status(403).send({code:403, result : '잘못된 접근. 그룹이 없거나 그룹에 속해있지 않습니다.'})
+        }
+    })
 })
 
 
