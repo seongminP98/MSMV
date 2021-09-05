@@ -465,17 +465,17 @@ router.post('/comment/:groupId', async (req, res, next) => {
     })
 })
 
-router.delete('/comment/:groupId', async(req, res, next) => {
+router.delete('/comment/:commentId', async(req, res, next) => {
     await db.query('select * from comment where group_id = ? and commenter = ?',
-    [req.params.groupId, req.user.id],
+    [req.params.commentId, req.user.id],
     async(error, result) => {
         if(error) {
             console.error(error);
             next(error);
         }
         if(result.length > 0) {
-            await db.query('delete from comment where group_id = ? and commenter = ?',
-            [req.params.groupId, req.user.id],
+            await db.query('delete from comment where id = ?',
+            [req.params.commentId],
             async(error2, result2) => {
                 if(error2) {
                     console.error(error2);
