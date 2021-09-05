@@ -138,7 +138,7 @@ router.get('/participation/:groupId', async(req, res, next) => { //그룹 참여
 
 router.get('/:groupId', async(req, res, next) => { //그룹 디테일
     await db.query('select * from usergroup where group_id = ? and user_id = ?',
-    [req.params.groupId, 7],
+    [req.params.groupId, req.user.id],
     async(error, result) => {
         if(error) {
             console.error(error);
@@ -146,7 +146,7 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
         }
         if(result.length > 0) {
             await db.query('select remittance from userGroup where user_id = ? and group_id = ?',
-                [7,req.params.groupId],
+                [req.user.id ,req.params.groupId],
                 async(error2, result2) => {
                     if(error2) {
                         console.error(error2);
