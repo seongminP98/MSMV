@@ -330,9 +330,11 @@ router.post('/remittance/complete', async(req, res, next) => { //해당 유저�
                         console.error(error2);
                         next(error2);
                     }
-                    await db.query('delete from remittanceCheck where group_id = ? and req_user_id = ?',
-                    [req.body.groupId, req.body.user_id],
-                    (error3, result3) => {
+
+                    await db.query('delete from remittanceCheck where id = ?',
+                    [req.body.remittance_id],
+                    (error3, result3) => { 
+
                         if(error3) {
                             console.error(error3);
                             next(error3);
