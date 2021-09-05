@@ -138,7 +138,7 @@ router.get('/participation/:groupId', async(req, res, next) => { //그룹 참여
 
 router.get('/:groupId', async(req, res, next) => { //그룹 디테일
     await db.query('select * from usergroup where group_id = ? and user_id = ?',
-    [req.params.groupId, req.user.id],
+    [req.params.groupId, 18],
     async(error, result) => {
         if(error) {
             console.error(error);
@@ -146,7 +146,7 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
         }
         if(result.length > 0) {
             await db.query('select remittance from userGroup where user_id = ? and group_id = ?',
-                [req.user.id ,req.params.groupId],
+                [18 ,req.params.groupId],
                 async(error2, result2) => {
                     if(error2) {
                         console.error(error2);
@@ -170,13 +170,22 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                                 result3[0].members = result4;
                                 await db.query('select users.id as user_id, nickname, authority from usergroup join users on usergroup.user_id = users.id where group_id = ? and authority = ?',
                                 [req.params.groupId, 'ADMIN'],
-                                (error5, result5) => {
+                                async(error5, result5) => {
                                     if(error5) {
                                         console.error(error5);
                                         next(error5);
                                     }
                                     result3[0].ADMIN = result5;
-                                    res.status(200).send({code:200, result : result3[0]});
+                                    await db.query('select comment.id as id, commenter, group_id, contents, comment.created created, nickname from comment join users on comment.commenter = users.id where group_id = ?',
+                                    [req.params.groupId],
+                                    (error6, result6) => {
+                                        if(error6) {
+                                            console.error(error6);
+                                            next(error6);
+                                        }
+                                        result3[0].comments = result6;
+                                        res.status(200).send({code:200, result : result3[0]});
+                                    })
                                 })
                                 
                             })
@@ -199,13 +208,22 @@ router.get('/:groupId', async(req, res, next) => { //그룹 디테일
                                 result3[0].members = result4;
                                 await db.query('select users.id as user_id, nickname, authority from usergroup join users on usergroup.user_id = users.id where group_id = ? and authority = ?',
                                 [req.params.groupId, 'ADMIN'],
-                                (error5, result5) => {
+                                async(error5, result5) => {
                                     if(error5) {
                                         console.error(error5);
                                         next(error5);
                                     }
                                     result3[0].ADMIN = result5;
-                                    res.status(200).send({code:200, result : result3[0]});
+                                    await db.query('select comment.id as id, commenter, group_id, contents, comment.created created, nickname from comment join users on comment.commenter = users.id where group_id = ?',
+                                    [req.params.groupId],
+                                    (error6, result6) => {
+                                        if(error6) {
+                                            console.error(error6);
+                                            next(error6);
+                                        }
+                                        result3[0].comments = result6;
+                                        res.status(200).send({code:200, result : result3[0]});
+                                    })
                                 })
                             })
                         })
