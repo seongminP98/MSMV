@@ -233,7 +233,8 @@ const Ott = ({match}) => {
   const setMemberRemittance = async (e) =>{
     let groupId = groupDetail.id
     let user_id = e.target.value;
-    await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/remittance/complete`, {groupId, user_id}, {withCredentials : true})
+    let remittance_id = e.target.name;
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/remittance/complete`, {groupId, user_id, remittance_id}, {withCredentials : true})
     .then((response) => {    
       console.log(response);
       window.alert(`리미턴스 체크 완료`);

@@ -178,10 +178,11 @@ const OttRoomPresenter = ( {groupDetail, remittances, detailTitleChange, noticeC
         <Modal.Body> 
           {remittances && remittances.length ? (remittances.map((remittance) => ( 
           <div key={remittance.remittanceCheck_id}>
+            <p>{remittance.remittanceCheck_id}</p>
               <p>{remittance.user_id}</p>
               <p>{remittance.nickname}</p>
               <p>{remittance.group_id}</p>
-              <StyledButton onClick={setMemberRemittance} value={remittance.user_id}>요청 확인</StyledButton>
+              <StyledButton onClick={setMemberRemittance} value={remittance.user_id} name={remittance.remittanceCheck_id}>요청 확인</StyledButton>
           </div>) 
           )): <div>리미턴스 요청 없음</div>}
         </Modal.Body>
