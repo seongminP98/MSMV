@@ -413,6 +413,39 @@ router.delete('/:groupId', async(req, res, next) => { //그룹 나가기. 그룹
     })
 })
 
+router.post('/comment/:groupId', async (req, res, next) => {
+    await db.query('select * from userGroup where group_id = ? and user_id = ?',
+    [req.params.groupId, req.user.id],
+    async(error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        if(result.length > 0) {
+            await db.query('insert into comment(commenter, group_id, contents) values(?,?,?)',
+            [req.user.id, req.params.groupId, req.body.contents],
+            async(error2, result2) => {
+                if(error2) {
+                    console.error(error2);
+                    next(error2);
+                }
+                await db.query('select * from comment where id = ?',
+                [result2.insertId],
+                (error3, result3) => {
+                    if(error3) {
+                        console.error(error3);
+                        next(error3);
+                    }
+                    res.status(200).send({code:200, result : result3})
+                })
+            })
+        } else {
+            res.status(403).send({code:403, result : '잘못된 접근. 그룹이 없거나 그룹에 속해있지 않습니다.'})
+        }
+    })
+
+})
+
 
 
 module.exports = router;
