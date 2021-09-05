@@ -1,4 +1,5 @@
 CREATE TABLE weeklymovie (
+    id int(11) NOT NULL AUTO_INCREMENT primary key,
 	movieCd int(20) not null,
     count int(10),
     primary key (movieCd)
