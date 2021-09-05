@@ -150,42 +150,34 @@ const Ott = ({match}) => {
   const [newMoney, setNewMoney] = useState();
 
   const detailTitleChange = (e) => {
-    console.log(e.target.value);
     setDetailTitle(e.target.value);
   }
 
   const noticeChange = (e) => {
-    console.log(e.target.value);
     setNotice(e.target.value);
   }
 
   const accountChange = (e) => {
-    console.log(e.target.value);
     setAccount(e.target.value);
   }
 
   const ott_idChange = (e) => {
-    console.log(e.target.value);
     setOtt_id(e.target.value);
   }
 
   const ott_pwdChange = (e) => {
-    console.log(e.target.value);
     setOtt_pwd(e.target.value);
   }
 
   const termChange = (e) => {
-    console.log(e.target.value);
     setTerm(e.target.value);
   }
 
   const start_dateChange = (e) => {
-    console.log(e.target.value);
     setStartDate(e.target.value);
   }
 
   const newMoneyChange = (e) => {
-    console.log(e.target.value);
     setNewMoney(e.target.value);
   }
 
@@ -200,6 +192,17 @@ const Ott = ({match}) => {
     .then((response) => {    
       console.log(response);
       getRoomDetail();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  const exitRoom = async () => {
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/ott/${groupDetail.id}`, {withCredentials : true})
+    .then((response) => {    
+      console.log(response);
+      history.push("/ott");
     })
     .catch((error) => {
       console.log(error);
@@ -246,8 +249,40 @@ const Ott = ({match}) => {
     });
   }
 
-  const detailChange = {detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange};
-  const detailSubmit = {patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance};
+  const [contents, setContents] = useState();
+
+  const commentsChange = (e) => {
+    setContents(e.target.value);
+  }
+
+  const writeOnClick = async () => {
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/comment/${groupDetail.id}`, { contents }, {withCredentials : true})
+    .then((response) => {
+     console.log(response);
+     getRoomDetail();
+    })
+    .catch((error)=> {
+      console.log(error);
+      window.alert("댓글 작성 중 오류가 발생했습니다.")
+    })
+  }
+
+  const deleteOnClick = async (e) => {
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/ott/comment/${e.target.id}`, {withCredentials: true})
+    .then((response) => {
+     console.log(response);
+     window.alert("리뷰가 삭제되었습니다.")
+     getRoomDetail();
+    })
+    .catch((error)=> {
+      console.log(error);
+      //window.alert(error.message);
+    }) 
+  }
+
+  const detailChange = {detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange};
+  const detailSubmit = {patchDetail, exitRoom, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, writeOnClick, deleteOnClick};
+
 
   useEffect(() => getRoomList(), [window.location.href]);
   useEffect(() => getMyRoomList(), [window.location.href]);

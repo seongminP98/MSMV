@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
 import {Modal} from "react-bootstrap";
+import {Comment} from 'antd';
 import moment from "moment";
 import store from '../../store';
 
@@ -71,7 +72,58 @@ const Input = styled.input`
   }
 `;
 
-const OttRoomPresenter = ( {groupDetail, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance} ) => {
+const ReviewDeleteButton = styled.button`
+  color: white;
+  background-color: #6B66FF;
+  border-color: #6B66FF;
+`
+
+
+
+const ComLeft = styled.div`
+    font-size: 15px;
+    text-align: left;
+`;
+const ReviewContent = styled(ComLeft)`
+  font-family: '나눔고딕'
+`
+
+const NonReviewDiv = styled.div`
+  margin: 15px;
+  font-family: '나눔고딕'
+`
+
+const Pad = styled.div`
+    margin: auto;
+    width : 1000px;
+`;
+
+const Font = styled.div`
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size:15px;
+`;
+
+const ReviewButton = styled.button`
+  font-weight: 600;
+  color: white;
+  border: 1px solid #6799FF;
+  padding: 0.5rem;
+  padding-bottom: 0.4rem;
+  margin-left:5px;
+  cursor: pointer;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size:18px;
+  transition: .2s all;
+  background:#6B66FF;
+
+  &:hover {
+      background-color: white;
+      color: #6799FF;
+  }
+`;
+
+const OttRoomPresenter = ( {groupDetail, exitRoom, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick} ) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -143,7 +195,47 @@ const OttRoomPresenter = ( {groupDetail, remittances, detailTitleChange, noticeC
         <StyledButton onClick={sendRemittanceDone}>요청 전송</StyledButton></>}
           
         <StyledLink to="/Ott">돌아가기</StyledLink>
+        <StyledButton onClick={exitRoom}>퇴장</StyledButton>
         
+        {groupDetail && groupDetail.comments.length > 0 ? (
+        <>
+        {groupDetail.comments.map((comment) => ( 
+          <Comment 
+            key={comment.id}
+            actions={[
+              <div>
+                {store.getState().user.id === comment.commenter ? (
+                    <ReviewDeleteButton type="button" id={comment.id} onClick={deleteOnClick} >댓글 삭제</ReviewDeleteButton>
+                    ) : (<p></p>)
+                }
+              </div>
+            ]}
+            content={
+              <ReviewContent>
+                <div>        
+                  <b>{comment.nickname}</b> &nbsp;{moment(comment.created).format("YYYY-MM-DD")} 작성<br/>
+                </div>
+                <div> 
+                  {comment.contents}
+                </div>
+              </ReviewContent>
+            }>
+            <hr/>
+          </Comment>
+        ))}
+        </>
+      ):(
+        <NonReviewDiv>리뷰가 없습니다.</NonReviewDiv>
+      )}
+      {store.getState().user ? (
+        <form style={{ display: 'flex' }}>
+          <textarea style={{ width: '80%', borderRadius: '2px' }}
+            onChange={commentsChange} placeholder="리뷰를 입력해주세요">
+          </textarea>
+          <ReviewButton style={{ width: '20%', height: '52px' }} onClick={writeOnClick}>작성</ReviewButton>
+        </form>
+        ):(<div>리뷰를 작성하려면 로그인하세요.</div>)} 
+
       </div> : <div> No GroupDetail available.</div>}
 
       <Modal show={show} onHide={handleClose}>
@@ -187,6 +279,8 @@ const OttRoomPresenter = ( {groupDetail, remittances, detailTitleChange, noticeC
           )): <div>리미턴스 요청 없음</div>}
         </Modal.Body>
       </Modal>
+
+      
 
     </OttPage>
   )
