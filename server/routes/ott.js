@@ -461,7 +461,30 @@ router.post('/comment/:groupId', async (req, res, next) => {
             res.status(403).send({code:403, result : '잘못된 접근. 그룹이 없거나 그룹에 속해있지 않습니다.'})
         }
     })
+})
 
+router.delete('/comment/:groupId', async(req, res, next) => {
+    await db.query('select * from comment where group_id = ? and commenter = ?',
+    [req.params.groupId, req.user.id],
+    async(error, result) => {
+        if(error) {
+            console.error(error);
+            next(error);
+        }
+        if(result.length > 0) {
+            await db.query('delete from comment where group_id = ? and commenter = ?',
+            [req.params.groupId, req.user.id],
+            async(error2, result2) => {
+                if(error2) {
+                    console.error(error2);
+                    next(error2);
+                }
+                res.status(200).send({code:200, result : '삭제되었습니다.'})
+            })
+        } else {
+            res.status(403).send({code:403, result : '내가 작성한 댓글이 아닙니다.'})
+        }
+    })
 })
 
 
