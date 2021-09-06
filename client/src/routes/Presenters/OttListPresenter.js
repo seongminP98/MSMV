@@ -192,6 +192,9 @@ const OttListPresenter = ({classChange, titleChange, classificationChange, max_m
           <OttSelect name="ott" value={optionsState} onChange={classificationChange}>
             <OttOption value="netflix"> 넷플릭스</OttOption>
             <OttOption value="watcha"> 왓챠</OttOption>
+            <OttOption value="tving"> 티빙</OttOption>
+            <OttOption value="wave"> 웨이브</OttOption>
+            <OttOption value="etc"> 기타</OttOption>
           </OttSelect>
           <Input placeholder="title" onChange={titleChange}></Input>
           <Input placeholder="maxmemnum"onChange={max_member_numChange}></Input>

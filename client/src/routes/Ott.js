@@ -304,8 +304,21 @@ const Ott = ({match}) => {
     }) 
   }
 
+  function translationPlatform(platform) {
+    if (platform === "netflix")
+      return ("넷플릭스");
+    else if (platform === "watcha")
+      return ("왓챠");
+    else if (platform === "wave")
+      return ("웨이브");
+    else if (platform === "tving")
+      return ("티빙");
+    else
+      return ("기타");
+  }
+
   const detailChange = {detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange};
-  const detailSubmit = {patchDetail, exitRoom, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick};
+  const detailSubmit = {patchDetail, exitRoom, translationPlatform, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick};
 
 
   useEffect(() => getRoomList(), [window.location.href]);

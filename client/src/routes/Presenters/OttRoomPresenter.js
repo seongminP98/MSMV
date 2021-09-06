@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
 import {Modal} from "react-bootstrap";
-import {Comment} from 'antd';
+import {Comment, Tooltip} from 'antd';
 import moment from "moment";
 import store from '../../store';
 
@@ -101,37 +101,64 @@ const CommentButton = styled.button`
   }
 `;
 
+const TitleDiv = styled.h2`
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+`
+
+const ContentTitle = styled(TitleDiv)`
+  font-size : 36px;
+  border-bottom: 1px solid gray;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-bottom: 5px;
+  overflow: visible;
+`
+
 const OttDiv = styled.div`
-  width : 75%;
+  width : 1150px;
   height : 600px;
   display: grid;
   grid-template-columns: 2fr 4fr 1fr; 
-  background : lightgray;
   margin: auto;
 `
 
 const MembersDiv = styled.div`
   font-family : "Jua";
   display: block;
-  border: 1px solid;
+  border-style: solid;
+  border-width : 0 0 3px 0;
+  border-radius : 14px 14px;
+  border-color: #595959;
+  background: #6b66ff;
+
 `
 
 const MemberDiv = styled.div`
   background : white;
   font-size: 28px;
-  border-radius : 7px;
+  text-align: left;
+
+  width: 80%;
+  height: 20%;
+
+  display: grid;
+  grid-templates-rows: 1fr 1fr;
+
   margin: auto;
   margin-top: 10px;
   margin-bottom: 10px;
-  padding: 10px;
+
+  padding-bottom: 10px;
   padding-top: 15px;
-  width: 80%;
-  height: 20%;
-  display: grid;
-  grid-templates-rows: 1fr 1fr;
-  text-align: left;
   padding-left: 20px;
   padding-right: 20px;
+
+  border-style: solid;
+  border-width : 1px 0px 3px 0;
+  border-radius : 7px;
+  border-color: #595959;
 `
 
 const MemberUpperDiv = styled.div`
@@ -149,12 +176,107 @@ const Icon = styled.img`
   position: relative;
   bottom: 3px;
   margin-left: 5px;
+`
 
+const ClassIcon = styled.img`
+  margin-right : 10px;
+  position: relative;
+  bottom: 4px;
 `
 
 const ContentDiv = styled.div`
   white-space: pre-line;
   font-family: "Jua";
+  border-style: solid;
+  border-width : 1px 0px 3px 0;
+  border-radius : 14px 14px;
+  border-color: #595959;
+  margin-right: 10px;
+  margin-left: 10px;
+`
+
+const ContentLine1 = styled.div`
+  font-size: 20px;
+  display: grid;
+  grid-template-columns : 1fr 1fr;
+`;
+
+const ContentElement1 = styled.div`
+  margin-top: 5px;
+  margin-left: 13px;
+  margin-right: 13px;
+
+  border-width: 0 0 1px 0;
+  border-style : solid;
+  border-color : gray;
+  border-radius: 8px;
+`
+
+const ContentLine2 = styled.div`
+  margin-top: 10px;
+  font-size: 25px;
+`;
+
+const ContentElement2 = styled.div`
+  font-size: 14px;
+  font-family: 맑은고딕;
+  
+  min-height: 60px;
+
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  margin: auto;
+  margin-left: 13px;
+  margin-right: 13px;
+
+  border-width: 0 0 1px 0;
+  border-style : solid;
+  border-color : gray;
+  border-radius: 8px;
+
+  text-align: center;  
+`
+
+
+const ContentLine3 = styled.div`
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns : 1fr 1fr;
+`;
+
+const ContentElement3 = styled(ContentElement1)`
+  border-width: 0 0 1px 0;
+  border-style : solid;
+  border-color : gray;
+  border-radius: 8px;
+  font-size: 16px;
+  text-align: left;
+  padding-left : 25px;
+  padding-bottom: 10px;
+`
+
+const ContentTitle3 = styled.div`
+  text-align: center;
+  font-size: 25px;
+  position: relative;
+  right: 20px;
+`
+
+const ContentLine4 = styled.div`
+  margin-top: 20px;
+  font-size: 25px;
+`;
+
+const ContentElement4 = styled.div`
+  font-size: 18px;
+  text-align: left;
+  padding-left: 235px;
+`
+
+const ContentElement4_2 = styled.div`
+  font-size: 18px;
 `
 
 const MenuDiv = styled(MembersDiv)`
@@ -166,14 +288,21 @@ const MenuButton = styled(Link)`
   font-size: 17px;
   width: 120px;
   color: black;
+
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 10px;
   padding-right: 10px;
+
   margin: auto;
+
   position: relative;
   bottom: 60px;
+
+  border-style: solid;
+  border-width : 1px 0px 3px 0;
   border-radius : 7px;
+  border-color: #595959;
 `
 
 const InputContainer = styled.div`
@@ -233,7 +362,7 @@ const HalfInput = styled(Input)`
 `
 
 const UnitInput = styled(Input)`
-  width: 30%;
+  width: 40%;
   ::-webkit-inner-spin-button,
   ::-webkit-outer-spin-button {
     -webkit-appearance: none; 
@@ -288,7 +417,7 @@ const Remittance = styled.div`
   
 `
 
-const OttRoomPresenter = ( {groupDetail, exitRoom, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick} ) => {
+const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick} ) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -315,13 +444,13 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, remittances, detailTitleChang
       {groupDetail ? 
       <OttDiv>
         <MembersDiv>
-          <h2>참여 멤버 ({groupDetail.members.length} / {groupDetail.max_member_num})</h2>
+          <TitleDiv>참여 멤버 ({groupDetail.members.length} / {groupDetail.max_member_num})</TitleDiv>
           {groupDetail.members.map((member) => (
             <MemberDiv key={member.user_id}>
               <MemberUpperDiv>
                 {member.nickname} 
-                {(member.authority === "ADMIN") ? <Icon src="./crown.png" alt="admin"/> : <></>}
-                {(member.user_id === store.getState().user.id) ? <Icon src="./avatar.png" alt="avatar"/> : <></>}
+                {(member.authority === "ADMIN") ? <Tooltip title="그룹장"><Icon src="./crown.png" alt="admin"/></Tooltip> : <></>}
+                {(member.user_id === store.getState().user.id) ? <Tooltip title="본인"><Icon src="./avatar.png" alt="avatar"/></Tooltip> : <></>}
               </MemberUpperDiv>
               <MemberLowerDiv>
                 
@@ -333,34 +462,66 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, remittances, detailTitleChang
         </MembersDiv>
 
         <ContentDiv>
-          <h2>{groupDetail.title}</h2>
+          <ContentTitle>{groupDetail.title}</ContentTitle>
           <div>
-            그룹장 : {groupDetail.ADMIN[0].nickname}<br/>
-            그룹 생성일 : {moment(groupDetail.created).format('YYYY년 MM월 DD일')} <br/>
-            OTT 플랫폼 : {groupDetail.classification} <br/>
-            <br/>공지사항 <br/> {groupDetail.notice} <br/>
-            <br/>
-            예상 공유 시작일 : {moment(groupDetail.start_date).format('YYYY년 MM월 DD일')} <br/>
-            기간 : {groupDetail.term}일 <br/>
-            예상 공유 종료일 : {moment(groupDetail.end_date).format('YYYY년 MM월 DD일')} <br/>
-            <br/>
-            송금 계좌 : {groupDetail.account} <br/>
-            총 결제 금액 : {groupDetail.total_money}원 <br/>
-            멤버별 결제 금액 : {groupDetail.div_money}원 <br/>
-            <br/>
+            <ContentLine1>
+              <ContentElement1>
+                <ClassIcon height="30px" src={`./${groupDetail.classification}.png`}/>{translationPlatform(groupDetail.classification)}
+              </ContentElement1>
+              <ContentElement1>{moment(groupDetail.created).format('YYYY년 MM월 DD일')} 생성</ContentElement1>
+            </ContentLine1>
+            
+            <ContentLine2>
+              공지사항
+              <ContentElement2>
+                {groupDetail.notice ? <>{groupDetail.notice}</> : <>공지사항이 없습니다.</>}
+              </ContentElement2>
+            </ContentLine2>
+            
+            <ContentLine3>
+              <ContentElement3>
+                <ContentTitle3>기간 정보</ContentTitle3>
+                {groupDetail.start_date ? <>
+                  예상 공유 시작일 : {moment(groupDetail.start_date).format('YYYY년 MM월 DD일')} <br/>
+                  기간 : {groupDetail.term}일 <br/>
+                  예상 공유 종료일 : {moment(groupDetail.end_date).format('YYYY년 MM월 DD일')} <br/>
+                </> : <>
+                  기간 정보가 없습니다.
+                </>}
+                
+              </ContentElement3>
+              <ContentElement3>
+                <ContentTitle3>계좌 정보</ContentTitle3>
+                {groupDetail.account ? <>
+                  송금 계좌 : {groupDetail.account} <br/>
+                 총 결제 금액 : {groupDetail.total_money}원 <br/>
+                  멤버별 결제 금액 : {groupDetail.div_money}원 <br/>
+                </> : <>
+                  계좌 정보가 없습니다.
+                </>}
+              </ContentElement3>
+            </ContentLine3>
+          
+            <ContentLine4>
             <h3>계정 공유란</h3>
-              {Object.keys(groupDetail).includes('ott_id') ? <div>
-                공유 ID : {groupDetail.ott_id} <br/>
-                공유 PW : {groupDetail.ott_pwd}
-              </div> : <div>
-                아직 계정이 공유되지 않습니다.
-              </div>}
+              {Object.keys(groupDetail).includes('ott_id') ? <ContentElement4>
+                {groupDetail.ott_id ? <>
+                  공유 ID : {groupDetail.ott_id} <br/>
+                  공유 PW : {groupDetail.ott_pwd}
+                </> : <>
+                  계정 정보가 없습니다.
+                </>}
+              </ContentElement4> : <ContentElement4_2>
+                아직 계정이 공유되지 않습니다. 그룹장의 송금 확인이 필요합니다.
+              </ContentElement4_2>}
+            </ContentLine4>
+            
           </div>
         </ContentDiv>
         
         
         <MenuDiv>
-          <h2>메뉴</h2>
+          <TitleDiv>메뉴</TitleDiv>
           {(store.getState().user.id === groupDetail.ADMIN[0].user_id) ? <>
           <MenuButton onClick={handleShow}>수정하기</MenuButton>
           <MenuButton onClick={remittanceShow}>송금 요청 확인</MenuButton>
@@ -433,29 +594,22 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, remittances, detailTitleChang
                 </div>
                 <UnitDiv>
                   <InputLabel>총 결제 금액</InputLabel>
-                  <UnitInput required={true} type="number" placeholder="원" defaultValue={groupDetail.total_money} onChange={newMoneyChange}/> <UnitLabel>원</UnitLabel>
+                  <UnitInput required={true} type="number" defaultValue={groupDetail.total_money} onChange={newMoneyChange}/> <UnitLabel>원</UnitLabel>
                 </UnitDiv>
               </InputDiv>
               <hr/>
               
+              <InputTitle>기간 정보</InputTitle>
               <InputDiv>
-                <InputTitle>기간 정보</InputTitle>
-                <div>{/*empty for grid*/}</div>
-                <div>{/*empty for grid*/}</div>
-                <div>
-                  <InputLabel>예상 서비스 이용 기간</InputLabel>
-                </div>
-                <div></div>
-                <UnitDiv>
-                  <UnitInput required={true} type="number" placeholder="기간" defaultValue={groupDetail.term} onChange={termChange}/> <UnitLabel>일</UnitLabel>
-                </UnitDiv>
                 <div>
                   <InputLabel>예상 서비스 시작일</InputLabel>
                   <HalfInput required={true} type="date" defaultValue={moment(groupDetail.start_date).format('YYYY-MM-DD')} onChange={start_dateChange}/>
                 </div>
                 <div>
-                  <InputLabel>예상 서비스 종료일</InputLabel>
-                  <HalfInput type="date" defaultValue={moment(groupDetail.end_date).format('YYYY-MM-DD')} disabled/>
+                <InputLabel>예상 서비스 이용 기간</InputLabel>
+                  <UnitDiv>
+                    <UnitInput required={true} type="number" defaultValue={groupDetail.term} onChange={termChange}/> <UnitLabel>일</UnitLabel>
+                  </UnitDiv>
                 </div>
               </InputDiv>
               <hr/>
