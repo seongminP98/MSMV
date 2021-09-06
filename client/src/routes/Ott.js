@@ -86,8 +86,15 @@ const Ott = ({match}) => {
     else {
       await axios.get(`${process.env.REACT_APP_SERVER_URL}${location.pathname}`, {withCredentials : true})
       .then((response) => {
-        console.log(response);
         setGroupDetail(response.data.result);
+        setDetailTitle(response.data.result.title);
+        setNotice(response.data.result.notice);
+        setAccount(response.data.result.account);
+        setOtt_id(response.data.result.ott_id);
+        setOtt_pwd(response.data.result.ott_pwd);
+        setTerm(response.data.result.term);
+        setStartDate(moment(response.data.result.start_date).format("YYYY-MM-DD"));
+        setNewMoney(response.data.result.total_money);
       })
       .catch((error) => {
         window.alert(error);
@@ -174,7 +181,7 @@ const Ott = ({match}) => {
   }
 
   const start_dateChange = (e) => {
-    setStartDate(e.target.value);
+    setStartDate(moment(e.target.value).format('YYYY-MM-DD'));
   }
 
   const newMoneyChange = (e) => {
@@ -182,20 +189,37 @@ const Ott = ({match}) => {
   }
 
 
+  function validateDate(date) {
+    let today = new Date();
+    let comp = new Date(date);
+
+    if (comp - today > 0)
+      return false;
+    else 
+      return true;
+  }
+
   const patchDetail = async () => {
     let title = detailTitle;
     let money = newMoney;
+    if (validateDate(start_date)) {
+      window.alert("입력한 날짜가 유효하지 않습니다.");
+      return 0;
+    }
+
     let tempDate = new Date(start_date);
-    tempDate.setDate(tempDate.getDate() + term);
+    tempDate.setDate(tempDate.getDate() + Number(term));
     let end_date = moment(tempDate).format('YYYY-MM-DD');
     await axios.patch(`${process.env.REACT_APP_SERVER_URL}${location.pathname}`, {title, notice, account, ott_id, ott_pwd, term, start_date, end_date, money}, {withCredentials : true})
     .then((response) => {    
-      console.log(response);
+      window.alert("수정이 완료됐습니다.");
       getRoomDetail();
     })
     .catch((error) => {
       console.log(error);
     });
+
+    
   }
 
   const exitRoom = async () => {
@@ -281,7 +305,7 @@ const Ott = ({match}) => {
   }
 
   const detailChange = {detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange};
-  const detailSubmit = {patchDetail, exitRoom, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, writeOnClick, deleteOnClick};
+  const detailSubmit = {patchDetail, exitRoom, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick};
 
 
   useEffect(() => getRoomList(), [window.location.href]);

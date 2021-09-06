@@ -298,7 +298,7 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
       </SearchMovieModal>
 
       <SelectMovieLine>
-        {!(selectedMovieList.length === 0) ? (<>
+        {(selectedMovieList) ? (<>
           {selectedMovieList.map((movie) => ( 
             <SelectMovieCard key={movie.movieCd}>
               <MovieImage alt="movie" src={movie.image} onerror="this.src='image.png'"></MovieImage> 
@@ -320,7 +320,7 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
 
       <SwipeDiv>
         <RecommTitle>추천 영화</RecommTitle>
-        {!(recommendMovieList.length === 0) ? (
+        {(recommendMovieList) ? (
         <SwipePad>
           <Swiper
             className="banner"
