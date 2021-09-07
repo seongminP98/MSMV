@@ -41,6 +41,9 @@ router.get('/mine', async(req, res, next) => { //내가 참여 중인 그룹 목
 })
 
 router.post('/make', async(req, res, next) => { //그룹 만들기
+    if(typeof(req.body.max_member_num) !== 'number') {
+        return res.status(400).send({code:400, result : '최대 인원 수는 숫자만 적어주세요.'})
+    }
     await db.query('insert into ottGroup(title,classification,max_member_num) values(?,?,?)',
     [req.body.title, req.body.classification, req.body.max_member_num],
     async(error, result) => {
