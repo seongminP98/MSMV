@@ -13,7 +13,10 @@ const Ott = ({match}) => {
 
   const classChange = async (e) => {
     console.log(e);
-    setSearchClass(e);
+    if (e === "all")
+      getRoomList();
+    else 
+      setSearchClass(e);
   }
 
 /*  
@@ -57,14 +60,10 @@ const Ott = ({match}) => {
     setMax_member_num(e.target.value);
   }
 
-  const moneyChange = (e) => {
-    setMoney(e.target.value);
-  }
-
-  const change = {classChange, titleChange, classificationChange, max_member_numChange, moneyChange};
+  const change = {classChange, titleChange, classificationChange, max_member_numChange};
 
   const createRoom = async () => {
-    await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/make`, {title, classification, max_member_num, money}, {withCredentials : true})
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/make`, {title, classification, max_member_num}, {withCredentials : true})
     .then((response) => {    
       getRoomList();
       getMyRoomList();
@@ -193,7 +192,7 @@ const Ott = ({match}) => {
     let today = new Date();
     let comp = new Date(date);
 
-    if (comp - today > 0)
+    if (comp - today >= 0)
       return false;
     else 
       return true;
@@ -251,6 +250,7 @@ const Ott = ({match}) => {
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/remittance`, {groupId}, {withCredentials : true})
     .then((response) => {    
       console.log(response);
+      window.alert("전송 완료")
     })
     .catch((error) => {
       console.log(error);

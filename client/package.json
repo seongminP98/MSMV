@@ -22,6 +22,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-star-rating-component": "^1.4.1",
+    "react-tabs": "^3.2.2",
     "redux": "^4.1.0",
     "sass": "^1.34.1",
     "sass-loader": "^12.0.0",

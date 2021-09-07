@@ -127,11 +127,14 @@ const OttDiv = styled.div`
 const MembersDiv = styled.div`
   font-family : "Jua";
   display: block;
+
   border-style: solid;
-  border-width : 0 0 3px 0;
+  border-color : #6b66ff;
+  border-width: 3px;
+  border-bottom-width : 3px;
   border-radius : 14px 14px;
-  border-color: #595959;
-  background: #6b66ff;
+  border-bottom-color: #595959;
+  background: white;
 
 `
 
@@ -156,7 +159,7 @@ const MemberDiv = styled.div`
   padding-right: 20px;
 
   border-style: solid;
-  border-width : 1px 0px 3px 0;
+  border-width : 1px 1px 3px 1px;
   border-radius : 7px;
   border-color: #595959;
 `
@@ -188,7 +191,7 @@ const ContentDiv = styled.div`
   white-space: pre-line;
   font-family: "Jua";
   border-style: solid;
-  border-width : 1px 0px 3px 0;
+  border-width : 3px 1px 2px 1px;
   border-radius : 14px 14px;
   border-color: #595959;
   margin-right: 10px;
@@ -300,7 +303,7 @@ const MenuButton = styled(Link)`
   bottom: 60px;
 
   border-style: solid;
-  border-width : 1px 0px 3px 0;
+  border-width : 1px 1px 3px 1px;
   border-radius : 7px;
   border-color: #595959;
 `
@@ -524,13 +527,13 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
           <TitleDiv>메뉴</TitleDiv>
           {(store.getState().user.id === groupDetail.ADMIN[0].user_id) ? <>
           <MenuButton onClick={handleShow}>수정하기</MenuButton>
-          <MenuButton onClick={remittanceShow}>송금 요청 확인</MenuButton>
+          <MenuButton onClick={remittanceShow}>송금 요청<br/>확인</MenuButton>
           </> : <>
-          <MenuButton onClick={sendRemittanceDone}>송금 요청 전송</MenuButton>
+          <MenuButton onClick={sendRemittanceDone}>송금 요청<br/>전송</MenuButton>
           <MenuButton>계정 확인</MenuButton>
           </>}
             
-          <MenuButton to="/Ott">돌아가기</MenuButton>
+          <MenuButton to="/Ott">목록으로<br/>돌아가기</MenuButton>
           <MenuButton onClick={exitRoom}>퇴장</MenuButton>
         </MenuDiv>
     </OttDiv> : <div> No GroupDetail available.</div>}
