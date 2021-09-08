@@ -11,96 +11,6 @@ const OttPage = styled.div`
   display: grid;
 `
 
-const StyledLink = styled(Link)`
-  font-weight: 300;
-  background-color: white;
-  color : #6b66ff;
-  padding: 15px;
-  padding-top: 12px;
-  padding-bottom: 10px;
-  margin:0 5px 5px 0;
-  position: relative;
-  top: 20px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 20px;
-  transition: .2s all;
-  font-family: 'Jua', sans-serif;
-  border-radius: 5px;
-  &:hover {
-      background: #7D79FF;
-      color: white;
-  }
-`;
-
-const StyledButton = styled.button`
-  font-weight: 300;
-  background-color: white;
-  color : #6b66ff;
-  padding: 15px;
-  padding-top: 12px;
-  padding-bottom: 10px;
-  margin:0 5px 5px 0;
-  position: relative;
-  top: 20px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 20px;
-  transition: .2s all;
-  font-family: 'Jua', sans-serif;
-  border-radius: 5px;
-  &:hover {
-      background: #7D79FF;
-      color: white;
-  }
-`;
-
-
-
-const CommentDeleteButton = styled.button`
-  color: white;
-  background-color: #6B66FF;
-  border-color: #6B66FF;
-`
-
-
-
-const ComLeft = styled.div`
-    font-size: 15px;
-    text-align: left;
-`;
-const CommentContent = styled(ComLeft)`
-  font-family: '나눔고딕'
-`
-const CommentDiv = styled.div`
-;
-`
-
-const NonCommentDiv = styled.div`
-  margin: 15px;
-  font-family: '나눔고딕'
-`
-
-const CommentButton = styled.button`
-  font-weight: 600;
-  color: white;
-  border: 1px solid #6799FF;
-  padding: 0.5rem;
-  padding-bottom: 0.4rem;
-  margin-left:5px;
-  cursor: pointer;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size:18px;
-  transition: .2s all;
-  background:#6B66FF;
-
-  &:hover {
-      background-color: white;
-      color: #6799FF;
-  }
-`;
-
 const TitleDiv = styled.h2`
   margin: auto;
   margin-top: 20px;
@@ -122,6 +32,7 @@ const OttDiv = styled.div`
   display: grid;
   grid-template-columns: 2fr 4fr 1fr; 
   margin: auto;
+  margin-top: 20px;
 `
 
 const MembersDiv = styled.div`
@@ -377,6 +288,7 @@ const InputTitle = styled.div`
   font-size: 24px;
   margin-top: 14px;
   font-weight: 600;
+  margin-bottom: 14px;
 `
 
 const UnitLabel = styled.label`
@@ -416,11 +328,65 @@ const Remittance = styled.div`
   text-align: center;
   font-size: 18px;
   font-weight: 100;
-  font-family: 'Jua', sans-serif;
-  
+  font-family: 'Jua', sans-serif; 
 `
 
-const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick} ) => {
+const CommentDeleteButton = styled.button`
+  color: white;
+  background-color: #6B66FF;
+  border-color: #6B66FF;
+  border-radius: 5px;
+  &:hover {
+    box-shadow: 0 0 0 2px rgba(133, 133, 133, 0.5);
+  }
+`
+
+const CommentContent = styled.div`
+  font-size: 15px;
+  text-align: left;
+`
+const CommentDiv = styled.div`
+  width : 600px;
+  display: grid;
+  margin: auto;
+  border-bottom: 1px solid lightgray;
+`
+
+const NonCommentDiv = styled(CommentDiv)`
+  border: none;
+  border-bottom: none;
+  ;
+`
+
+
+
+const CommentButton = styled.button`
+  font-weight: 600;
+  color: white;
+  border: 1px solid #6799FF;
+  padding: 0.5rem;
+  padding-bottom: 0.4rem;
+  margin-left:5px;
+  cursor: pointer;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size:18px;
+  transition: .2s all;
+  background:#6B66FF;
+
+  &:hover {
+      background-color: white;
+      color: #6799FF;
+  }
+`;
+
+const CommentForm = styled.form`
+  width: 600px;
+  margin: auto;
+  margin-bottom: 30px;
+`
+
+const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick, getRoomDetail} ) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -444,7 +410,7 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
 
   return (
     <OttPage>
-      {groupDetail ? 
+      {(groupDetail && groupDetail.members.length > 0) ? 
       <OttDiv>
         <MembersDiv>
           <TitleDiv>참여 멤버 ({groupDetail.members.length} / {groupDetail.max_member_num})</TitleDiv>
@@ -530,13 +496,15 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
           <MenuButton onClick={remittanceShow}>송금 요청<br/>확인</MenuButton>
           </> : <>
           <MenuButton onClick={sendRemittanceDone}>송금 요청<br/>전송</MenuButton>
-          <MenuButton>계정 확인</MenuButton>
+          <MenuButton onClick={getRoomDetail}>계정 확인</MenuButton>
           </>}
             
           <MenuButton to="/Ott">목록으로<br/>돌아가기</MenuButton>
           <MenuButton onClick={exitRoom}>퇴장</MenuButton>
         </MenuDiv>
     </OttDiv> : <div> No GroupDetail available.</div>}
+
+
 
     <CommentDiv>
       {groupDetail && groupDetail.comments.length > 0 ? (
@@ -562,7 +530,6 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
                   </div>
                 </CommentContent>
               }>
-              <hr/>
             </Comment>
           ))}
         </>):(
@@ -571,13 +538,18 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
       </CommentDiv>
       
       {store.getState().user ? (
-        <form style={{ display: 'flex' }}>
+        <CommentForm style={{ display: 'flex' }}>
           <textarea style={{ width: '80%', borderRadius: '2px' }}
             onChange={commentsChange} placeholder="댓글을 입력해주세요">
           </textarea>
           <CommentButton style={{ width: '20%', height: '52px' }} onClick={writeOnClick}>작성</CommentButton>
-        </form>
-        ):(<div>댓글을 작성하려면 로그인하세요.</div>)} 
+        </CommentForm>
+        ):(<CommentForm>댓글을 작성하려면 로그인하세요.</CommentForm>)} 
+
+
+
+
+
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Body> 
@@ -620,14 +592,12 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
               <InputDiv>
                 <div>
                   <InputLabel>공유 ID</InputLabel>
-                  <HalfInput type="text" placeholder="ott_id" defaultValue={groupDetail.ott_id} onChange={ott_idChange}/>
+                  <HalfInput type="text" defaultValue={groupDetail.ott_id} onChange={ott_idChange}/>
                 </div>
                 <div>
                   <InputLabel>공유 비밀번호</InputLabel>
-                  <HalfInput type="text" placeholder="ott_pwd" defaultValue={groupDetail.ott_pwd} onChange={ott_pwdChange}/>
+                  <HalfInput type="text" defaultValue={groupDetail.ott_pwd} onChange={ott_pwdChange}/>
                 </div>
-                
-                
               </InputDiv>
             </InputContainer>
           ) : (<></>)}

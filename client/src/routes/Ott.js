@@ -12,9 +12,10 @@ const Ott = ({match}) => {
   const [searchClass, setSearchClass] = useState();
 
   const classChange = async (e) => {
-    console.log(e);
-    if (e === "all")
+    if (e === "all") {
       getRoomList();
+      setSearchClass("");
+    }
     else 
       setSearchClass(e);
   }
@@ -46,7 +47,6 @@ const Ott = ({match}) => {
   const [title, setTitle] = useState();
   const [classification, setClassification] = useState("netflix");
   const [max_member_num, setMax_member_num] = useState();
-  const [money, setMoney] = useState();
 
   const titleChange = (e) => {
     setTitle(e.target.value);
@@ -63,14 +63,19 @@ const Ott = ({match}) => {
   const change = {classChange, titleChange, classificationChange, max_member_numChange};
 
   const createRoom = async () => {
-    await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/make`, {title, classification, max_member_num}, {withCredentials : true})
-    .then((response) => {    
-      getRoomList();
-      getMyRoomList();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    if (!(title && max_member_num)) {
+      window.alert("제목과 최대 인원을 입력해야 합니다.");
+    }
+    else {
+      await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/make`, {title, classification, max_member_num}, {withCredentials : true})
+      .then((response) => {    
+        getRoomList();
+        getMyRoomList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
   }
 
   const [groupDetail, setGroupDetail] = useState();
@@ -107,7 +112,7 @@ const Ott = ({match}) => {
     .then((response) => {
       console.log(response);
       if (response.data.code === 198) 
-        window.alert(e.target.result);
+        window.alert(response.data.result);
       else
         history.push(`/Ott/${e.target.value}`);
     })
@@ -116,7 +121,7 @@ const Ott = ({match}) => {
     });
   }
 
-  const submit = {createRoom, enterRoom};
+  const submit = {createRoom, enterRoom, translationPlatform};
 
   const [roomList, setRoomList] = useState([]);
   const [myRoomList, setMyRoomList] = useState([]);
@@ -141,7 +146,7 @@ const Ott = ({match}) => {
     });
   }
 
-  const props = {roomList, myRoomList};
+  const props = {roomList, myRoomList, searchClass};
 
 
   // below Room Detail
@@ -250,7 +255,7 @@ const Ott = ({match}) => {
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/remittance`, {groupId}, {withCredentials : true})
     .then((response) => {    
       console.log(response);
-      window.alert("전송 완료")
+      window.alert(response.data.result);
     })
     .catch((error) => {
       console.log(error);
@@ -318,7 +323,7 @@ const Ott = ({match}) => {
   }
 
   const detailChange = {detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange};
-  const detailSubmit = {patchDetail, exitRoom, translationPlatform, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick};
+  const detailSubmit = {patchDetail, exitRoom, translationPlatform, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick, getRoomDetail};
 
 
   useEffect(() => getRoomList(), [window.location.href]);
