@@ -94,41 +94,16 @@ const WriteButton = styled.button`
 `
 
 const WriteImage = styled.img`
-  
-  
   width: 100px;
 `
 
-const Input = styled.input`
-  padding: 0px 10px;
-  box-sizing: border-box;
-  width: 100%;
-  height: 50px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-  border: 1px solid gray;
-  border-radius: 1px;
-  transition: border 0.1s ease-in-out;
-  outline: none;
-  &:hover,
-  &:focus {
-    border: 2px solid #6799ff;
-  }
-
-  ::-webkit-inner-spin-button,
-  ::-webkit-outer-spin-button {
-    -webkit-appearance: none; 
-  }
-  text-align: right;
-`;
-
 const OttSelect = styled.select`
-  text-align: center;
-  width : 80px;
+  width : 200px;
   height : 50px;
-  font-size: 20px;
+  font-size: 17px;
   margin-top : 5px;
   padding-left: 3px;
+  border-radius: 3px;
   outline: none;
   &:hover,
   &:focus {
@@ -137,8 +112,6 @@ const OttSelect = styled.select`
 `;
 
 const OttOption = styled.option`
-  text-align: center;
-  font-size: 20px;
 `;
 
 const OttPage = styled.div`
@@ -213,7 +186,10 @@ const MyRoom = styled(OttRoom)`
 `
 
 const NoRoomListDiv = styled(MyRoomListDiv)`
-  display: block;
+  display: flex;
+  font-size: 24px;
+  justify-content: center;
+  padding-top : 120px;
 `
 
 const StyledDropdown = styled(Dropdown)`
@@ -245,6 +221,84 @@ const ClassIcon = styled.img`
   margin-right : 10px;
   position: relative;
   bottom: 4px;
+`
+
+const InputContainer = styled.div`
+  padding-left: 26px;
+  padding-right: 30px;
+`
+const Input = styled.input`
+  padding: 0px 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 50px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 1px solid gray;
+  border-radius: 3px;
+  transition: border 0.1s ease-in-out;
+  outline: none;
+  &:hover,
+  &:focus {
+    border: 2px solid #6799ff;
+  }
+`;
+
+const InputLabel = styled.label`
+  font-size:20px;
+  display: block;
+`
+
+const NoticeInput = styled.textarea`
+  padding: 10px 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 1px solid gray;
+  border-radius: 3px;
+  transition: border 0.1s ease-in-out;
+  outline: none;
+  &:hover,
+  &:focus {
+    border: 2px solid #6799ff;
+  }
+  height : 100px;
+  width: 100%;
+  text-overflow: auto;
+`
+
+const InputDiv = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top : 10px;
+`
+
+const UnitInput = styled(Input)`
+  width: 40%;
+  ::-webkit-inner-spin-button,
+  ::-webkit-outer-spin-button {
+    -webkit-appearance: none; 
+  }
+  text-align: right;
+`
+
+const InputTitle = styled.div`
+  font-size: 24px;
+  margin-top: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+`
+
+const UnitLabel = styled.label`
+  font-size:20px;
+  padding-left : 10px;
+`
+
+const UnitDiv = styled.div`
+  text-align: right;
+  padding-right: 10px;
 `
 
 const OttListPresenter = ({classChange, titleChange, classificationChange, max_member_numChange, createRoom, enterRoom, translationPlatform, roomList, myRoomList, searchClass}) => {
@@ -286,9 +340,10 @@ const OttListPresenter = ({classChange, titleChange, classificationChange, max_m
         </STabList>
 
         <STabPanel>
-          
-          <OttRoomListDiv> 
-            {roomList && roomList.slice(0).reverse().map((room) => ( 
+        
+          {(roomList.length !== 0) ? 
+            <OttRoomListDiv>
+              {roomList && roomList.slice(0).reverse().map((room) => ( 
               <OttRoom key={room.group_id}>
                 <OttRoomTitle>{room.title}</OttRoomTitle>
                 <OttRoomContent>
@@ -299,8 +354,11 @@ const OttListPresenter = ({classChange, titleChange, classificationChange, max_m
                 </OttRoomContent>
                 <StyledButton onClick={enterRoom} value={room.group_id}>ENTER</StyledButton>
               </OttRoom>
-              ))}
-          </OttRoomListDiv>
+              ))} 
+            </OttRoomListDiv>: <NoRoomListDiv>
+              현재 생성된 그룹이 없습니다.<br/><br/>새로운 그룹을 만들어보세요!
+          </NoRoomListDiv>}
+          
         </STabPanel>
 
         <STabPanel>
@@ -319,26 +377,35 @@ const OttListPresenter = ({classChange, titleChange, classificationChange, max_m
                 </MyRoom>
                 ))}
             </MyRoomListDiv> : <NoRoomListDiv>
-              없습니다
+              참여한 그룹이 없습니다.<br/><br/>다른 그룹에 참여하거나, 새로운 그룹을 만들어보세요!
           </NoRoomListDiv>}
         </STabPanel>
       </STabs>
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>방 생성</Modal.Title>
-        </Modal.Header>
         <Modal.Body> 
-          <h2>방 내용 입력</h2>
-          <OttSelect name="ott" value={optionsState} onChange={classificationChange}>
-            <OttOption value="netflix"> 넷플릭스</OttOption>
-            <OttOption value="watcha"> 왓챠</OttOption>
-            <OttOption value="tving"> 티빙</OttOption>
-            <OttOption value="wave"> 웨이브</OttOption>
-            <OttOption value="etc"> 기타</OttOption>
-          </OttSelect>
-          <Input placeholder="title" onChange={titleChange}></Input>
-          <Input type="number" pattern="[0-9]*" placeholder="maxmemnum" onChange={max_member_numChange}></Input>
+          <InputContainer>
+            <InputTitle>그룹 생성</InputTitle>
+            <InputLabel>그룹 제목</InputLabel>
+            <Input onChange={titleChange}></Input>
+            <InputDiv>
+              <div>
+                <InputLabel>그룹 OTT 플랫폼</InputLabel>
+                <OttSelect name="ott" value={optionsState} onChange={classificationChange}>
+                  <OttOption value="netflix">넷플릭스</OttOption>
+                  <OttOption value="watcha"> 왓챠</OttOption>
+                  <OttOption value="tving"> 티빙</OttOption>
+                  <OttOption value="wave"> 웨이브</OttOption>
+                  <OttOption value="etc"> 기타</OttOption>
+                </OttSelect>
+              </div>
+              <UnitDiv>
+                <InputLabel>그룹 최대 인원</InputLabel>
+                <UnitInput type="number" pattern="[0-9]*" onChange={max_member_numChange}/><UnitLabel> 명</UnitLabel>
+              </UnitDiv>
+            </InputDiv>
+            <p><br/>그룹을 만든 후, 수정을 통해 더 자세한 내용을 기입할 수 있습니다.</p>
+          </InputContainer>
         </Modal.Body>
         <Modal.Footer>
           <StyledButton variant="secondary" onClick={handleClose}>

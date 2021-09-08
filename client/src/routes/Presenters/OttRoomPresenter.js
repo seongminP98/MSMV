@@ -11,59 +11,11 @@ const OttPage = styled.div`
   display: grid;
 `
 
-const StyledLink = styled(Link)`
-  font-weight: 300;
-  background-color: white;
-  color : #6b66ff;
-  padding: 15px;
-  padding-top: 12px;
-  padding-bottom: 10px;
-  margin:0 5px 5px 0;
-  position: relative;
-  top: 20px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 20px;
-  transition: .2s all;
-  font-family: 'Jua', sans-serif;
-  border-radius: 5px;
-  &:hover {
-      background: #7D79FF;
-      color: white;
-  }
-`;
-
-const StyledButton = styled.button`
-  font-weight: 300;
-  background-color: white;
-  color : #6b66ff;
-  padding: 15px;
-  padding-top: 12px;
-  padding-bottom: 10px;
-  margin:0 5px 5px 0;
-  position: relative;
-  top: 20px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 20px;
-  transition: .2s all;
-  font-family: 'Jua', sans-serif;
-  border-radius: 5px;
-  &:hover {
-      background: #7D79FF;
-      color: white;
-  }
-`;
-
-
-
 const CommentDeleteButton = styled.button`
   color: white;
   background-color: #6B66FF;
   border-color: #6B66FF;
 `
-
-
 
 const ComLeft = styled.div`
     font-size: 15px;
@@ -377,6 +329,7 @@ const InputTitle = styled.div`
   font-size: 24px;
   margin-top: 14px;
   font-weight: 600;
+  margin-bottom: 14px;
 `
 
 const UnitLabel = styled.label`
@@ -620,14 +573,12 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
               <InputDiv>
                 <div>
                   <InputLabel>공유 ID</InputLabel>
-                  <HalfInput type="text" placeholder="ott_id" defaultValue={groupDetail.ott_id} onChange={ott_idChange}/>
+                  <HalfInput type="text" defaultValue={groupDetail.ott_id} onChange={ott_idChange}/>
                 </div>
                 <div>
                   <InputLabel>공유 비밀번호</InputLabel>
-                  <HalfInput type="text" placeholder="ott_pwd" defaultValue={groupDetail.ott_pwd} onChange={ott_pwdChange}/>
+                  <HalfInput type="text" defaultValue={groupDetail.ott_pwd} onChange={ott_pwdChange}/>
                 </div>
-                
-                
               </InputDiv>
             </InputContainer>
           ) : (<></>)}
