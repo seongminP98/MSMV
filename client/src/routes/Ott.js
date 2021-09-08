@@ -63,14 +63,19 @@ const Ott = ({match}) => {
   const change = {classChange, titleChange, classificationChange, max_member_numChange};
 
   const createRoom = async () => {
-    await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/make`, {title, classification, max_member_num}, {withCredentials : true})
-    .then((response) => {    
-      getRoomList();
-      getMyRoomList();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    if (!(title && max_member_num)) {
+      window.alert("제목과 최대 인원을 입력해야 합니다.");
+    }
+    else {
+      await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/make`, {title, classification, max_member_num}, {withCredentials : true})
+      .then((response) => {    
+        getRoomList();
+        getMyRoomList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
   }
 
   const [groupDetail, setGroupDetail] = useState();
