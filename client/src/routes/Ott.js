@@ -12,9 +12,10 @@ const Ott = ({match}) => {
   const [searchClass, setSearchClass] = useState();
 
   const classChange = async (e) => {
-    console.log(e);
-    if (e === "all")
+    if (e === "all") {
       getRoomList();
+      setSearchClass("");
+    }
     else 
       setSearchClass(e);
   }
@@ -46,7 +47,6 @@ const Ott = ({match}) => {
   const [title, setTitle] = useState();
   const [classification, setClassification] = useState("netflix");
   const [max_member_num, setMax_member_num] = useState();
-  const [money, setMoney] = useState();
 
   const titleChange = (e) => {
     setTitle(e.target.value);
@@ -116,7 +116,7 @@ const Ott = ({match}) => {
     });
   }
 
-  const submit = {createRoom, enterRoom};
+  const submit = {createRoom, enterRoom, translationPlatform};
 
   const [roomList, setRoomList] = useState([]);
   const [myRoomList, setMyRoomList] = useState([]);
@@ -141,7 +141,7 @@ const Ott = ({match}) => {
     });
   }
 
-  const props = {roomList, myRoomList};
+  const props = {roomList, myRoomList, searchClass};
 
 
   // below Room Detail
