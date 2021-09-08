@@ -32,13 +32,6 @@ const MovieTitleLink = styled(Link)`
   text-decoration: none;
   font-size: 20px;
   color: black;
-  hover {
-    text-decoration: underline;
-  }
-  
-  active {
-    text-decoration: underline;
-  }
 `;
 
 const MovieContent = styled.p`

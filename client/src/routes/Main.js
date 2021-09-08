@@ -25,7 +25,6 @@ const Main = () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/post/top10`)
     .then((response) => {
       setTopTenData(response.data.result);
-      console.log(response);
     })
     .catch((error) => {
       console.log(error);
@@ -36,19 +35,39 @@ const Main = () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/post/boxOffice`)
     .then((response) => {
       setBoxOfficeData(response.data.boxOffice);
-      console.log(response.data);
     })
     .catch((error) => {
       console.log(error);
     });
   }
   
+
+
+  const [genre, setGenre] = useState();
+  const [genreList, setGenreList] = useState([]);
+
+  const getGenre = async () => {
+    if (genre === undefined)
+      setGenre(1);
+    await axios.get(`${process.env.REACT_APP_SERVER_URL}/search/genre/${genre}`)
+    .then((response) => {
+      setGenreList(response.data.result);
+    })
+    .catch((error) => {
+      window.alert(error);
+    });
+  }
+
+  const selectGenre = (e) => {
+    setGenre(e.target.getAttribute("value"));
+  }
+
   useEffect(() => getTopTen(), []);
   useEffect(() => getBoxOffice(), []);
-
-
+  useEffect(() => getGenre(), [genre]);
+  
   return (
-    <MainPresenter topTenData={topTenData} boxOfficeData={boxOfficeData}/>
+    <MainPresenter topTenData={topTenData} boxOfficeData={boxOfficeData} genreList={genreList} selectGenre={selectGenre}/>
   )
 }
 

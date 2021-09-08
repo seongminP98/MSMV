@@ -2,7 +2,7 @@ import React from 'react';
 import store from '../../store';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import {Row, Col, Comment} from 'antd';
+import {Row, Col, Comment, Tooltip} from 'antd';
 import 'antd/dist/antd.css';
 import 'antd/dist/antd.less';
 import '../../App.css';
@@ -124,6 +124,18 @@ const NonReviewDiv = styled.div`
   margin: 15px;
   font-family: '나눔고딕'
 `
+const YTButton = styled.button`
+  width: 60px;
+  cursor: pointer;
+  border: none;
+  transition: .2s all;
+  background-color: red;
+  display: inline;
+  &:hover {
+      background: black;
+  }
+  border-radius: 12px;
+`;
 
 const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, reviewOnChange, writeOnClick, submitDeleteReview, starRating, onStarClick}) => {
   const director = [];
@@ -140,14 +152,22 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
     else
       actor.push(people);
   }
-
+//이 영화가 해시태그로 달린 유튜브 영상 보러가기!
   return (
       <Detail>
         <GridContainer>
           <MyImage src={movieData.image} alt={movieData.title}/>
           <MovieElement>
             <br/>
-            <ThemovieTitle>{movieData.title}</ThemovieTitle>
+            <ThemovieTitle>{movieData.title}&nbsp;
+              <Tooltip title="유튜브">
+                <a href={`https://www.youtube.com/results?search_query=%23${movieData.title}`} target="_blank">
+                  <YTButton>
+                    <img src="https://beslow.co.kr/assets/img/video_play.png" width="30px"/>
+                  </YTButton>
+                </a>
+              </Tooltip>
+             </ThemovieTitle>
             <br/>
             <MovieOutline>
               <p>관람등급 : {movieData.grade}<br/>
@@ -155,15 +175,16 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
               장르 : {movieData.genres}<br/>
               국가 : {movieData.country}<br/>
               상영시간 : {movieData.runningTime}</p>
-            </MovieOutline>
             <br/>
+            </MovieOutline>
+            
             <Tabs defaultActiveKey="home" id="uncontrolled-tab-example" className="mb-3">
               <Tab eventKey="home" title="줄거리">
                 <DetailContainer><DetPad>{movieData.summary}</DetPad></DetailContainer>
               </Tab>
               <Tab eventKey="profile" title="감독">
                 <PeopleWord>
-                <div label="감독" span={3} contentStyle={{ background: "white" }}>
+                <div label="감독" span={3}>
                   {director && director.map((people) => ( 
                     <React.Fragment key={people.peopleName}>
                         <img style={{width:'90px', height:'auto'}} src={people.peopleImage} alt={people.peopleName}/><br/>
@@ -175,7 +196,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
               </Tab>
               <Tab eventKey="contact" title="배우">
                 <PeopleWord>
-                <div label="배우" span={3} contentStyle={{ background: "white" }}>
+                <div label="배우" span={3}>
                   
                   <Row gutter={[16,16]}>
                     {actor && actor.map((people) => ( 
@@ -192,7 +213,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
                 </PeopleWord>
               </Tab>
               <Tab eventKey="recommend" title="추천영화">
-                {recommendedMovies.length ? <div label="추천" span={3} contentStyle={{ background: "white" }}>
+                {recommendedMovies.length ? <div label="추천" span={3}>
                   <DetailContainer><DetPad>
                     <Row gutter={[16,16]}>
                       {recommendedMovies && recommendedMovies.map((movie) => ( 

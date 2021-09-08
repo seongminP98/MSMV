@@ -64,12 +64,11 @@ const Detail = () => {
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/review`, { contents, rate, movieCd, movieTitle }, {withCredentials : true})
     .then((response) => {
      console.log(response);
-     window.alert("리뷰 작성 완료");
      getMovieData();
     })
     .catch((error)=> {
       console.log(error);
-      window.alert("리뷰 작성 중 오류 발생")
+      window.alert("리뷰 작성 중 오류가 발생했습니다.")
     })
     
   }
@@ -86,7 +85,7 @@ const Detail = () => {
     await axios.delete(`${process.env.REACT_APP_SERVER_URL}/review/${e.target.id}`, {withCredentials: true})
     .then((response) => {
      console.log(response);
-     window.alert("리뷰 삭제 완료")
+     window.alert("리뷰가 삭제되었습니다.")
      getMovieData();
     })
     .catch((error)=> {

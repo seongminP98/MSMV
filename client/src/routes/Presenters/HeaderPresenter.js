@@ -9,7 +9,7 @@ import "../../App.css";
 const Header = styled.header`
   position:relative; 
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 2fr;
   padding-top: 13px;
   width: 100%;
   height: 90px;
@@ -65,7 +65,7 @@ const MenuLeft = styled(Menu)`
   text-align: left;
   padding-left: 80px;
   padding-right:0px;
-  overflow:hidden;
+  overflow: hidden;
 `;
 
 const IntroMent = styled(StyledLink)`
@@ -87,6 +87,8 @@ const HeaderPresenter = ({user, LogoutClick}) => {
               <StyledLink to="MyPage"><img src="./avatar.png" width="25px" alt=""/></StyledLink>
             </Tooltip>
             <IntroMent to="MyPage">안녕하세요, {user.nickname}님!</IntroMent>
+            <StyledLink to="/Recomm">추천</StyledLink>
+            <StyledLink to="/Ott">OTT</StyledLink>
           </>
         ) : (<></>)}  
       </MenuLeft>

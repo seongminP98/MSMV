@@ -10,6 +10,8 @@ import Search from './routes/Search.js';
 import Detail from './routes/Detail.js';
 import MyPage from './routes/MyPage.js';
 import Genre from './routes/Genre.js';
+import Recomm from './routes/Recomm.js'
+import Ott from './routes/Ott.js'
 
 import store from "./store";
 import axios from 'axios';
@@ -75,7 +77,8 @@ function App() {
           <Route exact path="/mypage">
             <MyPage />
           </Route>
-            
+          <Route exact path="/recomm" component={Recomm}/>
+          <Route path="/ott" component={Ott}/>
         </Router>
       )}
       <FooterDesign>Made by SangMyung University<br/>CS GladOS Team</FooterDesign>

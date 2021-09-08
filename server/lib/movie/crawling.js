@@ -58,8 +58,24 @@ const parsingRecommend = async(keyword, result,callback) => {
     const $ = cheerio.load(html.data); 
     let grade = $(".info_spec").find("span:eq(4)").text().trim()
     grade = grade.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+
+    //등급의 위치가 span:eq(4)가아닌 더 앞에 있는 경우가 있음.
+    let gradeCheck = [$(".info_spec").find("span:eq(2)").text().trim(),
+                    $(".info_spec").find("span:eq(3)").text().trim(),
+                    $(".info_spec").find("span:eq(4)").text().trim()];
+
+
     result.grade = grade;
-    if(grade.includes('[국내]청소년 관람불가')){
+    let gradeFlag = true;
+    for(let i=0; i<gradeCheck.length; i++) {
+        let gc = gradeCheck[i].replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+
+        if(gc.includes('[국내]청소년 관람불가')){
+            gradeFlag = false;
+        }
+    }
+
+    if(!gradeFlag){
         callback(false);
     } else{
         let date = $(".info_spec").find("span:eq(3)").text().trim()
@@ -108,9 +124,9 @@ const parsingGenre = async(keyword, callback) => {
 
     let list = new Array();
     let movie = new Object();
-    let len = $(".list_ranking").find("tr").length;
+    // let len = $(".list_ranking").find("tr").length; //해당 장르에 속한 영화결과가 다 필요할 때 사용. 현재는 10개만 사용함.
     let rank = 1;
-    for(let i=2; i<len-1; i++ ){
+    for(let i=2; i<12; i++ ){
         let mvLink = $(".list_ranking").find(`tr:eq(${i})`).find("td.title > .tit3 > a").attr("href") //영화링크
         let mvName = $(".list_ranking").find(`tr:eq(${i})`).find("td.title > .tit3 > a").text()
         if(mvLink !== undefined){
