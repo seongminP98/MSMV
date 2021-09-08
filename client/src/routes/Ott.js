@@ -323,7 +323,7 @@ const Ott = ({match}) => {
   }
 
   const detailChange = {detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange};
-  const detailSubmit = {patchDetail, exitRoom, translationPlatform, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick};
+  const detailSubmit = {patchDetail, exitRoom, translationPlatform, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick, getRoomDetail};
 
 
   useEffect(() => getRoomList(), [window.location.href]);

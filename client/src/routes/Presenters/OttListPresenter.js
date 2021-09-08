@@ -250,25 +250,6 @@ const InputLabel = styled.label`
   display: block;
 `
 
-const NoticeInput = styled.textarea`
-  padding: 10px 10px;
-  font-size: 15px;
-  box-sizing: border-box;
-  margin-top: 5px;
-  margin-bottom: 10px;
-  border: 1px solid gray;
-  border-radius: 3px;
-  transition: border 0.1s ease-in-out;
-  outline: none;
-  &:hover,
-  &:focus {
-    border: 2px solid #6799ff;
-  }
-  height : 100px;
-  width: 100%;
-  text-overflow: auto;
-`
-
 const InputDiv = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;

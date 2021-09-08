@@ -386,7 +386,7 @@ const CommentForm = styled.form`
   margin-bottom: 30px;
 `
 
-const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick} ) => {
+const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick, getRoomDetail} ) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -496,7 +496,7 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
           <MenuButton onClick={remittanceShow}>송금 요청<br/>확인</MenuButton>
           </> : <>
           <MenuButton onClick={sendRemittanceDone}>송금 요청<br/>전송</MenuButton>
-          <MenuButton>계정 확인</MenuButton>
+          <MenuButton onClick={getRoomDetail}>계정 확인</MenuButton>
           </>}
             
           <MenuButton to="/Ott">목록으로<br/>돌아가기</MenuButton>
