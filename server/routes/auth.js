@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const middleware = require('./middleware');
 
-router.post('/login', (req, res, next) => {
+router.post('/login', middleware.isNotLoggedIn, (req, res, next) => {
   passport.authenticate('local', function (err, user, info) {
     if (err) {
       return next(err);
@@ -29,7 +30,7 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/login', function (req, res, next) {
+router.get('/login', middleware.isLoggedIn, function (req, res, next) {
   if (req.user) {
     res.status(200).send({ code: 200, data: req.user });
   } else {
@@ -37,7 +38,7 @@ router.get('/login', function (req, res, next) {
   }
 });
 
-router.get('/logout', function (req, res, next) {
+router.get('/logout', middleware.isLoggedIn, function (req, res, next) {
   req.logout();
   req.session.save(function () {
     res.status(200).send({ code: 200 });

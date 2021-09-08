@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
+const middleware = require('./middleware');
 
-router.post('/', async(req,res,next)=> {
-  console.log('------');
-  console.log(req.user.id);
-  console.log('------');
-
+router.post('/',middleware.isLoggedIn, async(req,res,next)=> {
     await db.query('INSERT INTO review(contents, commenter, rate, movieCd, movieTitle) values (?, ?, ?, ?, ?)', [
       req.body.contents, req.user.id, req.body.rate, req.body.movieCd, req.body.movieTitle], async (error, result) =>{
       if(error) {
@@ -31,8 +28,8 @@ router.post('/', async(req,res,next)=> {
   
   
   
-  router.patch('/', async(req, res, next) => {
-    //req.body.id 는 리뷰의 id
+  router.patch('/', middleware.isLoggedIn, async(req, res, next) => {
+
     await db.query('SELECT commenter FROM review WHERE id=?',[req.body.id], async(error,result)=>{
       if(error){
         next(error);
@@ -47,7 +44,7 @@ router.post('/', async(req,res,next)=> {
   
   })
 
-  router.delete('/:id', async (req, res, next) => {
+  router.delete('/:id', middleware.isLoggedIn, async (req, res, next) => {
     await db.query('SELECT commenter FROM review WHERE id=?',[req.params.id], async(error,result)=>{
       if(error){
         next(error);
