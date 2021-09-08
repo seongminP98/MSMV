@@ -23,7 +23,7 @@ const isAdmin = async(req, res, next) => {
     }
 
     await db.query('select authority from userGroup where group_id = ? and user_id = ?',
-    [groupId, 18],
+    [groupId, req.user.id],
     async(error, result) => {
         if(error){
             console.error(error);
@@ -43,7 +43,7 @@ const isAdmin = async(req, res, next) => {
 
 const isGroupMember = async(req, res, next) => {
     await db.query('select * from userGroup where group_id = ? and user_id = ?',
-    [req.params.groupId, 18],
+    [req.params.groupId, req.user.id],
     async(error, result) => {
         if(error){
             console.error(error);

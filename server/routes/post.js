@@ -8,7 +8,7 @@ const movieData = require('../lib/movie/movieData');
 const movieRcm = require('../lib/movie/recommend');
 
 
-router.get('/detail/:movieCd', async function(req, response, next){
+router.get('/detail/:movieCd', async function(req, res, next){
   const movieCd = req.params.movieCd;
   await db.query('SELECT * FROM moviecount WHERE movieCd = ?', [movieCd], async function(error, results){
     if(error){
@@ -34,12 +34,12 @@ router.get('/detail/:movieCd', async function(req, response, next){
         throw(error3)
       }
       else{
-        crawling.parsingDetail(movieCd,resultR,function(res){
-          crawling.parsingPost(movieCd,res,function(res2){
-            if(res2){
-              response.status(200).send({code : 200, result : res2});
+        crawling.parsingDetail(movieCd,resultR,function(movie){
+          crawling.parsingPost(movieCd,movie,function(movie2){
+            if(movie2){
+              res.status(200).send({code : 200, result : movie2});
             }else{
-              response.status(400).send({code : 400, result : '에러'});
+              res.status(400).send({code : 400, result : '에러'});
             }
           })
         })
@@ -48,14 +48,14 @@ router.get('/detail/:movieCd', async function(req, response, next){
   })
 })
 
-router.get('/boxOffice', async function(req, response,next){
+router.get('/boxOffice', async function(req, res, next){
 
   await db.query('select * from boxoffice order by movierank',async(err, result)=>{
     if(err){
       next(err)
     }
     if(result.length>0){
-      response.status(200).send({code:200, boxOffice: result});
+      res.status(200).send({code:200, boxOffice: result});
     }
     else{
       let now = new Date();	// 현재 날짜 및 시간
@@ -114,10 +114,10 @@ router.get('/boxOffice', async function(req, response,next){
               naverAPI.getMovieList(option,rank)
               .then(function(result2){
                       
-                    crawling.parsing(result2.movieCd,result2,async function(res){
-                        movieList.push(res);
+                    crawling.parsing(result2.movieCd,result2,async function(movie){
+                        movieList.push(movie);
                         
-                        await db.query('insert into boxoffice(movierank,name,movieCd,image) values(?,?,?,?)',[res.rank*=1,res.name,res.movieCd,res.image],function(err,result){
+                        await db.query('insert into boxoffice(movierank,name,movieCd,image) values(?,?,?,?)',[movie.rank*=1, movie.name, movie.movieCd, movie.image], function(err,result){
                           if(err){
                             console.error('sql error, 검색안되는 영화 있음');
                           }
@@ -128,7 +128,7 @@ router.get('/boxOffice', async function(req, response,next){
                             if(err){
                               next(err)
                             }
-                             response.status(200).send({code:200, boxOffice: result});
+                             res.status(200).send({code:200, boxOffice: result});
                           })
                         }
                     })
@@ -140,7 +140,7 @@ router.get('/boxOffice', async function(req, response,next){
 })
 
 
-router.get('/top10', async function(req, response){
+router.get('/top10', async function(req, res){
   await db.query('SELECT * FROM weeklymovie ORDER BY count DESC LIMIT 10', function(error, result){
     if(error){
       throw(error);
@@ -155,17 +155,17 @@ router.get('/top10', async function(req, response){
       let result2 = new Object();
       result2.rank = i;
       result2.movieCd = movieCd[i];
-      crawling.parsing(movieCd[i],result2,function(res){
-          topMovies.push(res);
+      crawling.parsing(movieCd[i],result2,function(movies){
+          topMovies.push(movies);
           
           if(topMovies.length === movieCd.length){
               topMovies.sort(function(a,b){
                   return parseFloat(a.rank)-parseFloat(b.rank)
               })
               if(topMovies){
-                response.status(200).send({code : 200, result : topMovies});
+                res.status(200).send({code : 200, result : topMovies});
               }else{
-                response.status(400).send({code : 400, result : '에러'});
+                res.status(400).send({code : 400, result : '에러'});
               }
           }
       })
@@ -173,81 +173,19 @@ router.get('/top10', async function(req, response){
   })
 })
 
-router.get('/recommend/:movieCode', async function(req, response){
-  let res = await axios.get(`${process.env.FLASK_SERVER_URL}/${encodeURI(req.params.movieCode)}`);
-  movieRcm.movieRecommend(req.params.movieCode, res, function(movieList){
+router.get('/recommend/:movieCode', async function(req, res){
+  let rcmMovies = await axios.get(`${process.env.FLASK_SERVER_URL}/${encodeURI(req.params.movieCode)}`);
+  movieRcm.movieRecommend(req.params.movieCode, rcmMovies, function(movieList){
 
     if(movieList === 400){
-      return response.status(400).send({code : 400, result : '에러'});
+      return res.status(400).send({code : 400, result : '에러'});
     }
     else if(movieList === 204){
-      return response.status(204).send({code : 204, result : "이 콘텐츠에 대한 추천은 제공하지 않습니다."});
+      return res.status(204).send({code : 204, result : "이 콘텐츠에 대한 추천은 제공하지 않습니다."});
     } else{
-      response.status(200).send({code : 200, result : movieList});
+      res.status(200).send({code : 200, result : movieList});
     }
   })
-
-/*
-  let res = await axios.get(`${process.env.FLASK_SERVER_URL}/${encodeURI(req.params.movieCode)}`);
-  if(res.data === "error") {
-    response.status(204).send({code : 204, result : "이 콘텐츠에 대한 추천은 제공하지 않습니다."});
-    return;
-  } 
-  const movieList = new Array();
-  let check = Object.values(res.data).length;
-  let mv = new Object();
-
-  crawling.parsingRecommend(req.params.movieCode,mv,function(flag){
-    if(flag===false){
-      for(let i=0; i<check; i++) {
-        let movie = new Object();
-        movie.movieCode = Object.values(res.data)[i]
-        movie.rank = i;
-        crawling.parsing(Object.values(res.data)[i],movie,function(result){
-          if(result!==false){
-            movieList.push(result);
-          } else{
-            check--;
-          }
-          if(movieList.length === check) {
-            movieList.sort(function(a,b){
-              return parseFloat(a.rank)-parseFloat(b.rank)
-          })
-            if(movieList){
-              response.status(200).send({code : 200, result : movieList});
-            }else{
-              response.status(400).send({code : 400, result : '에러'});
-            }
-          }
-        })
-      }
-    } else{
-      for(let i=0; i<check; i++) {
-        let movie = new Object();
-        movie.movieCode = Object.values(res.data)[i]
-        movie.rank = i;
-        
-        crawling.parsingRecommend(Object.values(res.data)[i],movie,function(result){
-          if(result!==false){
-            movieList.push(result);
-          } else{
-            check--;
-          }
-          if(movieList.length === check) {
-            movieList.sort(function(a,b){
-              return parseFloat(a.rank)-parseFloat(b.rank)
-          })
-            if(movieList){
-              response.status(200).send({code : 200, result : movieList});
-            }else{
-              response.status(400).send({code : 400, result : '에러'});
-            }
-          }
-        })
-      }
-    }
-  })
-  */
 })
 
 module.exports = router;

@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 const bcrypt = require('bcrypt');
+const middleware = require('./middleware');
 
-router.post('/id', async(req,res,next)=> {//id중복확인
+router.post('/id', middleware.isNotLoggedIn, async(req,res,next)=> {//id중복확인
   await db.query(`SELECT user_id FROM users where user_id=?`, [req.body.id], (error, result) => {
     if (error) {
       next(error);
@@ -16,7 +17,7 @@ router.post('/id', async(req,res,next)=> {//id중복확인
   });
 });
 
-router.post('/nick', async function (req, res, next) {//nickname 중복확인
+router.post('/nick', middleware.isNotLoggedIn, async function (req, res, next) {//nickname 중복확인
   await db.query(`SELECT user_id FROM users where nickname=?`, [req.body.nickname],(error, result) => {
     if (error) {
       next(error);
@@ -29,7 +30,7 @@ router.post('/nick', async function (req, res, next) {//nickname 중복확인
   });
 });
 
-router.post('/', async function (req, res, next) {//회원가입
+router.post('/', middleware.isNotLoggedIn, async function (req, res, next) {//회원가입
   let user;
   bcrypt.hash(req.body.password, 12, async (err, hash) => {
     await db.query(

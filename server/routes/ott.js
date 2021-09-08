@@ -42,6 +42,13 @@ router.get('/mine', middleware.isLoggedIn, async(req, res, next) => { //내가 �
 })
 
 router.post('/make', middleware.isLoggedIn, async(req, res, next) => { //그룹 만들기
+    if(req.body.title === undefined) {
+        return res.status(400).send({code:400, result : '제목을 적어주세요.'});
+    } else if(req.body.classification === undefined) {
+        return res.status(400).send({code:400, result : '플랫폼을 적어주세요.'});
+    } else if(req.body.max_member_num === undefined) {
+        return res.status(400).send({code:400, result : '입장 가능한 인원 수를 적어주세요.'});
+    }
     await db.query('insert into ottGroup(title,classification,max_member_num) values(?,?,?)',
     [req.body.title, req.body.classification, req.body.max_member_num],
     async(error, result) => {
@@ -237,7 +244,7 @@ router.post('/remittance', middleware.isLoggedIn, async(req, res, next) => { //�
         } else if(result[0].authority === 'ADMIN') {
             res.status(403).send({code:403, result : '그룹장은 이용할 수 없습니다.'}); //그룹장이 요청
         } else if(result[0].remittance === 1) {
-            res.status(400).send({code:400, result : '이미 송금 확인이 완료된 상태입니다.'}); //이미 송금요청 완료된 사람이 요청.
+            res.status(200).send({code:290, result : '이미 송금 확인이 완료된 상태입니다.'}); //이미 송금요청 완료된 사람이 요청.
         } else {
             await db.query('select * from remittanceCheck where group_id = ? and req_user_id = ?',
             [req.body.groupId, req.user.id],
@@ -247,7 +254,7 @@ router.post('/remittance', middleware.isLoggedIn, async(req, res, next) => { //�
                     next(error2);
                 }
                 if(result2.length > 0) {
-                    res.status(200).send({code:200, result : '이미 확인 요청을 보냈습니다.'});
+                    res.status(200).send({code:291, result : '이미 확인 요청을 보냈습니다.'});
                 }
                 else{
                     await db.query('select user_id as master from userGroup where group_id = ? and authority = ?',
@@ -381,35 +388,23 @@ router.delete('/:groupId',middleware.isLoggedIn, async(req, res, next) => { //�
     })
 })
 
-router.post('/comment/:groupId',middleware.isLoggedIn, async (req, res, next) => {
-    await db.query('select * from userGroup where group_id = ? and user_id = ?',
-    [req.params.groupId, req.user.id],
-    async(error, result) => {
-        if(error) {
-            console.error(error);
-            next(error);
+router.post('/comment/:groupId',middleware.isLoggedIn, middleware.isGroupMember, async (req, res, next) => {
+    await db.query('insert into comment(commenter, group_id, contents) values(?,?,?)',
+    [req.user.id, req.params.groupId, req.body.contents],
+    async(error2, result2) => {
+        if(error2) {
+            console.error(error2);
+            next(error2);
         }
-        if(result.length > 0) {
-            await db.query('insert into comment(commenter, group_id, contents) values(?,?,?)',
-            [req.user.id, req.params.groupId, req.body.contents],
-            async(error2, result2) => {
-                if(error2) {
-                    console.error(error2);
-                    next(error2);
-                }
-                await db.query('select * from comment where id = ?',
-                [result2.insertId],
-                (error3, result3) => {
-                    if(error3) {
-                        console.error(error3);
-                        next(error3);
-                    }
-                    res.status(200).send({code:200, result : result3})
-                })
-            })
-        } else {
-            res.status(403).send({code:403, result : '잘못된 접근. 그룹이 없거나 그룹에 속해있지 않습니다.'})
-        }
+        await db.query('select * from comment where id = ?',
+        [result2.insertId],
+        (error3, result3) => {
+            if(error3) {
+                console.error(error3);
+                next(error3);
+            }
+            res.status(200).send({code:200, result : result3})
+        })
     })
 })
 

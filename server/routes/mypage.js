@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 const bcrypt = require('bcrypt');
-
+const middleware = require('./middleware');
 
 //닉네임변경
-router.patch('/nickname', async(req, res, next) => {
+router.patch('/nickname', middleware.isLoggedIn, async(req, res, next) => {
   console.log(req.body.nickname);
   await db.query('SELECT id FROM users where nickname = ?', [req.body.nickname], function(error, result){
     if (error){
@@ -27,7 +27,7 @@ router.patch('/nickname', async(req, res, next) => {
 })
 
 
-router.patch('/password', async (req, res, next) => {
+router.patch('/password', middleware.isLoggedIn,  async (req, res, next) => {
   await db.query('SELECT password FROM users where id = ?', [req.user.id], async function(error, hash){
     if(error){
       console.error("쿼리문 에러");
@@ -61,7 +61,7 @@ router.patch('/password', async (req, res, next) => {
 
 
 //회원탈퇴
-router.post('/withdraw', async(req, res, next) => {
+router.post('/withdraw', middleware.isLoggedIn,  async(req, res, next) => {
   const id = req.user.id;
   const pw = req.body.pw;
   await db.query('SELECT password FROM users where id = ?', [req.user.id], async function(error, hash){
@@ -97,7 +97,7 @@ router.post('/withdraw', async(req, res, next) => {
   })
 })
 
-router.get('/myReview', async function(req, res, err){
+router.get('/myReview', middleware.isLoggedIn,  async function(req, res, err){
   await db.query('select review.id as review_id, contents, created, updated, commenter, rate, movieCd, movieTitle from review left join users on user_id = review.commenter where review.commenter = ?;', 
   [req.user.id], function(err, review){
     if(err){
