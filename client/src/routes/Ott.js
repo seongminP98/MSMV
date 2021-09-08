@@ -107,7 +107,7 @@ const Ott = ({match}) => {
     .then((response) => {
       console.log(response);
       if (response.data.code === 198) 
-        window.alert(e.target.result);
+        window.alert(response.data.result);
       else
         history.push(`/Ott/${e.target.value}`);
     })
@@ -250,7 +250,7 @@ const Ott = ({match}) => {
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/remittance`, {groupId}, {withCredentials : true})
     .then((response) => {    
       console.log(response);
-      window.alert("전송 완료")
+      window.alert(response.data.result);
     })
     .catch((error) => {
       console.log(error);
