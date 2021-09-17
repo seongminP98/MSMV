@@ -90,6 +90,12 @@ const parsingRecommend = async(keyword, result,callback) => {
         if(!result.title){
             let title = $(".mv_info_area").find(".h_movie").text()
             title = title.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
+            if(title.includes('상영중')){
+                title = title.split('상영중')[0];
+                show = true;
+            }else{
+                title = title.substring(0,title.length/2);
+            }
             result.title = title
         }
         if(genre===date){
