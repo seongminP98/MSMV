@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import store from '../../store';
 import Nav from 'react-bootstrap/Nav'
 import '../../App.css';
-import { Tab, Col, Row } from 'react-bootstrap';
+import { Tab, Col, Row, Popover, OverlayTrigger, Button } from 'react-bootstrap';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import StarRatingComponent from 'react-star-rating-component';
@@ -15,8 +15,8 @@ const Wrapper = styled.div`
   padding-left: 10px;
   font-family: 'Nanum Gothic', sans-serif;
   min-width:1190px;
-  // background: linear-gradient(135deg , #eaeaea, #c5cae9 )
 `;
+  // background: linear-gradient(135deg , #eaeaea, #c5cae9 )
 
 const MainTitle = styled.div`
   text-align: center;
@@ -25,8 +25,6 @@ const MainTitle = styled.div`
   font-size: 15px;
   font-family: 'Nanum Gothic', sans-serif;
   font-weight: 700;
-  background: ;
-  
   margin-left: auto;
   margin-right: auto;
 
@@ -42,9 +40,7 @@ const SubTitle = styled.div`
 
 const LeftLayout = styled.div`
   margin: 30px 0px 0px 50px;
-  background: ;
   font-size: 16px;
-  background: ;
   width: 65%;
   height: 200px;
   color: black;
@@ -52,13 +48,8 @@ const LeftLayout = styled.div`
 `;
 
 const SideBySide1 = styled.div`
-  // float: right;
-  // width: 500px;
   height: 150px;
   margin-left:-20px;
-  // background: ;
-  // margin-top: -50px;
-  // margin-right: 20px;
 `;
 
 const SideBySide2 = styled.div`
@@ -271,16 +262,33 @@ const MyTab = styled.div`
     font-size: 20px;
 `;
 const AllThing = styled.div`
-  background: linear-gradient(135deg , #eaeaea, #c5cae9 );
+  
 `;
+//background: linear-gradient(135deg , #eaeaea, #c5cae9 );
+
 const Pointword = styled.div`
   font-size:18px;
   font-weight:bold;
 `;
 
+const ExitPopover = styled(Popover)`
+  text-align: center;
+`
+
 const MyPagePresenter = ({takeNewNickname, submitNewNickname, takeOldPassword, takeNewPassword, submitNewPassword, takeWithdrawPassword, submitWithdraw, myReviews}) => {
   const user = store.getState().user;
 
+  const popover = (
+    <ExitPopover id="popover-basic">
+      <ExitPopover.Body>
+        아래의 버튼을 클릭할 시, 계정 정보가 사라지게 됩니다.<br/>
+        <br/>
+        <b>정말로 탈퇴하시겠습니까?</b><br/>
+        <br/>
+        <Button onClick={submitWithdraw}>탈퇴하기</Button>
+      </ExitPopover.Body>
+    </ExitPopover>
+    );
 
   return (
     <AllThing>
@@ -314,7 +322,7 @@ const MyPagePresenter = ({takeNewNickname, submitNewNickname, takeOldPassword, t
                         <Pointword><p>닉네임 변경</p></Pointword>
                         <p>현재 닉네임 : {user.nickname}</p>
                       <SideBySide1>
-                        <AllInput input onChange={takeNewNickname} placeholder="새 닉네임 입력"></AllInput>
+                        <AllInput onChange={takeNewNickname} placeholder="새 닉네임 입력"></AllInput>
                         <AllButton button onClick={submitNewNickname}>변경</AllButton>
                       </SideBySide1>
                       </LeftLayout>
@@ -335,9 +343,12 @@ const MyPagePresenter = ({takeNewNickname, submitNewNickname, takeOldPassword, t
                       <SubTitle><p>계정 탈퇴</p></SubTitle>
                         <LeftLayout>
                             <p>탈퇴할 경우 사용하고 계신 아이디({user.user_id})는 재사용 및 복구가 불가능합니다.</p>
+                            
                             <SideBySide3>
-                              <AllInput input onChange={takeWithdrawPassword} placeholder="현재 비밀번호 입력"></AllInput>
-                              <WarningButton button onClick={submitWithdraw}><b>탈퇴</b></WarningButton>
+                              <AllInput input type='password' onChange={takeWithdrawPassword} placeholder="현재 비밀번호 입력"></AllInput>
+                              <OverlayTrigger trigger="click" placement="top" overlay={popover}>
+                                <WarningButton variant="success">퇴장</WarningButton>
+                              </OverlayTrigger>
                             </SideBySide3>
                         </LeftLayout>
                       </DeleteLayout>

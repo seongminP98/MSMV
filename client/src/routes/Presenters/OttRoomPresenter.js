@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
-import {Modal} from "react-bootstrap";
+import {Modal, Popover, OverlayTrigger, Button} from "react-bootstrap";
 import {Comment, Tooltip} from 'antd';
 import moment from "moment";
 import store from '../../store';
@@ -349,16 +349,17 @@ const CommentDiv = styled.div`
   width : 600px;
   display: grid;
   margin: auto;
-  border-bottom: 1px solid lightgray;
+  margin-bottom: 4px;
+`
+
+const Comment2 = styled(Comment)`
+  border-bottom: 1px solid black;
 `
 
 const NonCommentDiv = styled(CommentDiv)`
   border: none;
-  border-bottom: none;
   ;
 `
-
-
 
 const CommentButton = styled.button`
   font-weight: 600;
@@ -386,6 +387,43 @@ const CommentForm = styled.form`
   margin-bottom: 30px;
 `
 
+const ExitButton = styled(Button)`
+  background: white;
+  font-size: 17px;
+  width: 120px;
+  color: black;
+
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  margin: auto;
+
+  position: relative;
+  bottom: 60px;
+
+  border-style: solid;
+  border-width : 1px 1px 3px 1px;
+  border-radius : 7px;
+  border-color: #595959;
+
+  &:hover {
+    color: #3FA6FB;
+    background: white;
+  }
+
+  &:focus {
+    color: black;
+    background: white;
+    box-shadow: none;
+  }
+`
+
+const ExitPopover = styled(Popover)`
+  text-align: center;
+`
+
 const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittances, detailTitleChange, noticeChange, accountChange, ott_idChange, ott_pwdChange, termChange, start_dateChange, newMoneyChange, commentsChange, patchDetail, checkMemberRemittance, sendRemittanceDone, setMemberRemittance, writeOnClick, deleteOnClick, getRoomDetail} ) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -407,6 +445,18 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
     setRemittanceModalShow(true);
     checkMemberRemittance();
   }
+
+  const popover = (
+    <ExitPopover id="popover-basic">
+      <ExitPopover.Body>
+        아래의 버튼을 클릭할 시, 해당 그룹에서 완전히 퇴장하게 됩니다.<br/>
+        <br/>
+        <b>그룹장이 퇴장할 경우, 해당 그룹은 완전히 사라집니다.</b><br/>
+        <br/>
+        <Button onClick={exitRoom}>그룹 퇴장</Button>
+      </ExitPopover.Body>
+    </ExitPopover>
+    );
 
   return (
     <OttPage>
@@ -452,8 +502,12 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
                 <ContentTitle3>기간 정보</ContentTitle3>
                 {groupDetail.start_date ? <>
                   예상 공유 시작일 : {moment(groupDetail.start_date).format('YYYY년 MM월 DD일')} <br/>
-                  기간 : {groupDetail.term}일 <br/>
-                  예상 공유 종료일 : {moment(groupDetail.end_date).format('YYYY년 MM월 DD일')} <br/>
+                  {groupDetail.term ? <>
+                    기간 : {groupDetail.term}일 <br/>
+                    예상 공유 종료일 : {moment(groupDetail.end_date).format('YYYY년 MM월 DD일')} <br/>
+                    </> : <>
+                      입력된 공유 기간 정보가 없습니다.
+                    </>}
                 </> : <>
                   기간 정보가 없습니다.
                 </>}
@@ -463,7 +517,7 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
                 <ContentTitle3>계좌 정보</ContentTitle3>
                 {groupDetail.account ? <>
                   송금 계좌 : {groupDetail.account} <br/>
-                 총 결제 금액 : {groupDetail.total_money}원 <br/>
+                  총 결제 금액 : {groupDetail.total_money}원 <br/>
                   멤버별 결제 금액 : {groupDetail.div_money}원 <br/>
                 </> : <>
                   계좌 정보가 없습니다.
@@ -487,8 +541,6 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
             
           </div>
         </ContentDiv>
-        
-        
         <MenuDiv>
           <TitleDiv>메뉴</TitleDiv>
           {(store.getState().user.id === groupDetail.ADMIN[0].user_id) ? <>
@@ -500,17 +552,19 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
           </>}
             
           <MenuButton to="/Ott">목록으로<br/>돌아가기</MenuButton>
-          <MenuButton onClick={exitRoom}>퇴장</MenuButton>
+          <OverlayTrigger trigger="click" placement="top" overlay={popover}>
+            <ExitButton variant="success">그룹 퇴장</ExitButton>
+          </OverlayTrigger>
         </MenuDiv>
     </OttDiv> : <div> No GroupDetail available.</div>}
 
-
+            
 
     <CommentDiv>
       {groupDetail && groupDetail.comments.length > 0 ? (
         <>
           {groupDetail.comments.map((comment) => ( 
-            <Comment 
+            <Comment2 
               key={comment.id}
               actions={[
                 <div>
@@ -523,14 +577,14 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
               content={
                 <CommentContent>
                   <div>        
-                    <b>{comment.nickname}</b> &nbsp;{moment(comment.created).format("YYYY-MM-DD")} 작성<br/>
+                    <b>{comment.nickname}</b> &nbsp;{moment(comment.created).format("YYYY-MM-DD hh:mm")} 작성<br/>
                   </div>
                   <div> 
                     {comment.contents}
                   </div>
                 </CommentContent>
               }>
-            </Comment>
+            </Comment2>
           ))}
         </>):(
           <NonCommentDiv>댓글이 없습니다.</NonCommentDiv>
@@ -556,7 +610,7 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
           {groupDetail ? (
             <InputContainer>
               <InputTitle>그룹 내용 수정</InputTitle>
-              <InputLabel>제목</InputLabel>
+              <InputLabel>그룹 이름</InputLabel>
               <Input required={true} type="text" defaultValue={groupDetail.title} onChange={detailTitleChange} minLength={2}/>
               <InputLabel>공지사항</InputLabel>
               <NoticeInput placeholder="그룹의 멤버들에게 공지할 사항을 입력해주세요." defaultValue={groupDetail.notice} onChange={noticeChange}/>
@@ -569,7 +623,7 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
                 </div>
                 <UnitDiv>
                   <InputLabel>총 결제 금액</InputLabel>
-                  <UnitInput required={true} type="number" defaultValue={groupDetail.total_money} onChange={newMoneyChange}/> <UnitLabel>원</UnitLabel>
+                  <UnitInput required={true} type="number" pattern="[0-9]*" defaultValue={groupDetail.total_money} onChange={newMoneyChange}/> <UnitLabel>원</UnitLabel>
                 </UnitDiv>
               </InputDiv>
               <hr/>
@@ -583,7 +637,7 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
                 <div>
                 <InputLabel>예상 서비스 이용 기간</InputLabel>
                   <UnitDiv>
-                    <UnitInput required={true} type="number" defaultValue={groupDetail.term} onChange={termChange}/> <UnitLabel>일</UnitLabel>
+                    <UnitInput required={true} type="number" pattern="[0-9]*" defaultValue={groupDetail.term} onChange={termChange}/> <UnitLabel>일</UnitLabel>
                   </UnitDiv>
                 </div>
               </InputDiv>
@@ -615,9 +669,9 @@ const OttRoomPresenter = ( {groupDetail, exitRoom, translationPlatform, remittan
 
       <Modal show={remittanceModalShow} onHide={remittanceClose}>
         <Modal.Header closeButton>
-          <Modal.Title>요청 확인</Modal.Title>
+          <InputTitle>송금 요청 확인</InputTitle>
         </Modal.Header>
-        <Modal.Body> 
+        <Modal.Body>
           <RemittanceDiv>
             {remittances && remittances.length ? (remittances.map((remittance) => ( 
             <Remittance key={remittance.remittanceCheck_id}>

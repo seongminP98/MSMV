@@ -107,7 +107,7 @@ const MovieSummary = styled.p`
   width : 500px;
   overflow: hidden; text-overflow: ellipsis;
   display: -webkit-box; 
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 5;
   -webkit-box-orient: vertical; 
   word-wrap:break-word;
   line-height: 1.5em;
@@ -119,6 +119,23 @@ const SummaryLink = styled(Link)`
   height: 1.5em;
   position: relative;
   left:450px;
+
+  color: black;
+
+  padding: 5px;
+  font-family: "Jua";
+  margin: auto;
+
+  border-style: solid;
+  border-width : 0 0 3px 0;
+  border-radius : 7px;
+  border-color: #595959;
+
+  background-color: #7D79FF;
+  &:hover {
+      background: white;
+      color: #6b66ff;
+  }
 `;
 
 

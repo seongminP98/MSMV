@@ -4,7 +4,7 @@ import OttListPresenter from './Presenters/OttListPresenter';
 import OttRoomPresenter from './Presenters/OttRoomPresenter';
 import { HashRouter as Router, Route, useHistory, useLocation } from 'react-router-dom'; 
 import moment from "moment";
-
+import swal from "@sweetalert/with-react";
 
 const Ott = ({match}) => {
   // below Room List
@@ -64,7 +64,7 @@ const Ott = ({match}) => {
 
   const createRoom = async () => {
     if (!(title && max_member_num)) {
-      window.alert("제목과 최대 인원을 입력해야 합니다.");
+      swal("제목과 최대 인원을 입력해야 합니다.");
     }
     else {
       await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/make`, {title, classification, max_member_num}, {withCredentials : true})
@@ -101,7 +101,7 @@ const Ott = ({match}) => {
         setNewMoney(response.data.result.total_money);
       })
       .catch((error) => {
-        window.alert(error);
+        swal(error);
         history.push("/");
       });
     }
@@ -110,9 +110,8 @@ const Ott = ({match}) => {
   const enterRoom = async (e) => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/ott/participation/${e.target.value}`, {withCredentials : true})
     .then((response) => {
-      console.log(response);
       if (response.data.code === 198) 
-        window.alert(response.data.result);
+        swal(response.data.result);
       else
         history.push(`/Ott/${e.target.value}`);
     })
@@ -194,7 +193,8 @@ const Ott = ({match}) => {
 
 
   function validateDate(date) {
-    let today = new Date();
+    let today = moment(new Date()).format('YYYY-MM-DD');
+    today = new Date(today);
     let comp = new Date(date);
 
     if (comp - today >= 0)
@@ -207,16 +207,22 @@ const Ott = ({match}) => {
     let title = detailTitle;
     let money = newMoney;
     if (validateDate(start_date)) {
-      window.alert("입력한 날짜가 유효하지 않습니다.");
+      swal("입력한 날짜가 유효하지 않습니다.");
       return 0;
     }
+
+    if (detailTitle === "") {
+      swal("그룹 이름은 필수 입력 사항입니다.");
+      return 0;
+    }
+
 
     let tempDate = new Date(start_date);
     tempDate.setDate(tempDate.getDate() + Number(term));
     let end_date = moment(tempDate).format('YYYY-MM-DD');
     await axios.patch(`${process.env.REACT_APP_SERVER_URL}${location.pathname}`, {title, notice, account, ott_id, ott_pwd, term, start_date, end_date, money}, {withCredentials : true})
     .then((response) => {    
-      window.alert("수정이 완료됐습니다.");
+      swal("수정이 완료됐습니다.");
       getRoomDetail();
     })
     .catch((error) => {
@@ -229,7 +235,6 @@ const Ott = ({match}) => {
   const exitRoom = async () => {
     await axios.delete(`${process.env.REACT_APP_SERVER_URL}/ott/${groupDetail.id}`, {withCredentials : true})
     .then((response) => {    
-      console.log(response);
       history.push("/ott");
     })
     .catch((error) => {
@@ -242,7 +247,6 @@ const Ott = ({match}) => {
   const checkMemberRemittance = async () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/ott/remittance/${groupDetail.id}`, {withCredentials : true})
     .then((response) => {    
-      console.log(response);
       setRemittances(response.data.result);
     })
     .catch((error) => {
@@ -254,8 +258,7 @@ const Ott = ({match}) => {
     let groupId = groupDetail.id;
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/remittance`, {groupId}, {withCredentials : true})
     .then((response) => {    
-      console.log(response);
-      window.alert(response.data.result);
+      swal(response.data.result);
     })
     .catch((error) => {
       console.log(error);
@@ -268,8 +271,7 @@ const Ott = ({match}) => {
     let remittance_id = e.target.name;
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/remittance/complete`, {groupId, user_id, remittance_id}, {withCredentials : true})
     .then((response) => {    
-      console.log(response);
-      window.alert(`리미턴스 체크 완료`);
+      swal(`사용자의 송금 요청을 승인했습니다. 이제 해당 사용자와 OTT 플랫폼 계정 정보를 공유합니다.`);
       getRoomDetail();
       checkMemberRemittance();
     })
@@ -287,25 +289,22 @@ const Ott = ({match}) => {
   const writeOnClick = async () => {
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/ott/comment/${groupDetail.id}`, { contents }, {withCredentials : true})
     .then((response) => {
-     console.log(response);
      getRoomDetail();
     })
     .catch((error)=> {
       console.log(error);
-      window.alert("댓글 작성 중 오류가 발생했습니다.")
+      swal("댓글 작성 중 오류가 발생했습니다.")
     })
   }
 
   const deleteOnClick = async (e) => {
     await axios.delete(`${process.env.REACT_APP_SERVER_URL}/ott/comment/${e.target.id}`, {withCredentials: true})
     .then((response) => {
-     console.log(response);
-     window.alert("리뷰가 삭제되었습니다.")
+     swal("리뷰가 삭제되었습니다.")
      getRoomDetail();
     })
     .catch((error)=> {
-      console.log(error);
-      //window.alert(error.message);
+      swal(error.response.data.message);
     }) 
   }
 

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
 import RecommPresenter from './Presenters/RecommPresenter.js'
+import swal from "@sweetalert/with-react";
 
 const Recomm = () => {
   const [searchContent, setSearchContent] = useState('');
@@ -16,7 +17,6 @@ const Recomm = () => {
       }
       const check = 1;
       const movieNm = searchContent;
-      console.log("start axios");
       await axios.post(`${process.env.REACT_APP_SERVER_URL}/search`, { check, movieNm })
       .then((response) => {
         if (response.status === 204)
@@ -25,12 +25,8 @@ const Recomm = () => {
           setResult(response.data.result);
       })
       .catch((error) => {
-        window.alert(error.response.data.message);
+        swal(error.response.data.message);
       });
-      console.log("end axios");
-    
-      //result.sort((a, b) => a.rate < b.rate);
-      console.log(result);
       setCurrentSearch(searchContent);
     }
   }
@@ -45,11 +41,9 @@ const Recomm = () => {
     if (movieList.length < 5)
       if (!movieList.includes(e.target.value))
         setMovieList(movieList => [...movieList, e.target.value]);
-    console.log(movieList);
   }
 
   const deleteMovie = async (e) => {
-    console.log(e.target.getAttribute("value"));
     if (movieList.length === 1)
       setMovieList([]);
     else {
@@ -60,14 +54,14 @@ const Recomm = () => {
 
   const confirmMovie = async () => {
     if (movieList.length === 0)
-      window.alert("Enter somethign");
+      swal("하나 이상의 영화를 선택해주세요.");
     else {
       await axios.post(`${process.env.REACT_APP_SERVER_URL}/personalrcm`, { movieList }, {withCredentials : true})
       .then((response) => {
-        console.log(response);
+        swal("아래에서 추천 영화를 확인하세요!");
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
     
       await showRecommendMovies();
@@ -82,16 +76,14 @@ const Recomm = () => {
   const showRecommendMovies = async () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/personalrcm`, {withCredentials : true})
     .then((response) => {
-      console.log(response);
       if (response.status === 204) {
-        console.log(200); 
         setRecommendMovieList(undefined);
       }
       else
         setRecommendMovieList(response.data.result);
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
   }
 
@@ -102,14 +94,13 @@ const Recomm = () => {
       setSelectedMovies([]);
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/personalrcm/usermovie`, {movieList}, {withCredentials : true})
     .then((response) => {    
-      console.log(response);
       if (response.data.result==="먼저 영화를 선택해주세요.")
         setSelectedMovies([]);
       else
         setSelectedMovies(response.data.result);
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
   }
 
@@ -118,11 +109,10 @@ const Recomm = () => {
   const getSelectedMovies = async () => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/personalrcm/usermovies`, {withCredentials : true})
     .then((response) => {
-      console.log(response);
       setSelectedMovieList(response.data.result);
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
   }
   

@@ -12,7 +12,7 @@ const Header = () => {
     .then(() => {
       store.dispatch({type : 'LOGOUT'});
     })
-    .catch((e) => console.error(e));
+    .catch((error) => {;});
   };
   // check isinlogin
 

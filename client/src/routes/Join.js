@@ -3,6 +3,7 @@ import axios from 'axios';
 import store from '../store';
 import {useHistory} from 'react-router';
 import JoinPresenter from './Presenters/JoinPresenter';
+import swal from "@sweetalert/with-react";
 
 const Join = () => {
   const [id, setId] = useState('');
@@ -71,33 +72,33 @@ const Join = () => {
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/join`, { id, password, nickname })
       .then(async (response) => {
         await store.dispatch({ type: 'LOGIN', user: response.data.result });
-        window.alert('정상적으로 회원가입 되었습니다!');
+        swal('정상적으로 회원가입 되었습니다!');
         history.push({ pathname: '/' });
       })
-      .catch((err) => window.alert('회원가입 중 에러가 발생하였습니다!'));
+      .catch((error) => swal('회원가입 중 에러가 발생하였습니다!'));
   };
 
   const onSubmit = async (e) => {
     if (!isPasswordSame())
-      return window.alert('비밀번호를 다시 확인해주세요.');
+      return swal('비밀번호를 다시 확인해주세요.');
     
     //id check
     switch(await isIdAvailable()) {
       case 200 : 
         break;
       case 400 :
-        return window.alert('중복된 아이디입니다.'); 
+        return swal('중복된 아이디입니다.'); 
       default :
-        return window.alert('ID 체크 중 오류');
+        return swal('ID 체크 중 오류');
     }
 
     switch(await isNicknameAvailable()) {
       case 200 : 
         break;
       case 400 :
-        return window.alert('중복된 닉네임입니다.'); 
+        return swal('중복된 닉네임입니다.'); 
       default :
-        return window.alert('닉네임 체크 중 오류');
+        return swal('닉네임 체크 중 오류');
     }
 
     await requestJoin();

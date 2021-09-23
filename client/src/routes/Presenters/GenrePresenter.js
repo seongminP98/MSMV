@@ -3,6 +3,8 @@ import {Link} from "react-router-dom";
 import styled from "styled-components";
 
 
+//unused Page
+
 const MovieCard = styled.div`
   padding : 15px;
   class: "card bg-primary mb-3";

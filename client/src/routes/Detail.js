@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import DetailPresenter from "./Presenters/DetailPresenter.js";
 import {useLocation} from "react-router";
 import axios from "axios";
+import swal from "@sweetalert/with-react";
 
 const Detail = () => {
   // below for detail code
@@ -20,10 +21,8 @@ const Detail = () => {
       setMovieData(response.data.result);
       setMovieReviews(response.data.result.review);
       setPeoples(response.data.result.people);
-      console.log(response.data.result);
     })
     .catch((error) => {
-      console.log(error);
     });
 
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/post/recommend/${movieCd}`)
@@ -31,6 +30,7 @@ const Detail = () => {
       if (response.status === 204)
         setRecommendedMovies([]);
       else {
+        console.log(response); // for test
         response.data.result.forEach(function(item, index, object) {
           if (item.image === 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png') {
             object.splice(index, 1);
@@ -38,10 +38,8 @@ const Detail = () => {
         });
         setRecommendedMovies(response.data.result);
       }
-      console.log(response.data.result);
     })
     .catch((error) => {
-      console.log(error);
     });
   }
 
@@ -55,20 +53,23 @@ const Detail = () => {
   const submitWriteReview = async () => {
     const contents = reviewContent;
     const rate = starRating.rating;
-    console.log(starRating);
     const movieTitle = movieData.title;
     if (starRating === 0) {
-      window.alert("별점을 매겨주세요.");
+      swal("별점을 매겨주세요.");
       return;
     }
+
+    if (contents === "") {
+      swal("내용을 입력해주세요.");
+      return;
+    }
+
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/review`, { contents, rate, movieCd, movieTitle }, {withCredentials : true})
     .then((response) => {
-     console.log(response);
      getMovieData();
     })
     .catch((error)=> {
-      console.log(error);
-      window.alert("리뷰 작성 중 오류가 발생했습니다.")
+      swal("리뷰 작성 중 오류가 발생했습니다.")
     })
     
   }
@@ -84,19 +85,16 @@ const Detail = () => {
   const submitDeleteReview = async (e) => {
     await axios.delete(`${process.env.REACT_APP_SERVER_URL}/review/${e.target.id}`, {withCredentials: true})
     .then((response) => {
-     console.log(response);
-     window.alert("리뷰가 삭제되었습니다.")
+     swal("리뷰가 삭제되었습니다.")
      getMovieData();
     })
     .catch((error)=> {
-      console.log(error);
-      //window.alert(error.message);
+      swal(error.response.data.message);
     }) 
   }
 
   const onStarClick = (nextValue, prevValue, name) => {
     setStarRating({rating: nextValue});
-    console.log(starRating);
   };
 
   useEffect(() => getMovieData(), [window.location.href]);

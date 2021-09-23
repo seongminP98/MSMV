@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import store from "../store";
 import MyPagePresenter from './Presenters/MyPagePresenter.js';
+import swal from "@sweetalert/with-react";
 
 const MyPage = () => {
   const [newNickname, setNewNickname] = useState('');
@@ -16,29 +17,28 @@ const MyPage = () => {
 
   const submitNewNickname = async () => {
     const nickname = newNickname;
-    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/mypage/nickname`, { nickname }, { withCredentials: true })
-    .then((response) => {
-      console.log(response);
-      if (response.data.code === 400) {
-        console.log("닉네임 중복");
-        window.alert("400 : 해당 닉네임이 이미 존재합니다.");
-      }
-      else if (response.data.code === 200) {
-        console.log("닉네임 변경 완료");
-        window.alert("닉네임이 정상적으로 변경되었습니다.");
-        window.location.reload();
-      }
-    })
-    .catch((error) => {
-      window.alert(error);
-    });
-  }
 
-  const testNewNickname = async () => {
-    console.log(store.getState());
-    //console.log(store.getState().user.nickname);
+    if (nickname === store.getState().user.nickname) {
+      swal("현재 닉네임과 동일한 닉네임입니다.")
+    }
+    else {
+      await axios.patch(`${process.env.REACT_APP_SERVER_URL}/mypage/nickname`, { nickname }, { withCredentials: true })
+      .then((response) => {
+        if (response.data.code === 400) {
+          swal("해당 닉네임이 이미 존재합니다.");
+        }
+        else if (response.data.code === 200) {
+          swal("닉네임이 정상적으로 변경되었습니다.\n\n잠시 후 업데이트됩니다...");
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000)
+        }
+      })
+      .catch((error) => {
+        swal(error);
+      });
+    }
   }
-
 
   const takeNewPassword = async (e) => {
     setNewPassword(e.target.value);
@@ -50,12 +50,13 @@ const MyPage = () => {
   const submitNewPassword = async () => {
     await axios.patch(`${process.env.REACT_APP_SERVER_URL}/mypage/password`, { oldPassword, newPassword }, { withCredentials: true })
     .then((response) => {
-        console.log("비밀번호 변경 완료");
-        window.alert("비밀번호가 정상적으로 변경되었습니다.");
+      swal("비밀번호가 정상적으로 변경되었습니다.\n\n잠시 후 업데이트됩니다...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000)
     })
     .catch((error) => {
-      console.log(error.response.data);
-      window.alert(error.response.data.message);
+      swal(error.response.data.message);
     });
   }
 
@@ -67,31 +68,30 @@ const MyPage = () => {
     const pw = withdrawPassword;
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/mypage/withdraw`, { pw }, { withCredentials: true })
     .then((response) => {
-        console.log("탈퇴 완료");
-        window.alert("탈퇴 완료");
+      swal("탈퇴가 정상적으로 진행되었습니다.");
+      setTimeout(() => {
         window.location.href = "/";
+      }, 2000)
     })
     .catch((error) => {
-      console.log(error.response.data);
-      window.alert(error.response.data.message);
+      swal(error.response.data.message);
     });
   }
 
   const getMyReviews = async() => {
     await axios.get(`${process.env.REACT_APP_SERVER_URL}/mypage/myReview`, { withCredentials:true })
     .then((response) => {
-      console.log(response);
       setMyReviews(response.data.result);
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      window.alert(error);
     });
   }
 
   useEffect(() => getMyReviews(), []);
 
   return (
-    <MyPagePresenter takeNewNickname={takeNewNickname} submitNewNickname={submitNewNickname} testNewNickname={testNewNickname} takeNewPassword={takeNewPassword} takeOldPassword={takeOldPassword} submitNewPassword={submitNewPassword} takeWithdrawPassword={takeWithdrawPassword} submitWithdraw={submitWithdraw} myReviews={myReviews}/>
+    <MyPagePresenter takeNewNickname={takeNewNickname} submitNewNickname={submitNewNickname} takeNewPassword={takeNewPassword} takeOldPassword={takeOldPassword} submitNewPassword={submitNewPassword} takeWithdrawPassword={takeWithdrawPassword} submitWithdraw={submitWithdraw} myReviews={myReviews}/>
   )
 }
 

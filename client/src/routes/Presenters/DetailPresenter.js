@@ -91,11 +91,13 @@ const MyImage = styled.img`
     margin-top:20px;
     // padding:10px;
     width:550px;
+    border-radius : 7px;
 `;
 
 
 const ReviewContent = styled(ComLeft)`
-  font-family: '나눔고딕'
+  font-family: '나눔고딕';
+  white-space: pre-line;
 `
 
 const Font = styled.div`
@@ -122,7 +124,7 @@ const TitleWord = styled.div`
 
 const NonReviewDiv = styled.div`
   margin: 15px;
-  font-family: '나눔고딕'
+  font-family: 맑은고딕;
 `
 const YTButton = styled.button`
   width: 60px;
@@ -160,7 +162,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
           <MovieElement>
             <br/>
             <ThemovieTitle>{movieData.title}&nbsp;
-              <Tooltip title="유튜브">
+              <Tooltip title={`#${movieData.title} in YouTube`}>
                 <a href={`https://www.youtube.com/results?search_query=%23${movieData.title}`} target="_blank">
                   <YTButton>
                     <img src="https://beslow.co.kr/assets/img/video_play.png" width="30px"/>
@@ -200,7 +202,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
                   
                   <Row gutter={[16,16]}>
                     {actor && actor.map((people) => ( 
-                    <React.Fragment key={people.index}>
+                    <React.Fragment key={people.peopleName}>
                       <Col lg={4} md={6} xs={12}>
                         <img style={{ width:'100%', height:'auto'}} src={people.peopleImage} alt={people.peopleName}/> 
                         <TitleWord>{people.peopleName}</TitleWord>
@@ -245,10 +247,9 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
               value={starRating.rating}
               onStarClick={onStarClick}
           />
-          <form style={{ display: 'flex' }}>
+          <form style={{ display: 'flex'}}>
             <textarea style={{ width: '80%', borderRadius: '2px' }}
-              onChange={reviewOnChange}
-              placeholder="리뷰를 입력해주세요">
+              onChange={reviewOnChange}>
             </textarea>
             <ReviewButton style={{ width: '20%', height: '52px' }} onClick={writeOnClick}>작성</ReviewButton>
           </form>
@@ -260,7 +261,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
       <Font>
       {movieReviews.length !== 0 ? (
         <>
-        {movieReviews.map((review) => ( 
+        {movieReviews.slice(0).reverse().map((review) => ( 
           <Comment 
             actions={[
               <React.Fragment key={review.id}>
@@ -268,7 +269,7 @@ const DetailPresenter = ({movieData, movieReviews, peoples, recommendedMovies, r
                 {store.getState().user ? (
                   (store.getState().user.id === review.commenter) ? (
                     <ReviewDeleteButton type="button" id={review.id} onClick={submitDeleteReview}>리뷰 삭제</ReviewDeleteButton>
-                    ) : (<p>{review.commenter}, {store.getState().user.id}</p>)
+                    ) : (<p></p>)
                     ) : (<p></p>)
                 }
               </div>

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import store from '../store';
 import { useHistory } from 'react-router';
-
+import swal from "@sweetalert/with-react";
 import AuthPresenter from './Presenters/AuthPresenter';
 
 const Auth = () => {
@@ -27,7 +27,7 @@ const Auth = () => {
       history.push({pathname : '/'});
       store.dispatch({ type : 'LOGIN', user: response.data.result});
     })
-    .catch((error) => window.alert("아이디와 비밀번호를 확인해주세요."));
+    .catch((error) => swal("아이디와 비밀번호를 확인해주세요."));
   } 
 
   return (

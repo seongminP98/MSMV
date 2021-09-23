@@ -42,11 +42,9 @@ function App() {
         await store.dispatch({ type: 'LOGIN', user: result.data.data });
         setIsLoginChecked(true);
       })
-    .catch((error) => {
+    .catch(() => {
       setIsLoginChecked(true);
     });
-    
-
   };
 
 

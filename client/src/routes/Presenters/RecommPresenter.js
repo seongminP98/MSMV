@@ -5,6 +5,7 @@ import styled from "styled-components";
 import {Tooltip} from 'antd';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "../../App.css";
+import swal from "@sweetalert/with-react";
 
 const Recomm = styled.div`
   padding-top: 40px;
@@ -219,7 +220,7 @@ const RecommPresenter = ({submitSearch, takeInput, result, currentSearch, select
 
   const handleConfirm = () => {
     if (selectedMovies.length === 0)
-      window.alert("Enter Something!")
+      swal("하나 이상의 영화를 선택해주세요!")
     else {
       confirmMovie();
       setShow(false);
