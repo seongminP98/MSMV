@@ -1,26 +1,26 @@
 {
   "files": {
-    "main.css": "/msmv/static/css/main.a8381a46.chunk.css",
-    "main.js": "/msmv/static/js/main.a35097ae.chunk.js",
-    "main.js.map": "/msmv/static/js/main.a35097ae.chunk.js.map",
-    "runtime-main.js": "/msmv/static/js/runtime-main.fb4cec86.js",
-    "runtime-main.js.map": "/msmv/static/js/runtime-main.fb4cec86.js.map",
-    "static/css/2.87938838.chunk.css": "/msmv/static/css/2.87938838.chunk.css",
-    "static/js/2.42c1a943.chunk.js": "/msmv/static/js/2.42c1a943.chunk.js",
-    "static/js/2.42c1a943.chunk.js.map": "/msmv/static/js/2.42c1a943.chunk.js.map",
-    "static/js/3.0233abaf.chunk.js": "/msmv/static/js/3.0233abaf.chunk.js",
-    "static/js/3.0233abaf.chunk.js.map": "/msmv/static/js/3.0233abaf.chunk.js.map",
-    "index.html": "/msmv/index.html",
-    "static/css/2.87938838.chunk.css.map": "/msmv/static/css/2.87938838.chunk.css.map",
-    "static/css/main.a8381a46.chunk.css.map": "/msmv/static/css/main.a8381a46.chunk.css.map",
-    "static/js/2.42c1a943.chunk.js.LICENSE.txt": "/msmv/static/js/2.42c1a943.chunk.js.LICENSE.txt",
-    "static/media/antd.less": "/msmv/static/media/antd.1fb1fa95.less"
+    "main.css": "/MSMV/static/css/main.a8381a46.chunk.css",
+    "main.js": "/MSMV/static/js/main.261301ec.chunk.js",
+    "main.js.map": "/MSMV/static/js/main.261301ec.chunk.js.map",
+    "runtime-main.js": "/MSMV/static/js/runtime-main.2ade1b34.js",
+    "runtime-main.js.map": "/MSMV/static/js/runtime-main.2ade1b34.js.map",
+    "static/css/2.87938838.chunk.css": "/MSMV/static/css/2.87938838.chunk.css",
+    "static/js/2.2c72b492.chunk.js": "/MSMV/static/js/2.2c72b492.chunk.js",
+    "static/js/2.2c72b492.chunk.js.map": "/MSMV/static/js/2.2c72b492.chunk.js.map",
+    "static/js/3.0233abaf.chunk.js": "/MSMV/static/js/3.0233abaf.chunk.js",
+    "static/js/3.0233abaf.chunk.js.map": "/MSMV/static/js/3.0233abaf.chunk.js.map",
+    "index.html": "/MSMV/index.html",
+    "static/css/2.87938838.chunk.css.map": "/MSMV/static/css/2.87938838.chunk.css.map",
+    "static/css/main.a8381a46.chunk.css.map": "/MSMV/static/css/main.a8381a46.chunk.css.map",
+    "static/js/2.2c72b492.chunk.js.LICENSE.txt": "/MSMV/static/js/2.2c72b492.chunk.js.LICENSE.txt",
+    "static/media/antd.less": "/MSMV/static/media/antd.1fb1fa95.less"
   },
   "entrypoints": [
-    "static/js/runtime-main.fb4cec86.js",
+    "static/js/runtime-main.2ade1b34.js",
     "static/css/2.87938838.chunk.css",
-    "static/js/2.42c1a943.chunk.js",
+    "static/js/2.2c72b492.chunk.js",
     "static/css/main.a8381a46.chunk.css",
-    "static/js/main.a35097ae.chunk.js"
+    "static/js/main.261301ec.chunk.js"
   ]
 }
