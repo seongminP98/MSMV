@@ -123,14 +123,6 @@ const MyReviewLayout = styled.div`
   // margin-right: auto;
 `;
 
-// const Table = styled.div`
-//   border: 1px solid black;
-//   border-radius:2px;
-//   width: 85%;
-//   height: auto;
-//   padding: 5px 10px 5px 10px;
-//   margin: 0 auto;
-// `;
 
 const Table = styled.div`
   border-bottom : 1px solid black;
@@ -138,11 +130,12 @@ const Table = styled.div`
   height: auto;
   padding: 20px 10px 15px 10px;
   margin: 0;
-
+  white-space: pre-line;
 `;
 const Review = styled.div`
   padding-left:40px;
 `;
+
 const Rate = styled.div`
   font-size: 14px;
 `;
@@ -158,6 +151,7 @@ const Info = styled.div`
 
 const Contents = styled.div`
   font-size: 14px;
+  font-weight: 100;
 `;
 
 const DeleteLayout = styled.div`

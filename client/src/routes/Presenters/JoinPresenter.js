@@ -99,7 +99,7 @@ const JoinPresenter = ({ onSubmit, onChange, id, password, nickname, passwordChe
       <JoinForm>
         <JoinTitle>회원가입</JoinTitle>
         <InputContainer>
-          <Input required={true} maxLength={10} value={id} placeholder="아이디" id="id" onChange={onChange} />
+          <Input required={true} minLength={5} maxLength={10} value={id} placeholder="아이디" id="id" onChange={onChange} />
           <Input required={true} maxLength={8} value={nickname} placeholder="닉네임" id="nickname" onChange={onChange} />
           {/* <Input
             required={true}
