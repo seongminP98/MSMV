@@ -38,7 +38,7 @@ const Join = () => {
       return code;
     }
 
-    if (id.length < 6) {
+    if (id.length < 5) {
       code = 402;
       return code;
     }
@@ -121,7 +121,7 @@ const Join = () => {
       case 401 :
         return swal("아이디를 입력해주세요.");
       case 402 : 
-        return swal("아이디가 너무 짧습니다. (6자 이상)");
+        return swal("아이디가 너무 짧습니다. (5자 이상)");
       default :
         return swal('ID 체크 중 오류');
     }
