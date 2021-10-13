@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
-const middleware = require('./middleware');
+const middleware = require('../lib/middleware');
 
 router.post('/',middleware.isLoggedIn, async(req,res,next)=> {
     await db.query('INSERT INTO review(contents, commenter, rate, movieCd, movieTitle) values (?, ?, ?, ?, ?)', [

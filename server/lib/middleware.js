@@ -1,4 +1,4 @@
-const db = require('../lib/db');
+const db = require('./db');
 
 const isLoggedIn = (req, res, next) => {
     if (req.isAuthenticated()) {

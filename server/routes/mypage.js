@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 const bcrypt = require('bcrypt');
-const middleware = require('./middleware');
+const middleware = require('../lib/middleware');
 
 //닉네임변경
 router.patch('/nickname', middleware.isLoggedIn, async(req, res, next) => {

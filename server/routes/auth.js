@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const middleware = require('./middleware');
+const middleware = require('../lib/middleware');
 
 router.post('/login', middleware.isNotLoggedIn, (req, res, next) => {
   passport.authenticate('local', function (err, user, info) {

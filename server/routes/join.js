@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
 const bcrypt = require('bcrypt');
-const middleware = require('./middleware');
+const middleware = require('../lib/middleware');
 
 router.post('/id', middleware.isNotLoggedIn, async(req,res,next)=> {//id중복확인
   await db.query(`SELECT user_id FROM users where user_id=?`, [req.body.id], (error, result) => {

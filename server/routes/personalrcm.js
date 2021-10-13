@@ -4,7 +4,7 @@ const db = require('../lib/db');
 const movieRcm = require('../lib/movie/recommend');
 const axios = require('axios');
 const crawling = require('../lib/movie/crawling');
-const middleware = require('./middleware');
+const middleware = require('../lib/middleware');
 
 router.post('/', middleware.isLoggedIn, async(req, res, next) => {
     let movieList = new Array();
