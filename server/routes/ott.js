@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
-const middleware = require('./middleware');
+const middleware = require('../lib/middleware');
 
 router.get('/', async(req, res, next) => { //그룹 목록
     await db.query('select group_id, title, classification, max_member_num, o.created, total_money, div_money, count(user_id) current_count from usergroup left join ottGroup as o on usergroup.group_id = o.id group by group_id',
@@ -281,7 +281,7 @@ router.post('/remittance', middleware.isLoggedIn, async(req, res, next) => { //�
     })
 })
 
-router.get('/remittance/:groupId',middleware.isLoggedIn, middleware.isAdmin, async(req, res, next) => { //그룹장이 송금완료 했다는 요청 확인.
+router.get('/remittance/:groupId',middleware.isLoggedIn, middleware.isAdmin, async(req, res, next) => { //그룹장이 송금요청 목록 보기.
     await db.query('select remittanceCheck.id as remittanceCheck_id, users.id as user_id, nickname, group_id from remittanceCheck join users on req_user_id = users.id where group_id = ?',
     [req.params.groupId],
     (error2, result2) => {
