@@ -29,7 +29,9 @@ router.post('/', async (req, res) => {
                         movieListNm.push(movie);
                     }
                 }
-                
+                movieListNm.sort(function(a,b){
+                    return parseFloat(b.rate)-parseFloat(a.rate)
+                })
                 res.status(200).send({code : 200, result : movieListNm});
             })
         }
