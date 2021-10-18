@@ -47,7 +47,7 @@ router.post('/', (req, res) => {
     else if(req.body.check === 2){ //감독명으로 검색
         // console.log("감독명으로 검색");
         if(req.body.dirNm === undefined){
-            movie.status(400).send({code : 400, message : "감독명을 입력해 주세요"});
+            res.status(400).send({code : 400, message : "감독명을 입력해 주세요"});
         } else{
             kobis.searchMovieDir(req.body.dirNm,function(movie){
                 let checkLength =movie.length
