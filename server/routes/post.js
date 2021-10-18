@@ -35,9 +35,9 @@ router.get('/detail/:movieCd', async function(req, res, next){
       }
       else{
         crawling.parsingDetail(movieCd,resultR,function(movie){
-          crawling.parsingPost(movieCd,movie,function(movie2){
-            if(movie2){
-              res.status(200).send({code : 200, result : movie2});
+          crawling.parsingPost(movieCd,movie,function(movieWithImage){
+            if(movieWithImage){
+              res.status(200).send({code : 200, result : movieWithImage});
             }else{
               res.status(400).send({code : 400, result : '에러'});
             }
@@ -94,9 +94,9 @@ router.get('/boxOffice', async function(req, res, next){
       
       let targetDt = yy[3]+month(yy)+yy[2];
       
-      let a = movieData.getName(targetDt);
+      let boxOfficeMovies = movieData.getName(targetDt);
       
-      a.then(function(result){
+      boxOfficeMovies.then(function(result){
           let movieList = new Array();
 
           for(let i=0; i<result.dailyBoxOfficeList.length; i++){
