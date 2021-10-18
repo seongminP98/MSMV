@@ -58,32 +58,31 @@ router.get('/', middleware.isLoggedIn,  async (req, res, next) => {
                 
                 let movieCode = result[i].movieCd;
                 let rcmMovie = await axios.get(`${process.env.FLASK_SERVER_URL}/personal/${encodeURI(movieCode)}`);
-                movieRcm.movieRecommend(movieCode, rcmMovie, function(movieList){
-                    check++;
-                    if(movieList === 400){
-                        console.log(400)
-                        return res.status(400).send({code : 400, result : '에러'});
-                    }
-                    else if(movieList === 204){
-                        console.log(204)
-                    } else{
-                        for(let j=0; j<movieList.length; j++) {
-                            
-                            if(!movieCdList.includes(movieList[j].movieCode)){
-                                sumList.push(movieList[j]);
-                                movieCdList.push(movieList[j].movieCode)
-                            }
+                let movieList = await movieRcm.movieRecommend(movieCode, rcmMovie);
+                check++;
+                if(movieList === 400){
+                    console.log(400)
+                    return res.status(400).send({code : 400, result : '에러'});
+                }
+                else if(movieList === 204){
+                    console.log(204)
+                } else{
+                    for(let j=0; j<movieList.length; j++) {
+                        
+                        if(!movieCdList.includes(movieList[j].movieCode)){
+                            sumList.push(movieList[j]);
+                            movieCdList.push(movieList[j].movieCode)
                         }
                     }
+                }
 
-                    if(check === result.length) {
-                        sumList.sort((a,b)=>{
-                            return parseFloat(a.rank)-parseFloat(b.rank);
-                        })
-                        
-                        return res.status(200).send({code : 200, result : sumList});
-                    }
-                })
+                if(check === result.length) {
+                    sumList.sort((a,b)=>{
+                        return parseFloat(a.rank)-parseFloat(b.rank);
+                    })
+                    
+                    return res.status(200).send({code : 200, result : sumList});
+                }
             }
         }
     })

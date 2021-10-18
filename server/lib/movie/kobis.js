@@ -17,7 +17,7 @@ function movieData2(movieCd){ //영화상세보기
 
 }
 
-function searchMovieDir(directorNm, callback){ //감독으로 검색
+function searchMovieDir(directorNm){ //감독으로 검색
     dirNm = utf8.encode(directorNm);
     return axios.get( `http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json?key=${process.env.serviceKey}&directorNm=${dirNm}`).then(response2 =>{
         resultMovies = new Array();
@@ -29,7 +29,7 @@ function searchMovieDir(directorNm, callback){ //감독으로 검색
         if(resultMovies.length === 0){
             return response.status(204).send();
         }
-        callback(resultMovies)
+        return resultMovies
     })
 }
 
