@@ -8,12 +8,10 @@ async function movieRecommend(movieCode, res, callback){
     
     if(res.data === "error") {
         callback(204)
-    //   response.status(204).send({code : 204, result : "이 콘텐츠에 대한 추천은 제공하지 않습니다."});
-    //   return;
     } else{
         const movieList = new Array();
-    let check = Object.values(res.data).length;
-    let mv = new Object();
+        let check = Object.values(res.data).length;
+        let mv = new Object();
   
     crawling.parsingRecommend(movieCode,mv,function(flag){
       if(flag===false){
@@ -33,10 +31,8 @@ async function movieRecommend(movieCode, res, callback){
             })
               if(movieList){
                 callback(movieList);
-                //response.status(200).send({code : 200, result : movieList});
               }else{
-                  callback(400);
-                //response.status(400).send({code : 400, result : '에러'});
+                callback(400);
               }
             }
           })
@@ -59,18 +55,15 @@ async function movieRecommend(movieCode, res, callback){
             })
               if(movieList){
                 callback(movieList);
-                // response.status(200).send({code : 200, result : movieList});
               }else{
                 callback(400);
-                // response.status(400).send({code : 400, result : '에러'});
               }
             }
           })
         }
       }
     })
-    }
-    
+  }
 }
 
 module.exports = {movieRecommend};

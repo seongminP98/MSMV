@@ -112,7 +112,7 @@ router.get('/boxOffice', async function(req, res, next){
               }
               let rank = result.dailyBoxOfficeList[i].rnum
               naverAPI.getMovieList(option,rank)
-              .then(function(result2){
+              .then((result2)=>{
                       
                     crawling.parsing(result2.movieCd,result2,async function(movie){
                         movieList.push(movie);

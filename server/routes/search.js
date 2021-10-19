@@ -85,7 +85,7 @@ router.post('/', (req, res) => {
         }
     }
     else{
-        response.status(400).send({code : 400, message : "감독명이나 영화로 검색해주세요(check에러)"});
+        res.status(400).send({code : 400, message : "감독명이나 영화로 검색해주세요(check에러)"});
     }
 })
 
