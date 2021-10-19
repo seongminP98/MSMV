@@ -4,8 +4,9 @@ const naverAPI = require('../lib/movie/naverAPI');
 const crawling = require('../lib/movie/crawling');
 const kobis = require('../lib/movie/kobis');
 
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
     if(req.body.check===1){ //제목으로 검색
+        // console.log('제목으로 검색')
         if(req.body.movieNm === undefined){
             res.status(400).send({code : 400, message : "제목을 입력해 주세요"});
         }else{
@@ -19,59 +20,68 @@ router.post('/', async (req, res) => {
             }
             let movieListNm = new Array();
             naverAPI.getMovieListNm(option)
-            .then(async(result)=>{
+            .then(function(result){
+                let len = result.length;
                 if(result.length === 0) {
                     return res.status(204).send();
                 }
-                for(let i=0; i<result.length; i++){
-                    let movie = await crawling.parsing(result[i].movieCd,result[i]);
-                    if(movie.image !== 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'){ //포스터 이미지 없는 영화 제외
-                        movieListNm.push(movie);
-                    }
+                for(let i=0; i<len; i++){
+                    crawling.parsing(result[i].movieCd,result[i],function(movie){
+                        if(movie.image === 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'){ //포스터 이미지 없는 영화 제외
+                            len--;
+                        }else{
+                            movieListNm.push(movie);
+                        }
+                        if(movieListNm.length === len){
+                            movieListNm.sort(function(a,b){
+                                return parseFloat(b.rate)-parseFloat(a.rate)
+                            })
+                            res.status(200).send({code : 200, result : movieListNm});
+                        }
+                    })
                 }
-                movieListNm.sort(function(a,b){
-                    return parseFloat(b.rate)-parseFloat(a.rate)
-                })
-                res.status(200).send({code : 200, result : movieListNm});
             })
         }
+        
     }
     else if(req.body.check === 2){ //감독명으로 검색
+        // console.log("감독명으로 검색");
         if(req.body.dirNm === undefined){
             res.status(400).send({code : 400, message : "감독명을 입력해 주세요"});
         } else{
-            let movie = await kobis.searchMovieDir(req.body.dirNm);
-            let checkLength =movie.length
-            
-            let movieList = new Array();
-            for(let i=0; i<movie.length; i++){
-                let prdtYear = movie[i].prdtYear;
-                const option = {
-                    query : movie[i].movieName,
-                    start : 1,
-                    display : 5,
-                    yearfrom : prdtYear,
-                    yearto : prdtYear,
-                    sort : 'sim',
-                    filter : 'small',
-                }
-                naverAPI.getMovieListDir(option,req.body.dirNm)
-                .then(async(result2)=>{  
-                    
-                    if(!result2){
-                        checkLength--;
-                    }else{
-                        let movie = await crawling.parsing(result2.movieCd,result2);
-                        movieList.push(movie);
-                        if(movieList.length === checkLength){
-                            movieList.sort(function(a,b){
-                                return parseFloat(b.rate)-parseFloat(a.rate)
-                            })
-                            res.status(200).send({code : 200, result : movieList});
-                        }
+            kobis.searchMovieDir(req.body.dirNm,function(movie){
+                let checkLength =movie.length
+                
+                let movieList = new Array();
+                for(let i=0; i<movie.length; i++){
+                    let prdtYear = movie[i].prdtYear;
+                    const option = {
+                        query : movie[i].movieName,
+                        start : 1,
+                        display : 5,
+                        yearfrom : prdtYear,
+                        yearto : prdtYear,
+                        sort : 'sim',
+                        filter : 'small',
                     }
-                })
-            }
+                    naverAPI.getMovieListDir(option,req.body.dirNm)
+                    .then(function(result2){  
+                        if(!result2){
+                            checkLength--;
+                        }else{
+                            crawling.parsing(result2.movieCd,result2,function(movie){
+                                movieList.push(movie);
+                                if(movieList.length === checkLength){
+                                    movieList.sort(function(a,b){
+                                        return parseFloat(b.rate)-parseFloat(a.rate)
+                                    })
+                                    res.status(200).send({code : 200, result : movieList});
+                                }
+                            })
+                        }
+                    })
+                }
+            })
         }
     }
     else{
@@ -79,7 +89,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.get('/genre/:tg', async(req, res) => {
+router.get('/genre/:tg', (req, res) => {
     /**
      *  1: 드라마 2: 판타지
         3: 서부 4: 공포
@@ -116,17 +126,25 @@ router.get('/genre/:tg', async(req, res) => {
         18. SF
         19. 액션
      */
-    let movies = await crawling.parsingGenre(req.params.tg)
-    if(movies.length === 0 ){
-        res.status(400).send({code : 400, message : "잘못된 입력입니다."});
-    }
+    crawling.parsingGenre(req.params.tg, (movies) => {
+        if(movies.length === 0 ){
+            res.status(400).send({code : 400, message : "잘못된 입력입니다."});
+        }
 
-    let movieList = new Array();
-    for(let i=0; i<movies.length; i++) {
-        let movie = await crawling.parsing(movies[i].code, movies[i]);
-        movieList.push(movie);
-    }
+        let movieList = new Array();
+        for(let i=0; i<movies.length; i++) {
+            crawling.parsing(movies[i].code, movies[i], (movie) => {
 
-    res.status(200).send({code : 200, result : movieList});
+                movieList.push(movie);
+                if(movieList.length === movies.length){
+                    movieList.sort(function(a,b){
+                        return parseFloat(a.rank)-parseFloat(b.rank)
+                    })
+                    res.status(200).send({code : 200, result : movieList});
+                }
+            })
+        }
+
+    })
 })
 module.exports = router;
