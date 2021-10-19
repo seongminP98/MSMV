@@ -17,7 +17,7 @@ const getHTMLPost = async(keyword) => {
     }
 }
 
-const parsing = async(keyword, result) => {
+const parsing = async(keyword, result, callback) => {
     const html = await getHTML(keyword);
     
     const $ = cheerio.load(html.data); 
@@ -48,11 +48,11 @@ const parsing = async(keyword, result) => {
         result.date = date
         
     }
-    return result;
+    callback(result);
     
 }
 
-const parsingRecommend = async(keyword, result) => {
+const parsingRecommend = async(keyword, result,callback) => {
     const html = await getHTML(keyword);
     
     const $ = cheerio.load(html.data); 
@@ -76,7 +76,7 @@ const parsingRecommend = async(keyword, result) => {
     }
 
     if(!gradeFlag){
-        return false;
+        callback(false);
     } else{
         let date = $(".info_spec").find("span:eq(3)").text().trim()
         date = date.replace(/(\r\n\t|\n|\r\t|\t)/gm,"")
@@ -104,7 +104,7 @@ const parsingRecommend = async(keyword, result) => {
             result.date = date
             
         }
-        return result;
+        callback(result);
     }
     
     
@@ -118,7 +118,7 @@ const getHTMLGenre = async(keyword) => {
     }
     
 }
-const parsingGenre = async(keyword) => {
+const parsingGenre = async(keyword, callback) => {
     const html = await getHTMLGenre(keyword);
     
     const $ = cheerio.load(html.data); 
@@ -140,10 +140,10 @@ const parsingGenre = async(keyword) => {
             rank++;
         }
     }
-    return list;
+    callback(list);
 }
 
-const parsingDetail = async(keyword,review) => {
+const parsingDetail = async(keyword,review, callback) => {
     const html = await getHTML(keyword);
     
     const $ = cheerio.load(html.data);
@@ -236,15 +236,15 @@ const parsingDetail = async(keyword,review) => {
         "grade" : grade,
         "review" : review
     }
-    return item;
+    callback(item);
 }
 
-const parsingPost = async(keyword,result) => {
+const parsingPost = async(keyword,result,callback) => {
     const html = await getHTMLPost(keyword);
     const $ = cheerio.load(html.data); 
     result.image = $("#page_content").find("img").attr("src")
 
-    return result;
+    callback(result);
 }
 
 
