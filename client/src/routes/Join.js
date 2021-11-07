@@ -116,7 +116,7 @@ const Join = () => {
     switch(await isIdAvailable()) {
       case 200 : 
         break;
-      case 400 :
+      case 409 :
         return swal('중복된 아이디입니다.');
       case 401 :
         return swal("아이디를 입력해주세요.");
@@ -129,7 +129,7 @@ const Join = () => {
     switch(await isNicknameAvailable()) {
       case 200 : 
         break;
-      case 400 :
+      case 409 :
         return swal('중복된 닉네임입니다.'); 
       case 401 :
         return swal("닉네임을 입력해주세요.");

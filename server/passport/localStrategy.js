@@ -1,7 +1,7 @@
 const LocalStrategy = require('passport-local').Strategy;
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-const db = require('../lib/db');
+const userModel = require('../model/userModel');
 
 module.exports = () => {
   passport.use(
@@ -10,11 +10,9 @@ module.exports = () => {
         usernameField: 'id',
         passwordField: 'password',
       },
-      function (username, password, done) {
-        db.query('SELECT * FROM users WHERE user_id=?', [username],(err, result) => {
-          if (err) {
-            return done(err);
-          }
+      async(username, password, done) => {
+        try{
+          let result = await userModel.user.findByUserId(username);
           if (result[0]) {
             bcrypt.compare(password, result[0].password, function (err, check) {
               if (check) {
@@ -26,7 +24,9 @@ module.exports = () => {
           } else {
             return done(null, false, { message: '아이디가 올바르지 않습니다.' });
           }
-        });
+        } catch (err){
+          return done(err);
+        }
       }
     )
   );

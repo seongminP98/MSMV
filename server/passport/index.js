@@ -1,19 +1,15 @@
-const db = require('../lib/db');
 const passport = require('passport');
 const local = require('./localStrategy');
+const userModel = require('../model/userModel');
 
 module.exports = () =>{
-    passport.serializeUser(function (user, done) {
+    passport.serializeUser((user, done) => {
         done(null, user.id);
       });
     
-    passport.deserializeUser(function (id, done) {
-      db.query('SELECT id, user_id, nickname FROM users WHERE id=?', [id], function (err, result) {
-        if (err) {
-          throw err;
-        }
-        done(null, result[0]);
-      });
+    passport.deserializeUser(async(id, done) => {
+      let user = await userModel.user.findById(id);
+      done(null, user[0]);
     });
     
     local();
